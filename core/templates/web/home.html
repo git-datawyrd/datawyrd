@@ -1,0 +1,454 @@
+{% extends 'web/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}DataWyrd | Where data meets destiny{% endblock %}
+
+{% block content %}
+
+<!--  Header del home =============================================-->
+<section
+class="home-section home-parallax home-fade home-full-height bg-dark-60 agency-page-header"
+id="home"
+data-background="{% static 'img/web/datawyrd_header_home.jpg' %}"
+>
+<div class="titan-caption">
+  <div class="caption-content">
+    <div class="font-alt mb-30 titan-title-size-1">
+      Ayudamos a conectar tus datos con tus objetivos
+    </div>
+    <div class="font-alt mb-40 titan-title-size-3">
+      De una manera <span class="rotate">fácil | simple | ágil</span>
+    </div>
+    <a class="section-scroll btn btn-border-w btn-circle" href="#contact"
+      >Data Wyrd</a
+    >
+  </div>
+</div>
+</section>
+
+<!--  Contenido de la web =============================================-->
+<!--Etapas de conceptualización-->
+<div class="main">
+    <section class="module">
+      <div class="container">
+        <div class="row multi-columns-row">
+          <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="features-item">
+              <div class="features-icon">
+                <span class="icon-lightbulb"></span>
+              </div>
+              <h3 class="features-title font-alt">conceptualizamos las ideas</h3>
+              Nuestro equipo de expertos entiende tu negocio y te ayuda a
+              desarrollar una estrategia de negocios clara y concisa que refleje
+              tus objetivos y tu visión. Diseñamos una estrategia ágil, flexible y
+              colaborativa que aproveche las oportunidades y reduzca los riesgos.
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="features-item">
+              <div class="features-icon"><span class="icon-tools"></span></div>
+              <h3 class="features-title font-alt">diseñamos la estrategia</h3>
+              Una vez que se ha desarrollado una estrategia clara, nuestro equipo
+              de expertos le ayuda a desarrollar los planes de acción necesarios
+              para implementarla. Esto incluye el diseño de procesos, la selección
+              de herramientas, el desarrollo de estrategias de contenido y la
+              creación de planes de marketing.
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="features-item">
+              <div class="features-icon"><span class="icon-tools-2"></span></div>
+              <h3 class="features-title font-alt">desarrollamos la solución</h3>
+              Nuestro equipo de desarrollo puede ayudar a construir la solución a
+              medida que satisfaga tus necesidades de negocios. Esto incluye el
+              diseño de interfaces de usuario intuitivas, la integración de
+              herramientas de terceros y la implementación de aplicaciones seguras
+              y escalables.
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="features-item">
+              <div class="features-icon">
+                <span class="icon-gears"></span>
+              </div>
+              <h3 class="features-title font-alt">te brindamos soporte</h3>
+              Una vez que la solución está implementada, nuestro equipo de soporte
+              está listo para ayudar. Esto incluye el monitoreo de la solución, el
+              mantenimiento de la infraestructura, el soporte al cliente y el
+              desarrollo de nuevas funcionalidades.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!--Container imagen-->
+    <section>
+      <img
+        src="{% static 'img/web/separador.png' %}"
+        width="100%"
+        height="240"
+      />
+    </section>
+  
+
+    <!-- Sección Nuestros Servicios -->
+    <section class="module" id="alt-features">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6 col-sm-offset-3">
+            <h2 class="module-title font-alt">Lo que mejor hacemos</h2>
+          </div>
+        </div>
+        <div class="row">
+          <!-- Primera columna -->
+          <div class="col-sm-6 col-md-3 col-lg-3">
+            <!-- BI & Data Analytics -->
+            <div class="alt-features-item">
+              <div class="alt-features-icon">
+                <span class="icon-linegraph"></span>
+              </div>
+              <h3 class="alt-features-title font-alt">BI & Data Analytics</h3>
+              Transformamos tus datos en paneles interactivos y reportes visuales para una toma de decisiones más estratégica.
+            </div>
+
+            <!-- Data Engineering -->
+            <div class="alt-features-item">
+              <div class="alt-features-icon">
+                <span class="icon-gears"></span>
+              </div>
+              <h3 class="alt-features-title font-alt">Data Engineering & ETL</h3>
+              Diseñamos pipelines robustos de procesamiento de datos, automatizando flujos ETL con eficiencia y precisión.
+            </div>
+
+            <!-- Consultoría -->
+            <div class="alt-features-item">
+              <div class="alt-features-icon">
+                <span class="icon-genius"></span>
+              </div>
+              <h3 class="alt-features-title font-alt">Consultoría</h3>
+              Detectamos oportunidades de mejora en tus sistemas y procesos, orientados a la transformación digital y la eficiencia.
+            </div>
+          </div>
+
+          <!-- Imagen del medio -->
+          <div class="col-md-6 col-lg-6 hidden-xs hidden-sm">
+            <div class="alt-services-image align-center">
+              <img
+                src="{% static 'img/web/datawyrd_services_home.jpg' %}"
+                alt="Servicios Data Wyrd"
+                style="width: 80%;"
+              />
+            </div>
+          </div>
+
+          <!-- Segunda columna -->
+          <div class="col-sm-6 col-md-3 col-lg-3">
+            <!-- Aplicaciones Web -->
+            <div class="alt-features-item">
+              <div class="alt-features-icon">
+                <span class="icon-mobile"></span>
+              </div>
+              <h3 class="alt-features-title font-alt">Aplicaciones Web</h3>
+              Desarrollamos aplicaciones a medida para gestionar tus procesos de forma eficiente, escalable y segura.
+            </div>
+
+            <!-- Data Warehousing -->
+            <div class="alt-features-item">
+              <div class="alt-features-icon">
+                <span class="icon-layers"></span>
+              </div>
+              <h3 class="alt-features-title font-alt">Data Warehousing</h3>
+              Consolidamos grandes volúmenes de datos en almacenes centralizados, facilitando el análisis histórico y la toma de decisiones estratégicas.
+            </div>
+
+            <!-- Procesos & Sistemas -->
+            <div class="alt-features-item">
+              <div class="alt-features-icon">
+                <span class="icon-presentation"></span>
+              </div>
+              <h3 class="alt-features-title font-alt">Procesos & Sistemas</h3>
+              Modelamos y digitalizamos tus procesos, integrando herramientas que optimicen el trabajo diario de tu organización.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  
+    <!--Container de call to action-->
+    <section class="module-small bg-dark">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6 col-md-8 col-lg-6 col-lg-offset-2">
+            <div class="callout-text font-alt">
+              <h3 class="callout-title">Quieres contratar algún servicio?</h3>
+              <p>
+                Estamos muy interesados en escucharte y brindarte una solución.
+                <br />¡NO ESPERES MÁS Y COMPARTE TUS IDEAS CON NOSOTROS!
+              </p>
+            </div>
+          </div>
+          <div class="col-sm-6 col-md-4 col-lg-2">
+            <div class="callout-btn-box">
+              <a class="btn btn-w btn-round section-scroll" href="#contact"
+                >Agendemos una llamada!</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!--Container de portfolio de servicios-->
+  
+    <!--  include "vezetaelea_servicios/servicios.html" </p> -->
+  
+    <!--Container de preguntas frecuentes-->
+    <hr class="divider-w" />
+    <section class="module">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-6">
+            <h4 class="font-alt mb-30">Preguntas más frecuentes</h4>
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title font-alt">
+                    <a
+                      data-toggle="collapse"
+                      data-parent="#accordion"
+                      href="#support1"
+                      >Quiero contratar un servicio, ¿cómo debo proceder?</a
+                    >
+                  </h4>
+                </div>
+                <div class="panel-collapse collapse in" id="support1">
+                  <div class="panel-body">
+                    Le invitamos a que nos de algunos detalles del servicio que
+                    desea contratar a través de nuestro formulario de contacto.
+                    Por favor, especifique el tipo de servicio que necesita y
+                    describa con detalle sus características.
+                    <br />
+                    A la brevedad nos pondremos en contacto con usted para
+                    concertar una primera reunión donde se discutirán sus ideas y
+                    conceptos. Posteriormente, le enviaremos una oferta de
+                    servicio con los detalles del plan de trabajo y los honorarios
+                    correspondientes.
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title font-alt">
+                    <a
+                      class="collapsed"
+                      data-toggle="collapse"
+                      data-parent="#accordion"
+                      href="#support2"
+                      >¿Qué garantías ofrecen con respecto al trabajo que
+                      realizan?</a
+                    >
+                  </h4>
+                </div>
+                <div class="panel-collapse collapse" id="support2">
+                  <div class="panel-body">
+                    En algunas ofertas de servicios incluímos demos o prototipos
+                    donde siempre esperamos la aprobación del responsable del
+                    proceso, esto permite un control de los cambios y, en caso de
+                    ser necesario, poder regresar a una versión anterior.
+                    <br />Hay otros servicios (como el soporte técnico) en donde
+                    hay una manifestación de conformidad una vez completado el
+                    trabajo. <br />Nos preocupamos y estamos comprometidos en
+                    garantizar la satisfacción de nuestros clientes.
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title font-alt">
+                    <a
+                      class="collapsed"
+                      data-toggle="collapse"
+                      data-parent="#accordion"
+                      href="#support3"
+                      >¿Cuál es el tiempo de entrega para un proyecto?</a
+                    >
+                  </h4>
+                </div>
+                <div class="panel-collapse collapse" id="support3">
+                  <div class="panel-body">
+                    El tiempo de entrega de un proyecto depende de varios
+                    factores, entre los que se incluyen el tamaño y la complejidad
+                    del mismo, así como la cantidad de recursos disponibles. Por
+                    lo tanto, el tiempo de entrega puede variar según cada
+                    proyecto.
+                    <br />
+                    Nosotros, como proveedores de soluciones tecnológicas y de
+                    sistemas, estamos comprometidos a entregar nuestros proyectos
+                    lo antes posible, siempre trabajando duro para cumplir con los
+                    plazos acordados con nuestros clientes.
+                    <br />
+                    Nos esforzamos por ofrecer un servicio de primera calidad y
+                    para ello nos comprometemos a entregar los proyectos a tiempo.
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title font-alt">
+                    <a
+                      class="collapsed"
+                      data-toggle="collapse"
+                      data-parent="#accordion"
+                      href="#support4"
+                      >Quiero trabajar con Uds, ¿Cómo hago?</a
+                    >
+                  </h4>
+                </div>
+                <div class="panel-collapse collapse" id="support4">
+                  <div class="panel-body">
+                    ¡Gracias por tu interés en unirte a nuestro equipo!
+                    <br />Si estás interesado en conocer las vacantes actuales y
+                    aplicar en línea, te invitamos a visitar la sección "Trabaja
+                    con nosotros" en los links de interés al pie de página.
+                    <br />Si no hay ninguna vacante que coincida con tu perfil,
+                    también puedes enviar una solicitud de empleo para que
+                    tengamos acceso a tu perfil y te consideremos para futuras
+                    oportunidades. <br />Si tienes alguna otra pregunta, no dudes
+                    en contactarnos. ¡Esperamos contar contigo pronto!
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <h4 class="font-alt mb-30">Así evaluamos nuestra experiencia</h4>
+  
+            <h6 class="font-alt">
+              <span class="icon-chat"></span> Consultoría de Procesos
+            </h6>
+            <div class="progress">
+              <div
+                class="progress-bar pb-dark"
+                aria-valuenow="100"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span class="font-alt"></span>
+              </div>
+            </div>
+            <h6 class="font-alt">
+              <span class="icon-bargraph"></span> Business Intelligence
+            </h6>
+            <div class="progress">
+              <div
+                class="progress-bar pb-dark"
+                aria-valuenow="100"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span class="font-alt"></span>
+              </div>
+            </div>
+  
+            <h6 class="font-alt">
+              <span class="icon-layers"></span> Data Warehousing
+            </h6>
+            <div class="progress">
+              <div
+                class="progress-bar pb-dark"
+                aria-valuenow="95"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span class="font-alt"></span>
+              </div>
+            </div>
+            <h6 class="font-alt">
+              <span class="icon-linegraph"></span> Data Strategy
+            </h6>
+            <div class="progress">
+              <div
+                class="progress-bar pb-dark"
+                aria-valuenow="85"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span class="font-alt"></span>
+              </div>
+            </div>
+            <h6 class="font-alt">
+              <span class="icon-cloud"></span> Soluciones de Infraestructura y Cloud
+            </h6>
+            <div class="progress">
+              <div
+                class="progress-bar pb-dark"
+                aria-valuenow="95"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span class="font-alt"></span>
+              </div>
+            </div>
+            <h6 class="font-alt">
+              <span class="icon-gears"></span> Data Engineering
+            </h6>
+            <div class="progress">
+              <div
+                class="progress-bar pb-dark"
+                aria-valuenow="90"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span class="font-alt"></span>
+              </div>
+            </div>
+            <h6 class="font-alt">
+              <span class="icon-tools"></span> Desarrollo de Aplicaciones Web para BI
+            </h6>
+            <div class="progress">
+              <div
+                class="progress-bar pb-dark"
+                aria-valuenow="85"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span class="font-alt"></span>
+              </div>
+            </div>
+            <h6 class="font-alt">
+              <span class="icon-happy"></span> Orientados a la Calidad y
+              satisfacción del cliente
+            </h6>
+            <div class="progress">
+              <div
+                class="progress-bar pb-dark"
+                aria-valuenow="100"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span class="font-alt"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    {% include "contacto/contacto.html" %}
+      
+  </div>
+
+
+{% endblock %}

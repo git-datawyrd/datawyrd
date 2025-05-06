@@ -1,0 +1,50 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<section class="module bg-dark-60 pt-0 pb-0 parallax-bg testimonial"
+    data-background="{% static 'images/testimonial_bg.jpg' %}">
+    <section class="module" id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="center-block">
+                    <h2 class="module-title font-alt">
+                        Queremos responder a tu consulta
+                    </h2>
+                    <div class="module-subtitle font-serif"></div>
+                </div>
+            </div>
+
+            <!-- Mensajes de éxito o error -->
+            {% if messages %}
+                <div class="row mt-3">
+                    {% for message in messages %}
+                        <div class="alert alert-success text-center" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Formulario de contacto -->
+            <div class="row">
+                <div class="center-block">
+                    <form method="post" action="">
+                        {% csrf_token %}
+
+                        <!-- Aquí se renderiza el formulario -->
+                        {{ form|crispy }}
+
+                        <!-- Botón de envío -->
+                        <div class="text-center mt-4">
+                            <button class="btn btn-block btn-round btn-d" type="submit">
+                                Enviar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}

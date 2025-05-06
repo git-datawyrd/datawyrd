@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %} DataWyrd | "Where data meets destiny" {% endblock %}
+    </title>
+    {% load static %}
+
+<!--  Stylesheets=============================================-->
+<!--  Favicons=============================================-->
+    <link rel="icon" type="img/png" sizes="180x180" href="{% static 'img/favicon.ico' %}"/>
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'img/favicons/apple-icon-57x57.png' %}"/>
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static 'img/favicons/apple-icon-60x60.png' %}"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'img/favicons/apple-icon-72x72.png' %}"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'img/favicons/apple-icon-76x76.png' %}"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'img/favicons/apple-icon-114x114.png' %}"/>
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'img/favicons/apple-icon-120x120.png' %}"/>
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'img/favicons/apple-icon-144x144.png' %}"/>
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'img/favicons/apple-icon-152x152.png' %}"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicons/apple-icon-180x180.png' %}"/>
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'img/favicons/android-icon-192x192.png' %}"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicons/favicon-32x32.png' %}"/>
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicons/favicon-96x96.png' %}"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicons/favicon-16x16.png' %}"/>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="msapplication-TileColor" content="#a30f2d" />
+    <meta name="msapplication-TileImage" content="{% static 'img/favicons/ms-icon-144x144.png' %}"/>
+    <meta name="theme-color" content="#a30f2d" />
+
+    <!--  Stylesheets=============================================-->
+    <!-- Default stylesheets-->
+    <link href="{% static 'lib/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <!-- Template specific stylesheets-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Volkhov:400i" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet"/>
+    <link href="{% static 'lib/animate.css/animate.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/components-font-awesome/css/font-awesome.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/et-line-font/et-line-font.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/flexslider/flexslider.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/owl.carousel/dist/vezetaelea_web/owl.carousel.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/owl.carousel/dist/vezetaelea_web/owl.theme.default.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/magnific-popup/dist/magnific-popup.css' %}" rel="stylesheet"/>
+    <link href="{% static 'lib/simple-text-rotator/simpletextrotator.css' %}" rel="stylesheet"/>
+    <!-- Main stylesheet and color file-->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet"/>
+    <link id="color-scheme" href="{% static 'css/colors/default.css' %}" rel="stylesheet"/>
+
+</head>
+<body data-spy="scroll" data-target=".onpage-navigation" data-offset="60">
+    <!--  Pre-loader =============================================-->
+    <div class="page-loader">
+        <div class="loader">Loading...</div>
+      </div>
+    <header>
+        <nav class="navbar navbar-custom navbar-fixed-top navbar-transparent"
+        role="navigation"
+        >
+        <div class="container">
+        <div class="navbar-header">
+            <button
+            class="navbar-toggle"
+            type="button"
+            data-toggle="collapse"
+            data-target="#custom-collapse"
+            >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span><span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'img/favicon.ico' %}" alt="Logo" style="height: 40px; margin-right: 8px; display: inline-block; vertical-align: middle;">
+                <span style="vertical-align: middle;">DataWyrd</span>
+            </a>            
+        </div>
+        <div class="collapse navbar-collapse" id="custom-collapse">
+            <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a
+                class="dropdown-toggle"
+                href="{% url 'home' %}"
+                data-toggle="dropdown"
+                ><i class="fa fa-bar-chart-o fa-sm"></i> BI & Data Analytics</a
+                >
+                <ul class="dropdown-menu">
+                <li><a href="{% url 'home' %}">Power BI</a></li>
+                <li><a href="{% url 'home' %}">Looker Studio</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a
+                class="dropdown-toggle"
+                href="{% url 'home' %}"
+                data-toggle="dropdown"
+                ><i class="fa fa-database fa-sm"></i> Data Engineering & ETL</a
+                >
+                <ul class="dropdown-menu">
+                <li><a href="{% url 'home' %}">SQL</a></li>
+                <li><a href="{% url 'home' %}">Python</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a
+                class="dropdown-toggle"
+                href="{% url 'home' %}"
+                data-toggle="dropdown"
+                ><i class="fa fa-link fa-sm"></i> Web & Apps</a
+                >
+                <ul class="dropdown-menu">
+                <li><a href="{% url 'home' %}">Soluciones web</a></li>
+                <li><a href="{% url 'home' %}">Aplicaciones Web</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a
+                class="dropdown-toggle"
+                href="{% url 'home' %}"
+                data-toggle="dropdown"
+                ><i class="fa fa-bullhorn fa-sm"></i> Consultoría</a
+                >
+                <ul class="dropdown-menu">
+                <li><a href="{% url 'home' %}">Data Warehousing</a></li>
+                <li><a href="{% url 'home' %}">Procesos y Sistemas</a></li>
+                </ul>
+            </li>
+            </ul>
+        </div>
+        </div>
+    </nav>
+    </header>
+<main>
+
+
+    
+        
+    <!--  Contenido dinámico =============================================-->    
+        {% block content %}
+        
+        
+        
+        {% endblock %}
+
+
+    <!--Container de dirección, links y newsletter-->
+    <hr class="divider-d" />
+    <footer class="footer bg-dark">
+    <div class="container">
+        <div class="row">
+        <div class="col-lg-3 col-md-6">
+            <div class="alt-features-item mt-0">
+            <div class="alt-features-icon-white">
+                <span class="icon-megaphone"></span>
+            </div>
+            <h4>Contacto</h4>
+            Email: contacto@datawyrd.com<br />Teléfono:
+            <a
+                href="https://wa.me/+5491170215822/?text=Hola%20quiero%20información"
+                target="_blank">
+                +54 9 11 7021 5822
+            </a>
+            </div>
+            <div class="alt-features-item col-md-offset-1">
+            <div class="alt-features-icon-white">
+                <span class="icon-map"></span>
+            </div>
+            <h4>Dirección</h4>
+            A Definir<br />Ciudad Autónoma de Buenos Aires<br />CP 1414, Argentina
+            </div>
+        </div>
+
+        <div class="col-lg-2 col-md-6 footer-links">
+            <h4>Links de interés</h4>
+            <ul>
+            <li>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'home' %}">Home</a>
+            </li>
+            <li>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'nosotros' %}">Quiénes somos</a>
+            </li><li>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'home' %}">Trabaja con nosotros</a>
+            </li>
+            <li>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'home' %}">Política de privacidad</a>
+            </li>
+            </ul>
+        </div>
+
+        <div class="col-lg-3 col-md-6 footer-links">
+            <h4>Nuestros Servicios</h4>
+            <ul>
+            <li>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'home' %}">BI & Data Analytics</a>
+            </li>
+            <li>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'home' %}">Data Engineering & ETL</a>
+            </li>
+            <li>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'home' %}">Web & Apps</a>
+            </li>
+            <li>
+                <i class="bi bi-chevron-right"></i>
+                <a href="{% url 'home' %}">Consultoría</a>
+            </li>
+            </ul>
+        </div>
+
+        <div class="col-lg-4 col-md-6 footer-newsletter">
+            <h4>Suscríbete para más información</h4>
+            <p>
+            Entérate de las novedades que tenemos en DataWyrd:
+            promociones, ofertas de empleo, noticias y más.
+            <i>Sabemos y entendemos que tu tiempo es valioso.</i>
+            </p>
+            <div class="form-group">
+            <label class="sr-only" for="email">Email</label>
+            <input
+                class="form-control"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Correo electrónico*"
+                required="required"
+                data-validation-required-message="Por favor coloque un email válido."
+            />
+            <p class="help-block text-danger"></p>
+            </div>
+            <div class="form-group">
+            <button
+                class="btn btn-block btn-round btn-d"
+                id="cfsubmit"
+                type="submit"
+            >
+                Suscríbete
+            </button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <br />
+    </footer>
+
+    <!--Footer rrss-->
+    <hr class="divider-d" />
+    <footer class="footer bg-danger">
+    <div class="container">
+        <div class="row">
+        <div class="col-sm-6">
+            <p class="copyright font-alt">
+            Diseño y desarrollo Full Stack por
+            <a href="https://www.instagram.com/vezetaelea/">VeZetaeLeA</a>
+            </p>
+            <p>
+            <i>Front-End</i>: HTML 5 | CSS 3 | Boostrap 5 | Javascript
+            <br /><i>Back-End</i>: Python | Django | PostgreSQL
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <div class="footer-social-links">
+            <a
+                href="https://wa.me/+5491170215822/?text=Hola%20quiero%20información"
+                target="_blank"
+                ><i class="fa fa-whatsapp"></i
+            ></a>
+            <a href="https://www.instagram.com/datawyrd/" target="_blank"
+                ><i class="fa fa-instagram"></i
+            ></a>
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <a href="https://x.com/datawyrd" target="_blank"
+                ><i class="fa fa-twitter"></i
+            ></a>
+            <a href="https://github.com/git-datawyrd" target="_blank"
+                ><i class="fa fa-github"></i></a>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <p class="copyright font-alt text-center">
+            &copy; 2025 DataWyrd | "Where data meets destiny". Todos los derechos reservados.
+        </p>
+        </div>
+    </div>
+    </footer>
+
+    <!--scroll-up totop-->
+    <div class="scroll-up">
+    <a href="#totop"><i class="fa fa-angle-double-up"></i></a>
+    </div>
+
+
+
+</main>
+<!--  JavaScripts =============================================-->
+<script src="{% static 'lib/jquery/dist/jquery.js' %}"></script>
+<script src="{% static 'lib/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'lib/wow/dist/wow.js' %}"></script>
+<script src="{% static 'lib/jquery.mb.ytplayer/dist/jquery.mb.YTPlayer.js' %}"></script>
+<script src="{% static 'lib/isotope/dist/isotope.pkgd.js' %}"></script>
+<script src="{% static 'lib/imagesloaded/imagesloaded.pkgd.js' %}"></script>
+<script src="{% static 'lib/flexslider/jquery.flexslider.js' %}"></script>
+<script src="{% static 'lib/owl.carousel/dist/owl.carousel.min.js' %}"></script>
+<script src="{% static 'lib/smoothscroll.js' %}"></script>
+<script src="{% static 'lib/magnific-popup/dist/jquery.magnific-popup.js' %}"></script>
+<script src="{% static 'lib/simple-text-rotator/jquery.simple-text-rotator.min.js' %}"></script>
+<script src="{% static 'js/plugins.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+
+</body>
+</html>
