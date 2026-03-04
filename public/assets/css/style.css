@@ -375,14 +375,16 @@ body {
 }
 
 .btn-outline-primary {
-    color: var(--midnight-blue);
-    border: 2px solid var(--midnight-blue);
+    color: var(--tech-blue);
+    border: 1px solid rgba(48, 197, 255, 0.4);
+    background: transparent;
 }
 
 .btn-outline-primary:hover {
-    background-color: var(--midnight-blue);
-    color: var(--elegant-gold);
-    border-color: var(--elegant-gold);
+    background-color: var(--tech-blue);
+    color: var(--deep-black) !important;
+    border-color: var(--tech-blue);
+    box-shadow: 0 0 15px rgba(48, 197, 255, 0.3);
 }
 
 .btn-outline-white {
