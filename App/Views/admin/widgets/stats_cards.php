@@ -1,4 +1,17 @@
 <div class="row g-4">
+    <!-- Skeleton Loaders -->
+    <?php for ($i = 0; $i < 4; $i++): ?>
+        <div class="col-6 col-md-3 skeleton-loader no-print">
+            <div class="glass-morphism p-4 rounded-4 border-white-10 h-100">
+                <div class="skeleton skeleton-text mb-3" style="width: 50%"></div>
+                <div class="d-flex justify-content-between align-items-end">
+                    <div class="skeleton skeleton-title mb-0" style="width: 40%"></div>
+                    <div class="skeleton skeleton-text mb-0" style="width: 20%"></div>
+                </div>
+            </div>
+        </div>
+    <?php endfor; ?>
+
     <div class="col-6 col-md-3">
         <div class="glass-morphism p-4 rounded-4 border-white-10 h-100 position-relative overflow-hidden kpi-card">
             <div class="position-absolute top-0 end-0 p-3 opacity-10">

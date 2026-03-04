@@ -57,8 +57,16 @@ class SecurityLogger
     {
         try {
             $db = Database::getInstance()->getConnection();
-            $sql = "INSERT INTO audit_logs (request_id, user_id, user_email, user_role, action, details, level, ip_address, user_agent, request_uri, request_method) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            // Get previous hash for cryptographic linking (Zero Trust)
+            $stmtLast = $db->query("SELECT signature_hash FROM audit_logs ORDER BY id DESC LIMIT 1");
+            $lastHash = $stmtLast->fetchColumn() ?: 'genesis_block';
+
+            $payload = json_encode($data['details']);
+            $signatureHash = hash('sha256', $lastHash . $data['action'] . $payload . $data['timestamp'] . $data['ip']);
+
+            $sql = "INSERT INTO audit_logs (request_id, user_id, user_email, user_role, action, details, level, ip_address, user_agent, request_uri, request_method, signature_hash, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $stmt = $db->prepare($sql);
             $stmt->execute([
@@ -67,12 +75,14 @@ class SecurityLogger
                 $data['user_email'],
                 Auth::user()['role'] ?? 'guest',
                 $data['action'],
-                json_encode($data['details']),
+                $payload,
                 $data['severity'],
                 $data['ip'],
                 $_SERVER['HTTP_USER_AGENT'] ?? 'none',
                 $data['route'],
-                $data['method']
+                $data['method'],
+                $signatureHash,
+                $data['timestamp']
             ]);
         } catch (\Exception $dbEx) {
             error_log("DB Logging failed: " . $dbEx->getMessage());

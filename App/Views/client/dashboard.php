@@ -78,6 +78,19 @@
 </div>
 
 <div class="row g-4 mb-5">
+    <!-- Skeleton Loaders -->
+    <?php for ($i = 0; $i < 3; $i++): ?>
+        <div class="col-md-4 skeleton-loader no-print">
+            <div class="glass-morphism p-4 rounded-4 border-white-10 h-100">
+                <div class="skeleton skeleton-text mb-3" style="width: 50%"></div>
+                <div class="d-flex justify-content-between align-items-end">
+                    <div class="skeleton skeleton-title mb-0" style="width: 40%"></div>
+                    <div class="skeleton skeleton-text mb-0" style="width: 20%"></div>
+                </div>
+            </div>
+        </div>
+    <?php endfor; ?>
+
     <!-- Quick Stats in Admin KPI Style -->
     <div class="col-md-4">
         <div class="glass-morphism p-4 rounded-4 border-white-10 h-100 position-relative overflow-hidden kpi-card">
@@ -137,6 +150,18 @@
                     <p class="text-white-50 text-center py-4 mb-0">No hay tickets recientes.</p>
                 <?php else: ?>
                     <div class="list-group list-group-flush border-0">
+                        <!-- Skeletons -->
+                        <?php for ($i = 0; $i < 3; $i++): ?>
+                            <div
+                                class="list-group-item bg-transparent border-white-5 p-3 px-0 d-flex align-items-center gap-3 skeleton-row no-print">
+                                <div class="skeleton skeleton-avatar flex-shrink-0" style="width: 50px; height: 50px;"></div>
+                                <div class="flex-grow-1">
+                                    <div class="skeleton skeleton-text" style="width: 60%"></div>
+                                    <div class="skeleton skeleton-text" style="width: 40%"></div>
+                                </div>
+                            </div>
+                        <?php endfor; ?>
+
                         <?php foreach ($tickets as $ticket): ?>
                             <a href="<?php echo url('ticket/detail/' . $ticket['id']); ?>"
                                 class="list-group-item bg-transparent border-white-5 p-3 px-0 d-flex align-items-center gap-3 hover-lift-sm transition-all text-decoration-none">

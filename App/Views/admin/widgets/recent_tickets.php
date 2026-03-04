@@ -19,6 +19,22 @@
                 </tr>
             </thead>
             <tbody id="adminTicketsTable">
+                <!-- Skeleton Loader Rows (Removed via JS) -->
+                <?php for ($i = 0; $i < 5; $i++): ?>
+                    <tr class="skeleton-row no-print">
+                        <td class="p-4">
+                            <div class="skeleton skeleton-text" style="width: 40%"></div>
+                            <div class="skeleton skeleton-text" style="width: 80%"></div>
+                        </td>
+                        <td class="p-4">
+                            <div class="skeleton skeleton-text" style="width: 60%"></div>
+                        </td>
+                        <td class="p-4 text-end">
+                            <div class="skeleton skeleton-btn ms-auto"></div>
+                        </td>
+                    </tr>
+                <?php endfor; ?>
+
                 <?php foreach ($tickets as $ticket): ?>
                     <tr class="ticket-row"
                         data-search="<?php echo strtolower($ticket['ticket_number'] . ' ' . $ticket['client_name'] . ' ' . $ticket['subject']); ?>">

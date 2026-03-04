@@ -46,6 +46,10 @@
                                                     <span
                                                         class="badge bg-danger bg-opacity-10 text-danger x-small border border-danger border-opacity-25">INACTIVO</span>
                                                 <?php endif; ?>
+                                                <?php if ($u['two_factor_enabled']): ?>
+                                                    <span class="material-symbols-outlined text-success fs-6"
+                                                        title="2FA Activado">verified_user</span>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="x-small text-white-50 mt-1">ID:
                                                 <?php echo $u['id']; ?>

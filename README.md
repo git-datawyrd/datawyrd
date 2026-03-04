@@ -512,7 +512,8 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 
 ## 📊 Roadmap
 
-### ✅ Versión 2.0.0 a 2.3.0 (Actual)
+### ✅ Versión 2.0.0 a 2.6.0 (Actual)
+- [x] Evolución 9.7: Premium Admin UI & Executive Design (Modo Claro).
 - [x] Evolución 9.6: Refinamiento UX, CMS & Hardening.
 - [x] Nueva capa de Middleware (Auth/RBAC centralizado).
 - [x] Hardening de Seguridad: CSP, HSTS, Rate Limiting.
@@ -520,6 +521,7 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 - [x] Pricing Adaptativo ("Cotizar") con botones dinámicos.
 - [x] Filtros de multi-selección dinámicos en Admin.
 - [x] Narrativa corporativa de crecimiento sostenible en Home.
+- [x] Fase 4: Inteligencia (Lead Scoring) y Seguridad (Inmutabilidad/Argon2id).
 
 ### 🔮 Versión 3.0 (Próxima)
 - [ ] Aplicación Móvil Companion.

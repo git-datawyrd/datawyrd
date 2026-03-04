@@ -15,61 +15,8 @@ class AuditService
      */
     public static function log(string $action, array $details = [], string $level = 'INFO'): void
     {
-        try {
-            $db = Database::getInstance()->getConnection();
-
-            // Obtener información del usuario actual
-            $user = Auth::check() ? Auth::user() : null;
-            $userId = $user['id'] ?? null;
-            $userEmail = $user['email'] ?? 'guest';
-            $userRole = $user['role'] ?? 'guest';
-
-            // Obtener información de la petición
-            $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-            $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
-            $requestUri = $_SERVER['REQUEST_URI'] ?? 'unknown';
-            $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'unknown';
-
-            // Preparar datos para insertar
-            $payload = json_encode($details);
-            $requestId = \Core\App::$requestId ?? 'system';
-
-            // Get previous hash for cryptographic linking (Zero Trust)
-            $stmtLast = $db->query("SELECT signature_hash FROM audit_logs ORDER BY id DESC LIMIT 1");
-            $lastHash = $stmtLast->fetchColumn() ?: 'genesis_block';
-            $currentTime = date('Y-m-d H:i:s');
-
-            // Generate current block hash
-            $signatureHash = hash('sha256', $lastHash . $action . $payload . $currentTime . $ipAddress);
-
-            $sql = "INSERT INTO audit_logs 
-                    (request_id, user_id, user_email, user_role, action, details, level, ip_address, user_agent, request_uri, request_method, created_at, signature_hash) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-            $stmt = $db->prepare($sql);
-            $stmt->execute([
-                $requestId,
-                $userId,
-                $userEmail,
-                $userRole,
-                $action,
-                $payload,
-                $level,
-                $ipAddress,
-                substr($userAgent, 0, 255),
-                substr($requestUri, 0, 255),
-                $requestMethod,
-                $currentTime,
-                $signatureHash
-            ]);
-
-            // También escribir en archivo de log
-            self::writeToFile($action, $details, $level, $userEmail, $ipAddress);
-
-        } catch (\Exception $e) {
-            // Si falla la auditoría, al menos escribir en archivo
-            self::writeToFile($action, $details, 'ERROR', 'unknown', 'unknown', $e->getMessage());
-        }
+        // Redirigir al SecurityLogger centralizado del Core para consistencia total
+        \Core\SecurityLogger::log($action, $details, $level);
     }
 
     /**

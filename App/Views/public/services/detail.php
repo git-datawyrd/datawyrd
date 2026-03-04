@@ -1,7 +1,7 @@
 <section class="min-vh-60 d-flex align-items-center position-relative overflow-hidden pt-5 pb-5">
     <!-- Parallax Background -->
     <div class="position-absolute top-0 start-0 w-100 h-100 zoom-parallax"
-        style="background: linear-gradient(rgba(10, 11, 14, 0.75), rgba(10, 11, 14, 0.9)), url('<?php echo $service['category_image'] ? url($service['category_image']) : url('assets/images/hero_fallback.jpg'); ?>') center/cover no-repeat; transform: scale(1.1); z-index: 0;">
+        style="background: linear-gradient(rgba(10, 11, 14, 0.7), rgba(10, 11, 14, 0.9)), url('<?php echo $service['category_image'] ? url($service['category_image']) : url('assets/images/hero_fallback.jpg'); ?>') center/cover no-repeat; transform: scale(1.1); z-index: 0;">
     </div>
 
     <div class="container pt-5 position-relative" style="z-index: 1;">
@@ -32,9 +32,9 @@
                         <?php echo $service['name']; ?>
                     </h1>
                 </div>
-                <p class="lead text-white overflow-hidden" style="max-width: 750px; line-height: 1.6;">
+                <p class="text-white-50 overflow-hidden" style="max-width: 750px; line-height: 1.6;">
                     <span
-                        class="d-block bg-white-5 p-4 rounded-4 border-start border-gold border-4 backdrop-blur shadow-2xl">
+                        class="d-block bg-primary bg-opacity-10 p-3 p-md-4 rounded-4 border-start border-primary border-4 backdrop-blur shadow-2xl small">
                         <?php echo $service['full_description']; ?>
                     </span>
                 </p>
@@ -55,7 +55,7 @@
             <?php foreach ($plans as $plan): ?>
                 <div class="col-md-4">
                     <div
-                        class="card bg-midnight border-white-10 h-100 p-4 d-flex flex-column <?php echo $plan['is_featured'] ? 'border-primary shadow-gold transform-scale-105 z-1' : ''; ?>">
+                        class="card bg-midnight border-white-10 h-100 p-4 d-flex flex-column hover-lift transition-all <?php echo $plan['is_featured'] ? 'border-primary shadow-gold transform-scale-105 z-1' : ''; ?>">
                         <?php if ($plan['is_featured']): ?>
                             <div class="position-absolute top-0 start-50 translate-middle">
                                 <span class="badge bg-primary text-deep-black fw-bold px-3 py-2 uppercase tracking-tighter">Más
@@ -274,7 +274,7 @@
     .card:hover {
         transform: translateY(-8px);
         background: rgba(255, 255, 255, 0.05);
-        border-color: var(--tech-blue) !important;
-        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+        border-color: var(--elegant-gold) !important;
+        box-shadow: 0 15px 35px -10px rgba(212, 175, 55, 0.3) !important;
     }
 </style>

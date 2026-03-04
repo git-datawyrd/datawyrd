@@ -169,6 +169,11 @@
                         </h2>
                     </div>
                     <div class="d-flex align-items-center gap-2 gap-md-3">
+                        <button id="theme-toggle-btn" type="button"
+                            class="btn btn-outline-light btn-sm rounded-circle p-2 border-white-10 d-flex align-items-center justify-content-center"
+                            title="Cambiar Tema">
+                            <span class="material-symbols-outlined fs-5" id="theme-icon">light_mode</span>
+                        </button>
                         <div class="dropdown">
                             <button id="notification-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false"
                                 class="btn btn-outline-light btn-sm rounded-circle p-2 border-white-10 d-flex align-items-center justify-content-center position-relative">
@@ -398,6 +403,33 @@
             if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
             if (closeBtn) closeBtn.addEventListener('click', toggleSidebar);
             if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+            // --- Theme Toggle Logic ---
+            const themeBtn = document.getElementById('theme-toggle-btn');
+            const themeIcon = document.getElementById('theme-icon');
+            const htmlEl = document.documentElement;
+
+            // Load saved theme
+            const savedTheme = localStorage.getItem('datawyrd-theme') || 'dark';
+            htmlEl.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+
+            if (themeBtn) {
+                themeBtn.addEventListener('click', () => {
+                    const currentTheme = htmlEl.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                    htmlEl.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('datawyrd-theme', newTheme);
+                    updateThemeIcon(newTheme);
+                });
+            }
+
+            function updateThemeIcon(theme) {
+                if (themeIcon) {
+                    themeIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+                }
+            }
         });
     </script>
     <script>

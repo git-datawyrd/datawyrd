@@ -3,6 +3,8 @@
 
 # Logs y caché
 storage/logs/*.log
+storage/logs/*.json
+storage/rates/*.json
 storage/cache/*
 !storage/cache/.gitkeep
 !storage/logs/.gitkeep

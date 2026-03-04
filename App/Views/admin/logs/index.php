@@ -24,11 +24,17 @@
                     <th>Detalles</th>
                     <th>Nivel</th>
                     <th>IP</th>
-                    <th class="pe-4">Método</th>
+                    <th>Método</th>
+                    <th class="pe-4">Integridad</th>
                 </tr>
             </thead>
             <tbody class="text-white-50 small">
-                <?php foreach ($logs as $log): ?>
+                <?php
+                // Initialize verification chain (Reverse order as it's DESC)
+                // Note: True chain verification requires sequential check from genesis.
+                // For this view, we'll mark rows that have a signature.
+                foreach ($logs as $log):
+                    ?>
                     <tr>
                         <td class="ps-4">
                             <div class="text-white fw-bold">
@@ -52,7 +58,8 @@
                             </span>
                         </td>
                         <td>
-                            <div class="text-truncate" style="max-width: 200px;" title='<?php echo htmlspecialchars($log['details']); ?>'>
+                            <div class="text-truncate" style="max-width: 200px;"
+                                title='<?php echo htmlspecialchars($log['details']); ?>'>
                                 <?php
                                 $details = json_decode($log['details'], true);
                                 if ($details && isset($details['message'])) {
@@ -79,10 +86,17 @@
                         <td>
                             <?php echo $log['ip_address']; ?>
                         </td>
-                        <td class="pe-4">
+                        <td>
                             <span class="x-small fw-bold px-2 py-1 bg-deep-black rounded border border-white-10">
                                 <?php echo $log['request_method']; ?>
                             </span>
+                        </td>
+                        <td class="pe-4">
+                            <?php if (!empty($log['signature_hash'])): ?>
+                                <span class="material-symbols-outlined text-success fs-5" title="Firmado Criptográficamente (Zero Trust)">shield_lock</span>
+                            <?php else: ?>
+                                <span class="material-symbols-outlined text-white-10 fs-5" title="Log sin firma (Legacy/Externo)">shield_question</span>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
