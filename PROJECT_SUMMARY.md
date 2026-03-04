@@ -116,6 +116,7 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 - [x] **Analíticas Predictivas de Operación**: Notificación proactiva de posibles retrasos en Tickets ejecutándose en `scripts/cron_predictive.php`.
 - [x] **Auditorías Inmutables (Zero Trust)**: Los rastros de auditoría están ahora encriptados en cadena SHA256 (columna `signature_hash`) haciendo imposible la manipulación de base de datos sin detección.
 - [x] **Asincronía en Correos**: Sustituido motor base por `PHPMailer`, asegurando consistencia en la entrega usando colas a través del archivo `worker.php`.
+- [x] **Refinamiento de Permisos RBAC**: Corregido bug de acceso en `LogController` asegurando que el permiso `view_logs` esté correctamente mapeado para administradores en modo granular.
 
 ### 8. Evolución 9.7: Premium Admin UI (Executive Mode)
 - [x] **Executive Optimized Light Palette**: Implementación de un modo claro de alta gama con separación jerárquica entre sidebar, fondo y contenido.

@@ -90,7 +90,8 @@ class Auth
                 'manage_cms',
                 'view_reports',
                 'manage_tickets',
-                'manage_users'
+                'manage_users',
+                'view_logs'
             ],
             self::ROLE_STAFF => [
                 'manage_tickets',
