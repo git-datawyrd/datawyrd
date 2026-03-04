@@ -1,0 +1,33 @@
+# Archivos de configuración sensibles
+.env
+
+# Logs y caché
+storage/logs/*.log
+storage/cache/*
+!storage/cache/.gitkeep
+!storage/logs/.gitkeep
+
+# Archivos subidos por usuarios
+public/storage/uploads/*
+!public/storage/uploads/.gitkeep
+
+# Dependencias (si se usan en el futuro)
+/vendor/
+node_modules/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporales
+*.tmp
+*.bak
+*.swp
+*~

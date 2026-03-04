@@ -1,0 +1,2 @@
+{"request_id":"e9d0bc1cfe45f159","timestamp":"2026-03-02 06:54:45","action":"login_success","severity":"INFO","user_id":1,"user_email":"admin@datawyrd.com","route":"\/datawyrd\/auth\/doLogin","method":"POST","ip":"::1","details":"Usuario inici\u00f3 sesi\u00f3n correctamente."}
+{"request_id":"de6b72a1f4a20e7d","timestamp":"2026-03-02 06:54:48","action":"login_success","severity":"INFO","user_id":1,"user_email":"admin@datawyrd.com","route":"\/datawyrd\/auth\/doLogin","method":"POST","ip":"::1","details":"Usuario inici\u00f3 sesi\u00f3n correctamente."}
