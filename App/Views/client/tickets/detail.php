@@ -6,7 +6,22 @@
                 <span class="badge border border-white-10 text-white-50 px-3 py-2 uppercase x-small">
                     <?php echo $ticket['ticket_number']; ?>
                 </span>
-                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 uppercase x-small fw-black">
+                <?php
+                $statusClassDetailClient = [
+                    'open' => 'bg-danger-subtle',
+                    'in_analysis' => 'bg-warning-subtle',
+                    'budget_sent' => 'bg-info-subtle',
+                    'budget_approved' => 'bg-success-subtle',
+                    'budget_rejected' => 'bg-danger-subtle',
+                    'invoiced' => 'bg-info-subtle',
+                    'payment_pending' => 'bg-warning-subtle',
+                    'active' => 'bg-success-subtle',
+                    'resolved' => 'bg-success-subtle',
+                    'closed' => 'bg-secondary-subtle'
+                ];
+                $detailCls = $statusClassDetailClient[$ticket['status']] ?? 'bg-primary bg-opacity-10 text-primary';
+                ?>
+                <span class="badge <?php echo $detailCls; ?> px-3 py-2 uppercase x-small fw-black">
                     <?php echo translateStatus($ticket['status']); ?>
                 </span>
             </div>

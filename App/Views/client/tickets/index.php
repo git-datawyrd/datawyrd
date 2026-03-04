@@ -46,13 +46,19 @@
                                 </td>
                                 <td class="p-4">
                                     <?php
-                                    $statusClass = [
-                                        'open' => 'bg-danger-subtle text-danger',
-                                        'in_progress' => 'bg-info-subtle text-info',
-                                        'resolved' => 'bg-success-subtle text-success',
-                                        'closed' => 'bg-secondary-subtle text-white-50'
+                                    $statusClassClient = [
+                                        'open' => 'bg-danger-subtle',
+                                        'in_analysis' => 'bg-warning-subtle',
+                                        'budget_sent' => 'bg-info-subtle',
+                                        'budget_approved' => 'bg-success-subtle',
+                                        'budget_rejected' => 'bg-danger-subtle',
+                                        'invoiced' => 'bg-info-subtle',
+                                        'payment_pending' => 'bg-warning-subtle',
+                                        'active' => 'bg-success-subtle',
+                                        'resolved' => 'bg-success-subtle',
+                                        'closed' => 'bg-secondary-subtle'
                                     ];
-                                    $cls = $statusClass[$t['status']] ?? 'bg-white-10';
+                                    $cls = $statusClassClient[$t['status']] ?? 'bg-white-10';
                                     ?>
                                     <span
                                         class="badge <?php echo $cls; ?> x-small uppercase fw-bold tracking-tighter px-2 py-1">
