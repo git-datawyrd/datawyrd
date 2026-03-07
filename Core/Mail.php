@@ -13,25 +13,68 @@ class Mail
      */
     public static function send($to, $subject, $body)
     {
-        // Audit log for QUEUING
-        \Core\SecurityLogger::log('email_queued', [
-            'to' => $to,
-            'subject' => $subject
-        ], 'INFO');
+        if (!\Core\Config::get('mail_enabled', false)) {
+            return true; // Mail disabled globally, silently skip
+        }
 
+        $useQueue = getenv('MAIL_QUEUE') !== 'false';
+
+        if ($useQueue) {
+            // Async mode: push to DB queue (needs worker.php running)
+            \Core\SecurityLogger::log('email_queued', ['to' => $to, 'subject' => $subject], 'INFO');
+            try {
+                \Core\Queue::push('App\Jobs\SendEmailJob', [
+                    'to' => $to,
+                    'subject' => $subject,
+                    'body' => $body
+                ]);
+                return true;
+            } catch (\Exception $e) {
+                \Core\SecurityLogger::log('email_queue_failed', [
+                    'to' => $to,
+                    'subject' => $subject,
+                    'error' => $e->getMessage()
+                ], 'ERROR');
+                return false;
+            }
+        }
+
+        // Sync mode: send directly via PHPMailer (no worker needed — best for shared hosting)
+        $mailConfig = \Core\Config::get('mail');
+        if (empty($mailConfig['host'])) {
+            \Core\SecurityLogger::log('email_failed', ['to' => $to, 'error' => 'MAIL_HOST not set'], 'ERROR');
+            return false;
+        }
+
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
         try {
-            // Push to DB Queue
-            \Core\Queue::push('App\Jobs\SendEmailJob', [
-                'to' => $to,
-                'subject' => $subject,
-                'body' => $body
-            ]);
+            $mail->isSMTP();
+            $mail->Host = $mailConfig['host'];
+            $mail->SMTPAuth = true;
+            $mail->Username = $mailConfig['user'];
+            $mail->Password = $mailConfig['pass'];
+            $mail->SMTPSecure = strtolower($mailConfig['enc']) === 'tls'
+                ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS
+                : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port = $mailConfig['port'] ?: 587;
+            $mail->CharSet = 'UTF-8';
+
+            $mail->setFrom($mailConfig['from_address'], $mailConfig['from_name'] ?: 'Data Wyrd');
+            $mail->addAddress($to);
+
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+
+            $mail->send();
+
+            \Core\SecurityLogger::log('email_sent', ['to' => $to, 'subject' => $subject], 'INFO');
             return true;
         } catch (\Exception $e) {
-            \Core\SecurityLogger::log('email_queue_failed', [
+            \Core\SecurityLogger::log('email_failed', [
                 'to' => $to,
                 'subject' => $subject,
-                'error' => $e->getMessage()
+                'error' => $mail->ErrorInfo
             ], 'ERROR');
             return false;
         }
