@@ -10,13 +10,36 @@
     <!-- User Table -->
     <div class="col-lg-12">
         <div class="glass-morphism rounded-5 border-white-10 overflow-hidden shadow-2xl">
-            <div class="p-4 border-bottom border-white-10 bg-white-5 d-flex align-items-center justify-content-between">
-                <h5 class="text-white h6 mb-0 fw-bold uppercase tracking-widest">Miembros Activos</h5>
-                <div class="input-group input-group-sm w-auto">
-                    <span class="input-group-text bg-steel border-white-10 text-white-50"><span
-                            class="material-symbols-outlined fs-6">search</span></span>
-                    <input type="text" class="form-control bg-steel border-white-10 text-white"
-                        placeholder="Filtrar por nombre...">
+            <div
+                class="p-4 border-bottom border-white-10 bg-white-5 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <h5 class="text-white h6 mb-0 fw-bold uppercase tracking-widest d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">groups</span>
+                    Miembros Activos
+                </h5>
+                <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+                    <!-- Filter Buttons -->
+                    <div class="btn-group role-filters" role="group">
+                        <button type="button" class="btn btn-sm btn-primary fw-bold px-3 active"
+                            data-filter="all">Todos</button>
+                        <button type="button" class="btn btn-sm btn-outline-white border-white-10 fw-bold px-3"
+                            data-filter="admin"><span
+                                class="material-symbols-outlined fs-6 align-middle me-1">shield_person</span>
+                            Admins</button>
+                        <button type="button" class="btn btn-sm btn-outline-white border-white-10 fw-bold px-3"
+                            data-filter="staff"><span
+                                class="material-symbols-outlined fs-6 align-middle me-1">support_agent</span>
+                            Staff</button>
+                        <button type="button" class="btn btn-sm btn-outline-white border-white-10 fw-bold px-3"
+                            data-filter="client"><span
+                                class="material-symbols-outlined fs-6 align-middle me-1">group</span> Clientes</button>
+                    </div>
+
+                    <div class="input-group input-group-sm w-auto">
+                        <span class="input-group-text bg-steel border-white-10 text-white-50"><span
+                                class="material-symbols-outlined fs-6">search</span></span>
+                        <input type="text" id="userSearchInput" class="form-control bg-steel border-white-10 text-white"
+                            placeholder="Filtrar por nombre o email...">
+                    </div>
                 </div>
             </div>
             <div class="table-responsive">
@@ -32,7 +55,8 @@
                     </thead>
                     <tbody>
                         <?php foreach ($users as $u): ?>
-                            <tr>
+                            <tr class="user-row" data-role="<?php echo strtolower($u['role']); ?>"
+                                data-search="<?php echo strtolower($u['name'] . ' ' . $u['email'] . ' ' . ($u['company'] ?? '')); ?>">
                                 <td class="p-4">
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="rounded-circle bg-steel d-flex align-items-center justify-content-center text-primary shadow-gold font-monospace fw-bold"
@@ -128,9 +152,65 @@
             </div>
             <div class="p-4 bg-white-5 border-top border-white-10 text-center">
                 <span class="text-white-50 x-small uppercase tracking-widest">Total de registros:
-                    <?php echo count($users); ?>
+                    <span id="visibleUserCount"><?php echo count($users); ?></span>
                 </span>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('userSearchInput');
+        const filterButtons = document.querySelectorAll('.role-filters button');
+        const userRows = document.querySelectorAll('.user-row');
+        const countDisplay = document.getElementById('visibleUserCount');
+        let currentRoleFilter = 'all';
+
+        function filterUsers() {
+            const query = searchInput.value.toLowerCase();
+            let visibleCount = 0;
+
+            userRows.forEach(row => {
+                const role = row.dataset.role;
+                // Treat super_admin as admin for filtering
+                const mappedRole = role === 'super_admin' ? 'admin' : role;
+                const searchContent = row.dataset.search;
+
+                const matchesRole = currentRoleFilter === 'all' || mappedRole === currentRoleFilter;
+                const matchesSearch = query === '' || searchContent.includes(query);
+
+                if (matchesRole && matchesSearch) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            countDisplay.textContent = visibleCount;
+        }
+
+        // Role Filter Buttons
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                // Update active state
+                filterButtons.forEach(b => {
+                    b.classList.remove('btn-primary', 'active');
+                    b.classList.add('btn-outline-white');
+                });
+                this.classList.remove('btn-outline-white');
+                this.classList.add('btn-primary', 'active');
+
+                // Apply filter
+                currentRoleFilter = this.dataset.filter;
+                filterUsers();
+            });
+        });
+
+        // Search Input
+        if (searchInput) {
+            searchInput.addEventListener('input', filterUsers);
+        }
+    });
+</script>
