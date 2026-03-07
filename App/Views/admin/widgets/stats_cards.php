@@ -22,7 +22,9 @@
                 <h3 class="text-white fw-black mb-0 display-6 kpi-value">
                     <?php echo $stats['total_tickets']; ?>
                 </h3>
-                <span class="text-success small fw-bold">+12%</span>
+                <span
+                    class="text-white-50 x-small fw-bold border border-white-10 rounded-pill px-2 py-1 bg-white-5"><?php echo $stats['closed_tickets_pct']; ?>%
+                    Cerrados</span>
             </div>
         </div>
     </div>
@@ -50,7 +52,7 @@
                 <h3 class="text-white fw-black mb-0 display-6 kpi-value">
                     <?php echo $stats['active_services']; ?>
                 </h3>
-                <span class="text-white-50 small x-small">85% Cap.</span>
+                <span class="text-success x-small fw-bold border border-success-subtle rounded-pill px-2 py-1 bg-success bg-opacity-10"><?php echo $stats['paid_invoices_pct']; ?>% Pagado</span>
             </div>
         </div>
     </div>
@@ -64,7 +66,11 @@
                 <h3 class="text-white fw-black mb-0 display-6 kpi-value">
                     <?php echo $stats['total_users']; ?>
                 </h3>
-                <span class="text-accent x-small fw-bold">+5 Nuevos</span>
+                <div class="d-flex gap-1 x-small fw-bold">
+                    <span class="text-white-50" title="Clientes"><span class="material-symbols-outlined fs-6 align-middle" style="font-size: 12px !important;">group</span> <?php echo $stats['users_breakdown']['client'] ?? 0; ?></span>
+                    <span class="text-white-50" title="Staff"><span class="material-symbols-outlined fs-6 align-middle" style="font-size: 12px !important;">support_agent</span> <?php echo $stats['users_breakdown']['staff'] ?? 0; ?></span>
+                    <span class="text-primary" title="Admins"><span class="material-symbols-outlined fs-6 align-middle" style="font-size: 12px !important;">shield_person</span> <?php echo ($stats['users_breakdown']['admin'] ?? 0) + ($stats['users_breakdown']['super_admin'] ?? 0); ?></span>
+                </div>
             </div>
         </div>
     </div>

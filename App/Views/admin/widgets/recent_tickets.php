@@ -53,8 +53,8 @@
                         </td>
                         <td class="p-4 text-end">
                             <a href="<?php echo url('ticket/detail/' . $ticket['id']); ?>"
-                                class="btn btn-outline-primary btn-sm rounded-3">
-                                <span class="material-symbols-outlined fs-6">visibility</span>
+                                class="btn btn-outline-primary btn-sm rounded-3 d-inline-flex align-items-center gap-1 fw-bold">
+                                <span class="material-symbols-outlined fs-6">settings</span> Gestionar
                             </a>
                         </td>
                     </tr>

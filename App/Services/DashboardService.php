@@ -46,11 +46,32 @@ class DashboardService
     public function getAdminStats(): array
     {
         $ticketStats = $this->ticketRepo->getStats();
+
+        // 1. % Tickets Cerrados: closed / (total - void)
+        $totalTickets = (int) $this->db->query("SELECT COUNT(*) FROM tickets")->fetchColumn();
+        $voidTickets = (int) $this->db->query("SELECT COUNT(*) FROM tickets WHERE status = 'void'")->fetchColumn();
+        $closedTickets = (int) $this->db->query("SELECT COUNT(*) FROM tickets WHERE status = 'closed'")->fetchColumn();
+
+        $validTickets = $totalTickets - $voidTickets;
+        $closedPct = $validTickets > 0 ? round(($closedTickets / $validTickets) * 100) : 0;
+
+        // 2. % Monto Pagado
+        $invoiceTotals = $this->db->query("SELECT SUM(total) as total_amount, SUM(paid_amount) as total_paid FROM invoices")->fetch(PDO::FETCH_ASSOC);
+        $totalAmount = (float) ($invoiceTotals['total_amount'] ?? 0);
+        $totalPaid = (float) ($invoiceTotals['total_paid'] ?? 0);
+        $paidPct = $totalAmount > 0 ? round(($totalPaid / $totalAmount) * 100) : 0;
+
+        // 3. Desglose Usuarios
+        $usersBreakdown = $this->db->query("SELECT role, COUNT(*) as count FROM users GROUP BY role")->fetchAll(PDO::FETCH_KEY_PAIR);
+
         return [
-            'total_tickets' => $ticketStats['total'],
+            'total_tickets' => $totalTickets,
             'open_tickets' => $ticketStats['open'],
+            'closed_tickets_pct' => $closedPct,
             'active_services' => $this->db->query("SELECT COUNT(*) FROM active_services WHERE status = 'active'")->fetchColumn(),
-            'total_users' => $this->db->query("SELECT COUNT(*) FROM users")->fetchColumn()
+            'paid_invoices_pct' => $paidPct,
+            'total_users' => $this->db->query("SELECT COUNT(*) FROM users")->fetchColumn(),
+            'users_breakdown' => $usersBreakdown
         ];
     }
 

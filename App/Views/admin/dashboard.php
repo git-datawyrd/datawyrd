@@ -276,17 +276,17 @@
 
             const categories = Object.keys(resourceStats);
             const statusMap = {
-                'open': { label: 'Abierto', color: '#dc3545' },          // Danger
-                'in_analysis': { label: 'En Análisis', color: '#ffc107' }, // Warning
-                'budget_sent': { label: 'P. Enviado', color: '#0dcaf0' },   // Info
-                'budget_approved': { label: 'P. Aprobado', color: '#198754' }, // Success
-                'budget_rejected': { label: 'P. Rechazado', color: '#dc3545' }, // Danger
-                'invoiced': { label: 'Facturado', color: '#0dcaf0' },       // Info
-                'payment_pending': { label: 'P. Pendiente', color: '#ffc107' }, // Warning
-                'active': { label: 'Activo', color: '#198754' },           // Success
-                'resolved': { label: 'Resuelto', color: '#198754' },       // Success
-                'closed': { label: 'Cerrado', color: '#5c4d7d' },          // Secondary custom
-                'void': { label: 'Anulado', color: '#212529' }             // Dark
+                'open': { label: 'Abierto', color: '#30C5FF' },          // Tech Blue
+                'in_analysis': { label: 'En Análisis', color: '#5C4D7D' }, // Accent Purple
+                'budget_sent': { label: 'P. Enviado', color: '#9d8437' },   // Dark Gold
+                'budget_approved': { label: 'P. Aprobado', color: '#D4AF37' }, // Elegant Gold
+                'budget_rejected': { label: 'P. Rechazado', color: '#dc3545' }, // Danger (Keep for semantics)
+                'invoiced': { label: 'Facturado', color: '#1B1F3B' },       // Main Surface Dark
+                'payment_pending': { label: 'P. Pendiente', color: '#e6c86e' }, // Light Gold
+                'active': { label: 'Activo', color: '#10b981' },           // Emerald Branding
+                'resolved': { label: 'Resuelto', color: '#059669' },       // Emerald Dark
+                'closed': { label: 'Cerrado', color: '#0A0A0A' },          // Deep Black
+                'void': { label: 'Anulado', color: '#4b5563' }             // Gray
             };
 
             const allStatusesFound = new Set();
