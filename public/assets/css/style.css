@@ -49,9 +49,11 @@
     background-image: none !important;
 }
 
-[data-theme="light"] body {
+[data-theme="light"] body,
+body[data-theme="light"],
+html[data-theme="light"] body {
     color: var(--white);
-    background-color: var(--deep-black);
+    background-color: var(--deep-black) !important;
 }
 
 [data-theme="light"] .text-white {

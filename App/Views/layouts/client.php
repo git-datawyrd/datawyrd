@@ -17,7 +17,7 @@
     <script>window.APP_URL = "<?php echo url(); ?>";</script>
 </head>
 
-<body class="bg-deep-black">
+<body class="bg-deep-black" id="app-body">
     <div class="d-flex min-vh-100">
         <!-- Sidebar Overlay (mobile) -->
         <div id="sidebar-overlay" class="position-fixed w-100 h-100 bg-black bg-opacity-50 d-none"
@@ -342,18 +342,23 @@
             const themeBtn = document.getElementById('theme-toggle-btn');
             const themeIcon = document.getElementById('theme-icon');
             const htmlEl = document.documentElement;
+            const bodyEl = document.getElementById('app-body');
+
+            function applyTheme(theme) {
+                htmlEl.setAttribute('data-theme', theme);
+                if (bodyEl) bodyEl.setAttribute('data-theme', theme);
+                updateThemeIcon(theme);
+            }
 
             const savedTheme = localStorage.getItem('datawyrd-theme') || 'dark';
-            htmlEl.setAttribute('data-theme', savedTheme);
-            updateThemeIcon(savedTheme);
+            applyTheme(savedTheme);
 
             if (themeBtn) {
                 themeBtn.addEventListener('click', () => {
                     const currentTheme = htmlEl.getAttribute('data-theme');
                     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                    htmlEl.setAttribute('data-theme', newTheme);
                     localStorage.setItem('datawyrd-theme', newTheme);
-                    updateThemeIcon(newTheme);
+                    applyTheme(newTheme);
                 });
             }
 
@@ -362,6 +367,23 @@
                     themeIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
                 }
             }
+
+            // --- Flash Message Toast (visible on all devices) ---
+            function showToast(message, type) {
+                const colors = { success: '#198754', danger: '#dc3545', info: '#0dcaf0' };
+                const icons = { success: 'check_circle', danger: 'error', info: 'info' };
+                const toast = document.createElement('div');
+                toast.style.cssText = `position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(0);z-index:9999;min-width:280px;max-width:90vw;display:flex;align-items:center;gap:10px;padding:14px 20px;border-radius:12px;background:${colors[type] || colors.info};color:white;font-weight:700;font-size:0.85rem;box-shadow:0 8px 30px rgba(0,0,0,0.4);transition:opacity 0.5s ease;`;
+                toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:1.2rem">${icons[type] || icons.info}</span> ${message}`;
+                document.body.appendChild(toast);
+                setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 4000);
+            }
+            <?php if ($msg = \Core\Session::flash('success')): ?>
+                showToast("<?php echo addslashes($msg); ?>", 'success');
+            <?php endif; ?>
+            <?php if ($msg = \Core\Session::flash('error')): ?>
+                showToast("<?php echo addslashes($msg); ?>", 'danger');
+            <?php endif; ?>
 
             // --- Skeleton Management ---
             setTimeout(() => {

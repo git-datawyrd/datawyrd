@@ -113,7 +113,7 @@ class Mail
                 </div>
 
                 <div style='text-align: center; margin: 30px 0;'>
-                    <a href='{$appUrl}/auth/login' style='background: #D4AF37; color: black; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>Acceder al Dashboard</a>
+                    <a href='{$appUrl}/profile/settings#change-password' style='background: #D4AF37; color: black; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>Cambiar Contraseña</a>
                 </div>
 
                 <p style='color: #888; font-size: 13px;'>Nota: Por seguridad, te recomendamos cambiar tu contraseña una vez que inicies sesión.</p>

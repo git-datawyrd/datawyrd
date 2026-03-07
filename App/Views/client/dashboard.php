@@ -138,11 +138,11 @@
         <div class="glass-morphism rounded-5 border-white-10 overflow-hidden mb-4">
             <div class="p-4 border-bottom border-white-10 d-flex align-items-center justify-content-between">
                 <h2 class="text-white h5 fw-black mb-0">Últimas Solicitudes</h2>
-                <div>
-                    <a href="<?php echo url('ticket'); ?>"
-                        class="btn btn-outline-light btn-sm px-3 fw-bold small me-2">Ver Todo</a>
-                    <a href="<?php echo url('ticket/request'); ?>"
-                        class="btn btn-primary btn-sm px-3 fw-bold small">Nuevo Requerimiento</a>
+                <div class="d-flex gap-2">
+                    <a href="<?php echo url('ticket'); ?>" class="btn btn-outline-light btn-sm px-3 fw-bold small"
+                        style="min-width: 90px;">Ver Todo</a>
+                    <a href="<?php echo url('ticket/request'); ?>" class="btn btn-primary btn-sm px-3 fw-bold small"
+                        style="min-width: 120px;">Nuevo Requerimiento</a>
                 </div>
             </div>
             <div class="p-4">
