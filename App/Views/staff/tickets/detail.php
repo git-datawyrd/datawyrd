@@ -144,23 +144,39 @@
                     </div>
                 <?php else: ?>
                     <?php foreach ($messages as $msg): ?>
-                        <?php
-                        $isMe = ($msg['user_id'] == \Core\Auth::user()['id']);
-                        $alignClass = $isMe ? 'align-self-end' : 'align-self-start';
-                        $bgClass = $isMe ? 'bg-primary text-deep-black shadow-gold' : 'bg-steel text-white';
-                        $radiusClass = $isMe ? 'rounded-start-4 rounded-top-4' : 'rounded-end-4 rounded-top-4';
-                        ?>
-                        <div class="d-flex flex-column <?php echo $alignClass; ?>" style="max-width: 80%;">
-                            <div class="p-3 mb-1 <?php echo $bgClass; ?> <?php echo $radiusClass; ?>">
-                                <p class="small mb-0">
-                                    <?php echo nl2br($msg['message']); ?>
-                                </p>
+                        <?php if ($msg['message_type'] === 'system' || $msg['user_id'] == 0): ?>
+                            <div class="align-self-center text-center w-100 my-2">
+                                <div class="d-inline-block px-4 py-3 rounded-4"
+                                    style="background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(48,197,255,0.08)); border: 1px solid rgba(212,175,55,0.25); max-width: 90%; text-align: left;">
+                                    <p class="x-small mb-0 text-white" style="white-space: pre-line; line-height: 1.7;">
+                                        <?php echo nl2br(htmlspecialchars($msg['message'])); ?></p>
+                                    <div class="d-flex align-items-center gap-2 mt-2">
+                                        <span class="material-symbols-outlined text-primary"
+                                            style="font-size: 12px;">smart_toy</span>
+                                        <span class="x-small text-white-50">Data Wyrd Bot •
+                                            <?php echo date('H:i', strtotime($msg['created_at'])); ?></span>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="x-small text-white-50 <?php echo $isMe ? 'text-end' : 'text-start'; ?>">
-                                <?php echo !$isMe ? "<strong>{$msg['user_name']}</strong> • " : ""; ?>
-                                <?php echo date('H:i', strtotime($msg['created_at'])); ?>
-                            </span>
-                        </div>
+                        <?php else: ?>
+                            <?php
+                            $isMe = ($msg['user_id'] == \Core\Auth::user()['id']);
+                            $alignClass = $isMe ? 'align-self-end' : 'align-self-start';
+                            $bgClass = $isMe ? 'bg-primary text-deep-black shadow-gold' : 'bg-steel text-white';
+                            $radiusClass = $isMe ? 'rounded-start-4 rounded-top-4' : 'rounded-end-4 rounded-top-4';
+                            ?>
+                            <div class="d-flex flex-column <?php echo $alignClass; ?>" style="max-width: 80%;">
+                                <div class="p-3 mb-1 <?php echo $bgClass; ?> <?php echo $radiusClass; ?>">
+                                    <p class="small mb-0">
+                                        <?php echo nl2br($msg['message']); ?>
+                                    </p>
+                                </div>
+                                <span class="x-small text-white-50 <?php echo $isMe ? 'text-end' : 'text-start'; ?>">
+                                    <?php echo !$isMe ? "<strong>{$msg['user_name']}</strong> • " : ""; ?>
+                                    <?php echo date('H:i', strtotime($msg['created_at'])); ?>
+                                </span>
+                            </div>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
