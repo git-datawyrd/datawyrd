@@ -270,23 +270,47 @@
             });
         }
 
-        // 2. Resource Chart (Real Data from Status)
+        // 2. Resource Chart (Stacked Bar grouped by Pillar and Status)
         if (resEl) {
             const resCtx = resEl.getContext('2d');
+
+            const categories = Object.keys(resourceStats);
+            const statusMap = {
+                'open': { label: 'Abierto', color: '#dc3545' },          // Danger
+                'in_analysis': { label: 'En Análisis', color: '#ffc107' }, // Warning
+                'budget_sent': { label: 'P. Enviado', color: '#0dcaf0' },   // Info
+                'budget_approved': { label: 'P. Aprobado', color: '#198754' }, // Success
+                'budget_rejected': { label: 'P. Rechazado', color: '#dc3545' }, // Danger
+                'invoiced': { label: 'Facturado', color: '#0dcaf0' },       // Info
+                'payment_pending': { label: 'P. Pendiente', color: '#ffc107' }, // Warning
+                'active': { label: 'Activo', color: '#198754' },           // Success
+                'resolved': { label: 'Resuelto', color: '#198754' },       // Success
+                'closed': { label: 'Cerrado', color: '#5c4d7d' },          // Secondary custom
+                'void': { label: 'Anulado', color: '#212529' }             // Dark
+            };
+
+            const allStatusesFound = new Set();
+            categories.forEach(cat => {
+                Object.keys(resourceStats[cat]).forEach(st => allStatusesFound.add(st));
+            });
+
+            const datasets = [];
+            Array.from(allStatusesFound).forEach(status => {
+                const data = categories.map(cat => resourceStats[cat][status] || 0);
+                datasets.push({
+                    label: statusMap[status] ? statusMap[status].label : status,
+                    data: data,
+                    backgroundColor: statusMap[status] ? statusMap[status].color : 'rgba(255,255,255,0.2)',
+                    borderWidth: 0,
+                    borderRadius: 4
+                });
+            });
+
             new Chart(resCtx, {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
-                    labels: ['Abiertos', 'En Progreso', 'Resueltos', 'Cerrados'],
-                    datasets: [{
-                        data: [
-                            resourceStats.open,
-                            resourceStats.in_progress,
-                            resourceStats.resolved,
-                            resourceStats.closed
-                        ],
-                        backgroundColor: ['#D4AF37', '#33658A', '#198754', '#5C4D7D'],
-                        borderWidth: 0
-                    }]
+                    labels: categories,
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
@@ -294,7 +318,10 @@
                     plugins: {
                         legend: { display: true, position: 'bottom', labels: { color: 'rgba(255,255,255,0.7)', font: { family: 'var(--font-heading)', size: 10 } } }
                     },
-                    cutout: '75%'
+                    scales: {
+                        x: { stacked: true, grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 } } },
+                        y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', stepSize: 1 } }
+                    }
                 }
             });
         }

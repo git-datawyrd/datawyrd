@@ -122,18 +122,31 @@ class DashboardService
         return $monthlyData;
     }
 
-    /**
-     * Get resource distribution based on ticket status.
-     */
     public function getResourceDistribution(): array
     {
-        return [
-            'open' => (int) $this->db->query("SELECT COUNT(*) FROM tickets WHERE status = 'open'")->fetchColumn(),
-            'in_progress' => (int) $this->db->query("SELECT COUNT(*) FROM tickets WHERE status IN ('in_analysis', 'budget_sent', 'budget_approved', 'invoiced', 'payment_pending')")->fetchColumn(),
-            'resolved' => (int) $this->db->query("SELECT COUNT(*) FROM tickets WHERE status = 'active'")->fetchColumn(),
-            'closed' => (int) $this->db->query("SELECT COUNT(*) FROM tickets WHERE status = 'closed'")->fetchColumn()
-        ];
+        $stmt = $this->db->query("
+            SELECT sc.name as category, t.status, COUNT(*) as count 
+            FROM tickets t 
+            JOIN service_plans sp ON t.service_plan_id = sp.id 
+            JOIN services s ON sp.service_id = s.id 
+            JOIN service_categories sc ON s.category_id = sc.id 
+            GROUP BY sc.name, t.status
+        ");
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $distribution = [];
+        foreach ($results as $row) {
+            $cat = $row['category'];
+            $status = $row['status'];
+            if (!isset($distribution[$cat])) {
+                $distribution[$cat] = [];
+            }
+            $distribution[$cat][$status] = (int) $row['count'];
+        }
+
+        return $distribution;
     }
+
 
     /**
      * Get recent leads with intelligence scoring.
