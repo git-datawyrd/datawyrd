@@ -65,6 +65,7 @@
                         <option value="in_progress">En Proceso</option>
                         <option value="resolved">Resueltos</option>
                         <option value="closed">Cerrados</option>
+                        <option value="void">Anulados</option>
                     </select>
                 </div>
             </div>
@@ -118,7 +119,8 @@
                                         'payment_pending' => 'bg-warning-subtle',
                                         'active' => 'bg-success-subtle',
                                         'resolved' => 'bg-success-subtle',
-                                        'closed' => 'bg-secondary-subtle'
+                                        'closed' => 'bg-secondary-subtle',
+                                        'void' => 'bg-dark text-white'
                                     ];
                                     $cls = $statusClass[$t['status']] ?? 'bg-white-10';
                                     ?>

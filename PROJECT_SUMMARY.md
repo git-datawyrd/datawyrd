@@ -125,6 +125,12 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 - [x] **Polished Badge System**: Adaptación de todos los indicadores de estado (Pagado, Vencido, etc.) para máxima claridad visual en fondos claros.
 - [x] **Consistent CMS Branding**: Harmonización de iconos y botones de configuración para mantener la estética premium en toda la suite administrativa.
 
+### 9. Evolución 9.8: Commercial Flow Hardening (NUEVO)
+- [x] **Estado Negativo de Cierre (Anulado)**: Implementación del estado `void` para tickets que no califican como solicitudes de servicio (spam, ofertas, consultas externas).
+- [x] **Domain State Transitions**: Actualización de la lógica en `TicketStatus.php` para permitir la anulación desde estados tempranos (Open, In Analysis) y estados operativos.
+- [x] **UI Badge Consistency**: Integración de estilos visuales específicos (`badge-dark`) para el estado anulado en dashboards de Admin, Staff y Cliente.
+- [x] **SQL Migration Ready**: Generación de script de migración para actualización de esquema ENUM en producción.
+
 ---
 
 | Color | Hex (Dark) | Hex (Light) | Uso Principal |

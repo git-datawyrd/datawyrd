@@ -17,6 +17,7 @@ class TicketStatus
     const PAYMENT_PENDING = 'payment_pending';
     const ACTIVE = 'active';
     const CLOSED = 'closed';
+    const VOID = 'void';
 
     private $status;
 
@@ -102,14 +103,14 @@ class TicketStatus
     public function canTransitionTo(TicketStatus $newStatus): bool
     {
         $transitions = [
-            self::OPEN => [self::IN_ANALYSIS, self::CLOSED],
-            self::IN_ANALYSIS => [self::BUDGET_SENT, self::CLOSED],
+            self::OPEN => [self::IN_ANALYSIS, self::CLOSED, self::VOID],
+            self::IN_ANALYSIS => [self::BUDGET_SENT, self::CLOSED, self::VOID],
             self::BUDGET_SENT => [self::BUDGET_APPROVED, self::BUDGET_REJECTED],
             self::BUDGET_APPROVED => [self::INVOICED],
-            self::BUDGET_REJECTED => [self::IN_ANALYSIS, self::CLOSED],
+            self::BUDGET_REJECTED => [self::IN_ANALYSIS, self::CLOSED, self::VOID],
             self::INVOICED => [self::PAYMENT_PENDING],
             self::PAYMENT_PENDING => [self::ACTIVE],
-            self::ACTIVE => [self::CLOSED],
+            self::ACTIVE => [self::CLOSED, self::VOID],
             self::CLOSED => []
         ];
 
@@ -122,14 +123,14 @@ class TicketStatus
     public function getValidTransitions(): array
     {
         $transitions = [
-            self::OPEN => [self::IN_ANALYSIS, self::CLOSED],
-            self::IN_ANALYSIS => [self::BUDGET_SENT, self::CLOSED],
+            self::OPEN => [self::IN_ANALYSIS, self::CLOSED, self::VOID],
+            self::IN_ANALYSIS => [self::BUDGET_SENT, self::CLOSED, self::VOID],
             self::BUDGET_SENT => [self::BUDGET_APPROVED, self::BUDGET_REJECTED],
             self::BUDGET_APPROVED => [self::INVOICED],
-            self::BUDGET_REJECTED => [self::IN_ANALYSIS, self::CLOSED],
+            self::BUDGET_REJECTED => [self::IN_ANALYSIS, self::CLOSED, self::VOID],
             self::INVOICED => [self::PAYMENT_PENDING],
             self::PAYMENT_PENDING => [self::ACTIVE],
-            self::ACTIVE => [self::CLOSED],
+            self::ACTIVE => [self::CLOSED, self::VOID],
             self::CLOSED => []
         ];
 
@@ -190,7 +191,8 @@ class TicketStatus
             self::INVOICED => 'Facturado',
             self::PAYMENT_PENDING => 'Pago Pendiente',
             self::ACTIVE => 'Activo',
-            self::CLOSED => 'Cerrado'
+            self::CLOSED => 'Cerrado',
+            self::VOID => 'Anulado'
         ];
 
         return $labels[$this->status] ?? $this->status;
@@ -210,7 +212,8 @@ class TicketStatus
             self::INVOICED => 'badge-info',
             self::PAYMENT_PENDING => 'badge-warning',
             self::ACTIVE => 'badge-success',
-            self::CLOSED => 'badge-secondary'
+            self::CLOSED => 'badge-secondary',
+            self::VOID => 'badge-dark'
         ];
 
         return $classes[$this->status] ?? 'badge-secondary';
@@ -230,7 +233,8 @@ class TicketStatus
             self::INVOICED,
             self::PAYMENT_PENDING,
             self::ACTIVE,
-            self::CLOSED
+            self::CLOSED,
+            self::VOID
         ];
     }
 }

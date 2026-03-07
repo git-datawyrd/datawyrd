@@ -56,7 +56,8 @@
                                         'payment_pending' => 'bg-warning-subtle',
                                         'active' => 'bg-success-subtle',
                                         'resolved' => 'bg-success-subtle',
-                                        'closed' => 'bg-secondary-subtle'
+                                        'closed' => 'bg-secondary-subtle',
+                                        'void' => 'bg-dark text-white'
                                     ];
                                     $cls = $statusClassClient[$t['status']] ?? 'bg-white-10';
                                     ?>

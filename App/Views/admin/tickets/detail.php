@@ -17,7 +17,8 @@
                     'payment_pending' => 'bg-warning-subtle',
                     'active' => 'bg-success-subtle',
                     'resolved' => 'bg-success-subtle',
-                    'closed' => 'bg-secondary-subtle'
+                    'closed' => 'bg-secondary-subtle',
+                    'void' => 'bg-dark text-white'
                 ];
                 $detailCls = $statusClassDetail[$ticket['status']] ?? 'bg-primary bg-opacity-10 text-primary';
                 ?>

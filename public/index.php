@@ -90,6 +90,7 @@ function translateStatus($status)
         'resolved' => 'Resuelto',
         'closed' => 'Cerrado',
         'active' => 'Activo',
+        'void' => 'Anulado',
 
         // Budgets / Invoices
         'sent' => 'Enviado',
