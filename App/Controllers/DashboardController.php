@@ -183,12 +183,12 @@ class DashboardController extends Controller
 
         // Insert system auto-reply in the ticket chat (only if no system msg in last 5 min)
         $db = \Core\Database::getInstance()->getConnection();
-        $recentCheck = $db->prepare("SELECT COUNT(*) FROM chat_messages WHERE ticket_id = ? AND user_id = 0 AND message_type = 'system' AND created_at >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
+        $recentCheck = $db->prepare("SELECT COUNT(*) FROM chat_messages WHERE ticket_id = ? AND user_id IS NULL AND message_type = 'system' AND created_at >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)");
         $recentCheck->execute([$ticket_id]);
         if ((int) $recentCheck->fetchColumn() === 0) {
             $firstName = explode(' ', $user['name'])[0];
             $autoMsg = "🔔 Soporte Prioritario Activado\n\n¡Hola {$firstName}! Recibimos tu señal. Nuestro equipo ya fue notificado y se conectará contigo en breve.\n\nMientras tanto, cuéntanos con un poco más de detalle:\n• ¿Qué está ocurriendo exactamente?\n• ¿Tiene impacto en producción o en una fecha crítica?\n• ¿Ya intentaste algo para resolverlo?\n\nCuanto más detalle compartas aquí, más rápido podremos actuar. ⚡\n\nTiempo de respuesta estimado: < 30 minutos en horario laboral.";
-            $db->prepare("INSERT INTO chat_messages (ticket_id, user_id, message, message_type) VALUES (?, 0, ?, 'system')")
+            $db->prepare("INSERT INTO chat_messages (ticket_id, user_id, message, message_type) VALUES (?, NULL, ?, 'system')")
                 ->execute([$ticket_id, $autoMsg]);
         }
 
