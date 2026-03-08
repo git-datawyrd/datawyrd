@@ -22,11 +22,18 @@ class DashboardService
     }
 
     /**
-     * Get recent tickets for admin/staff view.
+     * Get recent tickets for admin/staff view with intelligence scoring.
      */
     public function getRecentTicketsWithClients(int $limit = 10): array
     {
-        return $this->ticketRepo->getRecentWithClients($limit);
+        $tickets = $this->ticketRepo->getRecentWithClients($limit);
+
+        $leadService = new \App\Services\CRM\LeadService();
+        foreach ($tickets as &$ticket) {
+            $ticket['lead_score'] = $leadService->calculateScore($ticket['client_id']);
+        }
+
+        return $tickets;
     }
 
     /**

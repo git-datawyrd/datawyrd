@@ -47,9 +47,20 @@
                             </span>
                         </td>
                         <td class="p-4">
-                            <span class="text-white small fw-bold">
-                                <?php echo htmlspecialchars($ticket['client_name']); ?>
-                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-white small fw-bold">
+                                    <?php echo htmlspecialchars($ticket['client_name']); ?>
+                                </span>
+                                <?php
+                                $score = $ticket['lead_score'] ?? 0;
+                                $scoreClass = $score >= 75 ? 'bg-gold text-deep-black' : ($score >= 40 ? 'bg-primary' : 'bg-white-10 text-white-50');
+                                ?>
+                                <span class="badge <?php echo $scoreClass; ?> rounded-pill x-small px-2 py-1 fw-bold"
+                                    style="font-size: 0.65rem;" title="Lead Intelligence Score">
+                                    <?php echo $score; ?> pts
+                                    <?php if ($score >= 75): ?> 🔥<?php endif; ?>
+                                </span>
+                            </div>
                         </td>
                         <td class="p-4 text-end">
                             <a href="<?php echo url('ticket/detail/' . $ticket['id']); ?>"
