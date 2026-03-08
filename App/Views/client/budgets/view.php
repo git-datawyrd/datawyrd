@@ -1,5 +1,5 @@
 <div class="row justify-content-center">
-    <div class="col-lg-10">
+    <div class="col-12">
         <!-- Budget Status Header -->
         <div class="d-flex align-items-center justify-content-between mb-5">
             <div>
@@ -138,86 +138,86 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Sticky Actions -->
-                <div class="col-lg-4 no-print">
-                    <div class="sticky-top" style="top: 100px;">
-                        <?php if ($budget['status'] == 'sent'): ?>
-                            <div
-                                class="glass-morphism p-4 rounded-5 border-primary border-opacity-25 bg-white-5 shadow-gold mb-4">
-                                <h5 class="text-white fw-bold mb-4 uppercase tracking-widest small">Decisión del Cliente
-                                </h5>
-                                <p class="text-white-50 small mb-4">Por favor revisa detenidamente los términos y el
-                                    presupuesto
-                                    antes de proceder.</p>
-
-                                <form action="<?php echo url('budget/decision'); ?>" method="POST">
-                                    <?php echo csrf_field(); ?>
-                                    <input type="hidden" name="budget_id" value="<?php echo $budget['id']; ?>">
-                                    <div class="d-flex flex-column gap-3">
-                                        <button type="submit" name="decision" value="approved"
-                                            class="btn btn-primary btn-lg py-3 fw-black uppercase tracking-widest shadow-gold">
-                                            <span class="material-symbols-outlined align-middle me-2">check_circle</span>
-                                            Aprobar Propuesta
-                                        </button>
-                                        <button type="submit" name="decision" value="rejected"
-                                            class="btn btn-outline-danger btn-lg py-3 fw-bold uppercase tracking-widest">
-                                            <span class="material-symbols-outlined align-middle me-2">cancel</span> Rechazar
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        <?php elseif ($budget['status'] == 'approved' || $budget['status'] == 'invoiced'): ?>
-                            <div
-                                class="glass-morphism p-4 rounded-5 border-success border-opacity-25 bg-success bg-opacity-10 text-center mb-4">
-                                <div class="rounded-circle bg-success text-white mx-auto d-flex align-items-center justify-content-center mb-3"
-                                    style="width: 50px; height: 50px;">
-                                    <span class="material-symbols-outlined">check</span>
-                                </div>
-                                <h5 class="text-white fw-bold mb-2">Propuesta Aprobada</h5>
-                                <p class="text-success small mb-4">¡Excelente! Ya puedes proceder con el pago para activar
-                                    tu
-                                    servicio.</p>
-
-                                <?php if (isset($invoice_id) && $invoice_id): ?>
-                                    <a href="<?php echo url('invoice/show/' . $invoice_id); ?>"
-                                        class="btn btn-success btn-lg w-100 py-3 fw-black uppercase tracking-widest shadow-gold">
-                                        <span class="material-symbols-outlined align-middle me-2">payments</span>
-                                        Ver Factura y Pagar
-                                    </a>
-                                <?php else: ?>
-                                    <p class="text-white-50 x-small italic">Nuestro equipo está terminando de procesar tu
-                                        factura.
-                                    </p>
-                                <?php endif; ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="glass-morphism p-4 rounded-5 border-white-10">
-                            <h5 class="text-white fw-bold mb-4 uppercase tracking-widest small">Información Adicional
+            <!-- Sticky Actions -->
+            <div class="col-lg-4 no-print">
+                <div class="sticky-top" style="top: 100px;">
+                    <?php if ($budget['status'] == 'sent'): ?>
+                        <div
+                            class="glass-morphism p-4 rounded-5 border-primary border-opacity-25 bg-white-5 shadow-gold mb-4">
+                            <h5 class="text-white fw-bold mb-4 uppercase tracking-widest small">Decisión del Cliente
                             </h5>
-                            <ul class="list-unstyled text-white-50 small">
-                                <li class="mb-3 d-flex gap-3">
-                                    <span class="material-symbols-outlined text-primary fs-5">schedule</span>
-                                    <span>Tiempo de entrega estimado: <strong>
-                                            <?php echo $budget['timeline_weeks']; ?> semanas
-                                        </strong>.</span>
-                                </li>
-                                <li class="mb-3 d-flex gap-3">
-                                    <span
-                                        class="material-symbols-outlined text-primary fs-5">account_balance_wallet</span>
-                                    <span>Moneda: <strong>
-                                            <?php echo $budget['currency']; ?>
-                                        </strong>.</span>
-                                </li>
-                            </ul>
-                            <button onclick="window.print()"
-                                class="btn btn-outline-light w-100 py-3 d-flex align-items-center justify-content-center gap-2">
-                                <span class="material-symbols-outlined fs-5">picture_as_pdf</span> Descargar PDF
-                            </button>
+                            <p class="text-white-50 small mb-4">Por favor revisa detenidamente los términos y el
+                                presupuesto
+                                antes de proceder.</p>
+
+                            <form action="<?php echo url('budget/decision'); ?>" method="POST">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="budget_id" value="<?php echo $budget['id']; ?>">
+                                <div class="d-flex flex-column gap-3">
+                                    <button type="submit" name="decision" value="approved"
+                                        class="btn btn-primary btn-lg py-3 fw-black uppercase tracking-widest shadow-gold">
+                                        <span class="material-symbols-outlined align-middle me-2">check_circle</span>
+                                        Aprobar Propuesta
+                                    </button>
+                                    <button type="submit" name="decision" value="rejected"
+                                        class="btn btn-outline-danger btn-lg py-3 fw-bold uppercase tracking-widest">
+                                        <span class="material-symbols-outlined align-middle me-2">cancel</span> Rechazar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
+                    <?php elseif ($budget['status'] == 'approved' || $budget['status'] == 'invoiced'): ?>
+                        <div
+                            class="glass-morphism p-4 rounded-5 border-success border-opacity-25 bg-success bg-opacity-10 text-center mb-4">
+                            <div class="rounded-circle bg-success text-white mx-auto d-flex align-items-center justify-content-center mb-3"
+                                style="width: 50px; height: 50px;">
+                                <span class="material-symbols-outlined">check</span>
+                            </div>
+                            <h5 class="text-white fw-bold mb-2">Propuesta Aprobada</h5>
+                            <p class="text-success small mb-4">¡Excelente! Ya puedes proceder con el pago para activar
+                                tu
+                                servicio.</p>
+
+                            <?php if (isset($invoice_id) && $invoice_id): ?>
+                                <a href="<?php echo url('invoice/show/' . $invoice_id); ?>"
+                                    class="btn btn-success btn-lg w-100 py-3 fw-black uppercase tracking-widest shadow-gold">
+                                    <span class="material-symbols-outlined align-middle me-2">payments</span>
+                                    Ver Factura y Pagar
+                                </a>
+                            <?php else: ?>
+                                <p class="text-white-50 x-small italic">Nuestro equipo está terminando de procesar tu
+                                    factura.
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="glass-morphism p-4 rounded-5 border-white-10">
+                        <h5 class="text-white fw-bold mb-4 uppercase tracking-widest small">Información Adicional
+                        </h5>
+                        <ul class="list-unstyled text-white-50 small">
+                            <li class="mb-3 d-flex gap-3">
+                                <span class="material-symbols-outlined text-primary fs-5">schedule</span>
+                                <span>Tiempo de entrega estimado: <strong>
+                                        <?php echo $budget['timeline_weeks']; ?> semanas
+                                    </strong>.</span>
+                            </li>
+                            <li class="mb-3 d-flex gap-3">
+                                <span class="material-symbols-outlined text-primary fs-5">account_balance_wallet</span>
+                                <span>Moneda: <strong>
+                                        <?php echo $budget['currency']; ?>
+                                    </strong>.</span>
+                            </li>
+                        </ul>
+                        <button onclick="window.print()"
+                            class="btn btn-outline-light w-100 py-3 d-flex align-items-center justify-content-center gap-2">
+                            <span class="material-symbols-outlined fs-5">picture_as_pdf</span> Descargar PDF
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
