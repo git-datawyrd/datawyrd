@@ -9,9 +9,7 @@
                 Años
             </button>
             <ul class="dropdown-menu dropdown-menu-dark p-2 bg-midnight border-white-10">
-                <?php
-                $currentYear = date('Y');
-                for ($y = $currentYear - 2; $y <= $currentYear; $y++): ?>
+                <?php foreach ($availableYears as $y): ?>
                     <li>
                         <div class="form-check">
                             <input class="form-check-input filter-year" type="checkbox" value="<?php echo $y; ?>"
@@ -21,7 +19,7 @@
                             </label>
                         </div>
                     </li>
-                <?php endfor; ?>
+                <?php endforeach; ?>
                 <li>
                     <hr class="dropdown-divider border-white-10">
                 </li>
@@ -43,7 +41,7 @@
             <ul class="dropdown-menu dropdown-menu-dark p-2 bg-midnight border-white-10"
                 style="max-height: 250px; overflow-y: auto;">
                 <?php
-                $months = [
+                $monthNames = [
                     1 => 'Enero',
                     2 => 'Febrero',
                     3 => 'Marzo',
@@ -57,7 +55,9 @@
                     11 => 'Noviembre',
                     12 => 'Diciembre'
                 ];
-                foreach ($months as $num => $name): ?>
+                foreach ($availableMonths as $num):
+                    $name = $monthNames[(int) $num] ?? $num;
+                    ?>
                     <li>
                         <div class="form-check">
                             <input class="form-check-input filter-month" type="checkbox" value="<?php echo $num; ?>"

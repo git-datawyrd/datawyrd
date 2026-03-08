@@ -63,9 +63,18 @@ class LogController extends Controller
         $stmt->execute($params);
         $logs = $stmt->fetchAll();
 
+        // Obtener Años y Meses disponibles dinámicamente
+        $stmtYears = $db->query("SELECT DISTINCT YEAR(created_at) as year FROM audit_logs ORDER BY year DESC");
+        $availableYears = $stmtYears->fetchAll(\PDO::FETCH_COLUMN);
+
+        $stmtMonths = $db->query("SELECT DISTINCT MONTH(created_at) as month FROM audit_logs ORDER BY month ASC");
+        $availableMonths = $stmtMonths->fetchAll(\PDO::FETCH_COLUMN);
+
         $this->viewLayout('admin/logs/index', 'admin', [
             'title' => 'Logs de Auditoría | Data Wyrd',
-            'logs' => $logs
+            'logs' => $logs,
+            'availableYears' => $availableYears,
+            'availableMonths' => $availableMonths
         ]);
     }
 
