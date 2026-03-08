@@ -139,7 +139,7 @@
         </div>
 
         <!-- Actions -->
-        <div class="row g-4">
+        <div class="row g-4 no-print">
             <div class="col-md-6">
                 <?php if ($invoice['status'] == 'unpaid' || $invoice['status'] == 'overdue' || $invoice['status'] == 'partial'): ?>
 
@@ -150,11 +150,11 @@
                                 Pagar Online
                             </h5>
                             <form action="<?php echo url('invoice/payMp'); ?>" method="POST">
-                                        <?php echo csrf_field(); ?>
+                                <?php echo csrf_field(); ?>
                                 <input type="hidden" name="invoice_id" value="<?php echo $invoice['id']; ?>">
                                 <div class="mb-3">
                                     <label class="text-white-50 x-small mb-2">Monto a Pagar</label>
-                                            <?php $pending = $invoice['total'] - $invoice['paid_amount']; ?>
+                                    <?php $pending = $invoice['total'] - $invoice['paid_amount']; ?>
                                     <input type="number" step="0.01" name="amount"
                                         class="form-control bg-steel border-white-10 text-white shadow-none"
                                         value="<?php echo number_format($pending > 0 ? $pending : $invoice['total'], 2, '.', ''); ?>"

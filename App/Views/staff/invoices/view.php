@@ -140,7 +140,7 @@
         </div>
 
         <!-- Actions -->
-        <div class="row g-4">
+        <div class="row g-4 no-print">
             <div class="col-md-6">
                 <?php if ($invoice['status'] == 'processing'): ?>
                     <div class="glass-morphism p-4 rounded-5 border-success border-opacity-25 shadow-gold">

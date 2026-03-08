@@ -143,7 +143,7 @@
             </div>
 
             <!-- Sticky Actions -->
-            <div class="col-lg-4">
+            <div class="col-lg-4 no-print">
                 <div class="sticky-top" style="top: 100px;">
                     <?php if ($budget['status'] == 'sent'): ?>
                         <div

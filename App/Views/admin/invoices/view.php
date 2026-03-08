@@ -21,7 +21,7 @@
 
         <div
             class="glass-morphism p-5 rounded-5 border-white-10 shadow-2xl bg-white-5 mb-5 position-relative overflow-hidden">
-            
+
             <!-- Invoice Content -->
             <div class="row mb-5 pb-5 border-bottom border-white-10">
                 <div class="col-6">
@@ -138,7 +138,7 @@
         </div>
 
         <!-- Actions -->
-        <div class="row g-4">
+        <div class="row g-4 no-print">
             <div class="col-md-6">
                 <?php if ($invoice['status'] == 'processing'): ?>
                     <div class="glass-morphism p-4 rounded-5 border-success border-opacity-25 shadow-gold">
