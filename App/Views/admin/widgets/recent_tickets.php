@@ -13,9 +13,9 @@
         <table class="table table-dark table-hover mb-0 align-middle">
             <thead class="bg-deep-black">
                 <tr>
+                    <th class="p-4 small uppercase tracking-widest text-white-50">Acciones</th>
                     <th class="p-4 small uppercase tracking-widest text-white-50">Ticket</th>
                     <th class="p-4 small uppercase tracking-widest text-white-50">Cliente</th>
-                    <th class="p-4 small uppercase tracking-widest text-white-50 text-end">Acciones</th>
                 </tr>
             </thead>
             <tbody id="adminTicketsTable">
@@ -39,6 +39,12 @@
                     <tr class="ticket-row"
                         data-search="<?php echo strtolower($ticket['ticket_number'] . ' ' . $ticket['client_name'] . ' ' . $ticket['subject']); ?>">
                         <td class="p-4">
+                            <a href="<?php echo url('ticket/detail/' . $ticket['id']); ?>"
+                                class="btn btn-outline-primary btn-sm rounded-3 d-inline-flex align-items-center gap-1 fw-bold">
+                                <span class="material-symbols-outlined fs-6">settings</span> Gestionar
+                            </a>
+                        </td>
+                        <td class="p-4">
                             <span class="text-white fw-bold d-block">
                                 <?php echo htmlspecialchars($ticket['ticket_number']); ?>
                             </span>
@@ -61,12 +67,6 @@
                                     <?php if ($score >= 75): ?> 🔥<?php endif; ?>
                                 </span>
                             </div>
-                        </td>
-                        <td class="p-4 text-end">
-                            <a href="<?php echo url('ticket/detail/' . $ticket['id']); ?>"
-                                class="btn btn-outline-primary btn-sm rounded-3 d-inline-flex align-items-center gap-1 fw-bold">
-                                <span class="material-symbols-outlined fs-6">settings</span> Gestionar
-                            </a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

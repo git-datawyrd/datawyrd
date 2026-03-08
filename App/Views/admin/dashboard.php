@@ -70,9 +70,17 @@
                     continue;
 
                 // Capture widget HTML
-                ob_start();
-                include_once "widgets/{$key}.php";
-                $widgetHTML = ob_get_clean();
+                $widgetPath = "widgets/{$key}.php";
+                $widgetHTML = '';
+
+                // Absolute path check for safety
+                $fullPath = dirname(__FILE__) . DIRECTORY_SEPARATOR . $widgetPath;
+
+                if (file_exists($fullPath)) {
+                    ob_start();
+                    include $fullPath;
+                    $widgetHTML = ob_get_clean();
+                }
 
                 if (!empty($widgetHTML)):
                     ?>
