@@ -1,14 +1,83 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
     <h2 class="text-white fw-bold mb-0">Logs de Auditoría</h2>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 flex-wrap">
+
+        <!-- Filter Year -->
+        <div class="dropdown">
+            <button class="btn bg-midnight text-white border-white-10 dropdown-toggle rounded-3" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Años
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark p-2 bg-midnight border-white-10">
+                <?php
+                $currentYear = date('Y');
+                for ($y = $currentYear - 2; $y <= $currentYear; $y++): ?>
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input filter-year" type="checkbox" value="<?php echo $y; ?>"
+                                id="year_<?php echo $y; ?>">
+                            <label class="form-check-label text-white small" for="year_<?php echo $y; ?>">
+                                <?php echo $y; ?>
+                            </label>
+                        </div>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+        </div>
+
+        <!-- Filter Month -->
+        <div class="dropdown">
+            <button class="btn bg-midnight text-white border-white-10 dropdown-toggle rounded-3" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Meses
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark p-2 bg-midnight border-white-10"
+                style="max-height: 250px; overflow-y: auto;">
+                <?php
+                $months = [
+                    1 => 'Enero',
+                    2 => 'Febrero',
+                    3 => 'Marzo',
+                    4 => 'Abril',
+                    5 => 'Mayo',
+                    6 => 'Junio',
+                    7 => 'Julio',
+                    8 => 'Agosto',
+                    9 => 'Septiembre',
+                    10 => 'Octubre',
+                    11 => 'Noviembre',
+                    12 => 'Diciembre'
+                ];
+                foreach ($months as $num => $name): ?>
+                    <li>
+                        <div class="form-check">
+                            <input class="form-check-input filter-month" type="checkbox" value="<?php echo $num; ?>"
+                                id="month_<?php echo $num; ?>">
+                            <label class="form-check-label text-white small" for="month_<?php echo $num; ?>">
+                                <?php echo $name; ?>
+                            </label>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+
         <select class="form-select bg-midnight border-white-10 text-white w-auto rounded-3" id="filter-level">
             <option value="">Todos los niveles</option>
             <option value="INFO">INFO</option>
             <option value="WARN">WARN</option>
             <option value="ERROR">ERROR</option>
         </select>
-        <button class="btn btn-outline-light rounded-3" onclick="location.reload()">
-            <span class="material-symbols-outlined fs-5 align-middle">refresh</span>
+        <button class="btn btn-outline-light rounded-3" onclick="applyFilters()" title="Aplicar Filtros">
+            <span class="material-symbols-outlined fs-5 align-middle">filter_alt</span>
+        </button>
+        <a href="#" id="export-csv" class="btn btn-primary rounded-3 d-flex align-items-center gap-1"
+            title="Descargar CSV">
+            <span class="material-symbols-outlined fs-5">download</span> CSV
+        </a>
+        <button class="btn btn-outline-light rounded-3" onclick="location.href='<?php echo url('admin/log'); ?>'"
+            title="Limpiar todo">
+            <span class="material-symbols-outlined fs-5 align-middle">mop</span>
         </button>
     </div>
 </div>
@@ -93,9 +162,11 @@
                         </td>
                         <td class="pe-4">
                             <?php if (!empty($log['signature_hash'])): ?>
-                                <span class="material-symbols-outlined text-success fs-5" title="Firmado Criptográficamente (Zero Trust)">shield_lock</span>
+                                <span class="material-symbols-outlined text-success fs-5"
+                                    title="Firmado Criptográficamente (Zero Trust)">shield_lock</span>
                             <?php else: ?>
-                                <span class="material-symbols-outlined text-white-10 fs-5" title="Log sin firma (Legacy/Externo)">shield_question</span>
+                                <span class="material-symbols-outlined text-white-10 fs-5"
+                                    title="Log sin firma (Legacy/Externo)">shield_question</span>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -106,20 +177,63 @@
 </div>
 
 <script>
-    document.getElementById('filter-level').addEventListener('change', function () {
-        const val = this.value;
+    function applyFilters() {
         const url = new URL(window.location.href);
-        if (val) {
-            url.searchParams.set('level', val);
-        } else {
-            url.searchParams.delete('level');
-        }
+        url.search = ''; // Clear params
+
+        const level = document.getElementById('filter-level').value;
+        if (level) url.searchParams.set('level', level);
+
+        document.querySelectorAll('.filter-year:checked').forEach(cb => {
+            url.searchParams.append('year[]', cb.value);
+        });
+
+        document.querySelectorAll('.filter-month:checked').forEach(cb => {
+            url.searchParams.append('month[]', cb.value);
+        });
+
         window.location.href = url.toString();
+    }
+
+    // Update export CSV link dynamically
+    function updateExportLink() {
+        const url = new URL(window.location.href);
+        const exportUrl = new URL("<?php echo url('admin/log/exportCsv'); ?>");
+
+        url.searchParams.forEach((value, key) => {
+            exportUrl.searchParams.append(key, value);
+        });
+
+        document.getElementById('export-csv').href = exportUrl.toString();
+    }
+
+    // Set initial values from URL on load
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.has('level')) {
+            document.getElementById('filter-level').value = urlParams.get('level');
+        }
+
+        const years = urlParams.getAll('year[]');
+        years.forEach(y => {
+            const cb = document.getElementById('year_' + y);
+            if (cb) cb.checked = true;
+        });
+
+        const months = urlParams.getAll('month[]');
+        months.forEach(m => {
+            const cb = document.getElementById('month_' + m);
+            if (cb) cb.checked = true;
+        });
+
+        updateExportLink();
     });
 
-    // Set initial value from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('level')) {
-        document.getElementById('filter-level').value = urlParams.get('level');
-    }
+    // Prevent dropdown closing when clicking checkboxes
+    document.querySelectorAll('.dropdown-menu .form-check').forEach(item => {
+        item.addEventListener('click', e => {
+            e.stopPropagation();
+        });
+    });
 </script>

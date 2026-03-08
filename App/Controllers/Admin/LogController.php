@@ -24,6 +24,8 @@ class LogController extends Controller
 
         $level = $_GET['level'] ?? null;
         $user_id = $_GET['user_id'] ?? null;
+        $years = $_GET['year'] ?? [];
+        $months = $_GET['month'] ?? [];
 
         $sql = "SELECT * FROM audit_logs";
         $params = [];
@@ -37,6 +39,18 @@ class LogController extends Controller
         if ($user_id) {
             $where[] = "user_id = ?";
             $params[] = $user_id;
+        }
+
+        if (!empty($years)) {
+            $inYears = str_repeat('?,', count($years) - 1) . '?';
+            $where[] = "YEAR(created_at) IN ($inYears)";
+            $params = array_merge($params, $years);
+        }
+
+        if (!empty($months)) {
+            $inMonths = str_repeat('?,', count($months) - 1) . '?';
+            $where[] = "MONTH(created_at) IN ($inMonths)";
+            $params = array_merge($params, $months);
         }
 
         if ($where) {
@@ -53,5 +67,72 @@ class LogController extends Controller
             'title' => 'Logs de Auditoría | Data Wyrd',
             'logs' => $logs
         ]);
+    }
+
+    public function exportCsv()
+    {
+        $db = Database::getInstance()->getConnection();
+
+        $level = $_GET['level'] ?? null;
+        $user_id = $_GET['user_id'] ?? null;
+        $years = $_GET['year'] ?? [];
+        $months = $_GET['month'] ?? [];
+
+        $sql = "SELECT * FROM audit_logs";
+        $params = [];
+        $where = [];
+
+        if ($level) {
+            $where[] = "level = ?";
+            $params[] = $level;
+        }
+
+        if ($user_id) {
+            $where[] = "user_id = ?";
+            $params[] = $user_id;
+        }
+
+        if (!empty($years)) {
+            $inYears = str_repeat('?,', count($years) - 1) . '?';
+            $where[] = "YEAR(created_at) IN ($inYears)";
+            $params = array_merge($params, $years);
+        }
+
+        if (!empty($months)) {
+            $inMonths = str_repeat('?,', count($months) - 1) . '?';
+            $where[] = "MONTH(created_at) IN ($inMonths)";
+            $params = array_merge($params, $months);
+        }
+
+        if ($where) {
+            $sql .= " WHERE " . implode(' AND ', $where);
+        }
+
+        $sql .= " ORDER BY created_at DESC LIMIT 10000";
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        $logs = $stmt->fetchAll();
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=audit_logs_' . date('Y-m-d') . '.csv');
+
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['Fecha', 'Accion', 'Usuario', 'Nivel', 'IP', 'Metodo', 'Detalles', 'Firma']);
+
+        foreach ($logs as $log) {
+            fputcsv($output, [
+                $log['created_at'],
+                $log['action'],
+                $log['user_email'],
+                $log['level'],
+                $log['ip_address'],
+                $log['request_method'],
+                $log['details'],
+                $log['signature_hash']
+            ]);
+        }
+        fclose($output);
+        exit;
     }
 }
