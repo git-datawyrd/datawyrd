@@ -207,7 +207,7 @@
             </div>
 
             <!-- Quick Action Bar (Mobile Only) -->
-            <div class="d-lg-none position-fixed bottom-0 start-0 w-100 bg-midnight border-top border-white-10 backdrop-blur d-flex justify-content-around py-2 px-1"
+            <div class="d-lg-none position-fixed bottom-0 start-0 w-100 bg-midnight border-top border-white-10 backdrop-blur d-flex justify-content-around py-2 px-1 no-print"
                 style="z-index: 1030; height: 65px;">
                 <a href="<?php echo url('dashboard'); ?>"
                     class="d-flex flex-column align-items-center text-decoration-none <?php echo strpos($_SERVER['REQUEST_URI'], 'dashboard') !== false ? 'text-primary' : 'text-white-50'; ?>">

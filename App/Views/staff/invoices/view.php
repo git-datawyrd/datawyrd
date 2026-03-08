@@ -57,12 +57,16 @@
                     <p class="text-white-50 small mb-1">
                         <?php echo $invoice['client_company']; ?>
                     </p>
-                    <p class="text-white-50 small mb-1">
-                        <?php echo $invoice['client_email']; ?>
-                    </p>
-                    <p class="text-white-50 small mb-0">
-                        <?php echo $invoice['client_phone']; ?>
-                    </p>
+                    <div class="d-flex align-items-center gap-3">
+                        <p class="text-white-50 small mb-0">
+                            <span class="material-symbols-outlined fs-6 align-middle me-1">mail</span>
+                            <?php echo $invoice['client_email']; ?>
+                        </p>
+                        <p class="text-white-50 small mb-0">
+                            <span class="material-symbols-outlined fs-6 align-middle me-1">call</span>
+                            <?php echo $invoice['client_phone'] ?: 'N/D'; ?>
+                        </p>
+                    </div>
                 </div>
             </div>
 

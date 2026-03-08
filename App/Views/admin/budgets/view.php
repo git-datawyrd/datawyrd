@@ -54,169 +54,180 @@
                             <p class="text-white-50 small mb-1">
                                 <?php echo $budget['client_company']; ?>
                             </p>
-                            <p class="text-white-50 small mb-0">
-                                <?php echo $budget['client_email']; ?>
+                            <div class="d-flex align-items-center gap-3">
+                                <p class="text-white-50 small mb-0">
+                                    <span class="material-symbols-outlined fs-6 align-middle me-1">mail</span>
+                                    <?php echo $budget['client_email']; ?>
+                                </p>
+                                <!-- El teléfono no está en la base de datos para esto o no llegó, se deja un placeholder en caso de expandirse después, o se lee de DB si es posible. Por ahora, ajustamos el email como row-->
+                            </div>
+                            <div class="col-6 text-end">
+                                <p class="text-primary x-small fw-bold uppercase tracking-widest mb-3">Ticket
+                                    Referencia:
+                                </p>
+                                <h4 class="text-white h6 fw-bold mb-0">#
+                                    <?php echo $budget['ticket_number']; ?>
+                                </h4>
+                            </div>
+                        </div>
+
+                        <!-- Scope -->
+                        <div class="mb-5">
+                            <h5
+                                class="text-white small fw-bold uppercase tracking-widest mb-3 border-bottom border-white-5 pb-2">
+                                Alcance de la Propuesta</h5>
+                            <p class="text-white-50 small lh-lg">
+                                <?php echo nl2br($budget['scope']); ?>
                             </p>
                         </div>
-                        <div class="col-6 text-end">
-                            <p class="text-primary x-small fw-bold uppercase tracking-widest mb-3">Ticket Referencia:
-                            </p>
-                            <h4 class="text-white h6 fw-bold mb-0">#
-                                <?php echo $budget['ticket_number']; ?>
-                            </h4>
-                        </div>
-                    </div>
 
-                    <!-- Scope -->
-                    <div class="mb-5">
-                        <h5
-                            class="text-white small fw-bold uppercase tracking-widest mb-3 border-bottom border-white-5 pb-2">
-                            Alcance de la Propuesta</h5>
-                        <p class="text-white-50 small lh-lg">
-                            <?php echo nl2br($budget['scope']); ?>
-                        </p>
-                    </div>
-
-                    <!-- Items Table -->
-                    <div class="mb-5">
-                        <h5
-                            class="text-white small fw-bold uppercase tracking-widest mb-3 border-bottom border-white-5 pb-2">
-                            Desglose de Inversión</h5>
-                        <table class="table table-dark table-borderless align-middle mt-3">
-                            <thead>
-                                <tr class="x-small text-white-50 uppercase border-bottom border-white-10">
-                                    <th class="p-3">Descripción</th>
-                                    <th class="p-3 text-center">Cant.</th>
-                                    <th class="p-3 text-end">Precio Unit.</th>
-                                    <th class="p-3 text-end">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($items as $item): ?>
-                                    <tr>
-                                        <td class="p-3">
-                                            <p class="text-white small mb-0 fw-bold">
-                                                <?php echo $item['description']; ?>
-                                            </p>
-                                        </td>
-                                        <td class="p-3 text-center text-white-50 small">
-                                            <?php echo number_format($item['quantity'], 2); ?>
-                                        </td>
-                                        <td class="p-3 text-end text-white-50 small">$
-                                            <?php echo number_format($item['unit_price'], 2); ?>
-                                        </td>
-                                        <td class="p-3 text-end text-white small fw-bold">$
-                                            <?php echo number_format($item['total'], 2); ?>
-                                        </td>
+                        <!-- Items Table -->
+                        <div class="mb-5">
+                            <h5
+                                class="text-white small fw-bold uppercase tracking-widest mb-3 border-bottom border-white-5 pb-2">
+                                Desglose de Inversión</h5>
+                            <table class="table table-dark table-borderless align-middle mt-3">
+                                <thead>
+                                    <tr class="x-small text-white-50 uppercase border-bottom border-white-10">
+                                        <th class="p-3">Descripción</th>
+                                        <th class="p-3 text-center">Cant.</th>
+                                        <th class="p-3 text-end">Precio Unit.</th>
+                                        <th class="p-3 text-end">Total</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($items as $item): ?>
+                                        <tr>
+                                            <td class="p-3">
+                                                <p class="text-white small mb-0 fw-bold">
+                                                    <?php echo $item['description']; ?>
+                                                </p>
+                                            </td>
+                                            <td class="p-3 text-center text-white-50 small">
+                                                <?php echo number_format($item['quantity'], 2); ?>
+                                            </td>
+                                            <td class="p-3 text-end text-white-50 small">$
+                                                <?php echo number_format($item['unit_price'], 2); ?>
+                                            </td>
+                                            <td class="p-3 text-end text-white small fw-bold">$
+                                                <?php echo number_format($item['total'], 2); ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <!-- Totals -->
-                    <div class="row justify-content-end">
-                        <div class="col-md-5">
-                            <div class="d-flex justify-content-between text-white-50 small mb-2">
-                                <span>Subtotal:</span>
-                                <span>$
-                                    <?php echo number_format($budget['subtotal'], 2); ?>
-                                </span>
-                            </div>
-                            <div class="d-flex justify-content-between text-white-50 small mb-3">
-                                <span>IVA (
-                                    <?php echo number_format($budget['tax_rate'], 0); ?>%):
-                                </span>
-                                <span>$
-                                    <?php echo number_format($budget['tax_amount'], 2); ?>
-                                </span>
-                            </div>
-                            <div
-                                class="d-flex justify-content-between align-items-center text-white border-top border-white-10 pt-3 h4 fw-black">
-                                <span class="text-nowrap">TOTAL:</span>
-                                <span
-                                    class="text-primary text-nowrap">$<?php echo number_format($budget['total'], 2); ?></span>
+                        <!-- Totals -->
+                        <div class="row justify-content-end">
+                            <div class="col-md-5">
+                                <div class="d-flex justify-content-between text-white-50 small mb-2">
+                                    <span>Subtotal:</span>
+                                    <span>$
+                                        <?php echo number_format($budget['subtotal'], 2); ?>
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between text-white-50 small mb-3">
+                                    <span>IVA (
+                                        <?php echo number_format($budget['tax_rate'], 0); ?>%):
+                                    </span>
+                                    <span>$
+                                        <?php echo number_format($budget['tax_amount'], 2); ?>
+                                    </span>
+                                </div>
+                                <div
+                                    class="d-flex justify-content-between align-items-center text-white border-top border-white-10 pt-3 h4 fw-black">
+                                    <span class="text-nowrap">TOTAL:</span>
+                                    <span
+                                        class="text-primary text-nowrap">$<?php echo number_format($budget['total'], 2); ?></span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Sticky Actions -->
-            <div class="col-lg-4 no-print">
-                <div class="sticky-top" style="top: 100px;">
-                    <?php if ($budget['status'] == 'sent'): ?>
-                        <div
-                            class="glass-morphism p-4 rounded-5 border-primary border-opacity-25 bg-white-5 shadow-gold mb-4">
-                            <h5 class="text-white fw-bold mb-4 uppercase tracking-widest small">Decisión del Cliente</h5>
-                            <p class="text-white-50 small mb-4">Por favor revisa detenidamente los términos y el presupuesto
-                                antes de proceder.</p>
+                <!-- Sticky Actions -->
+                <div class="col-lg-4 no-print">
+                    <div class="sticky-top" style="top: 100px;">
+                        <?php if ($budget['status'] == 'sent'): ?>
+                            <div
+                                class="glass-morphism p-4 rounded-5 border-primary border-opacity-25 bg-white-5 shadow-gold mb-4">
+                                <h5 class="text-white fw-bold mb-4 uppercase tracking-widest small">Decisión del Cliente
+                                </h5>
+                                <p class="text-white-50 small mb-4">Por favor revisa detenidamente los términos y el
+                                    presupuesto
+                                    antes de proceder.</p>
 
-                            <form action="<?php echo url('budget/decision'); ?>" method="POST">
-                                <?php echo csrf_field(); ?>
-                                <input type="hidden" name="budget_id" value="<?php echo $budget['id']; ?>">
-                                <div class="d-flex flex-column gap-3">
-                                    <button type="submit" name="decision" value="approved"
-                                        class="btn btn-primary btn-lg py-3 fw-black uppercase tracking-widest shadow-gold">
-                                        <span class="material-symbols-outlined align-middle me-2">check_circle</span>
-                                        Aprobar Propuesta
-                                    </button>
-                                    <button type="submit" name="decision" value="rejected"
-                                        class="btn btn-outline-danger btn-lg py-3 fw-bold uppercase tracking-widest">
-                                        <span class="material-symbols-outlined align-middle me-2">cancel</span> Rechazar
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    <?php elseif ($budget['status'] == 'approved'): ?>
-                        <div
-                            class="glass-morphism p-4 rounded-5 border-success border-opacity-25 bg-success bg-opacity-10 text-center mb-4">
-                            <div class="rounded-circle bg-success text-white mx-auto d-flex align-items-center justify-content-center mb-3"
-                                style="width: 50px; height: 50px;">
-                                <span class="material-symbols-outlined">check</span>
+                                <form action="<?php echo url('budget/decision'); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
+                                    <input type="hidden" name="budget_id" value="<?php echo $budget['id']; ?>">
+                                    <div class="d-flex flex-column gap-3">
+                                        <button type="submit" name="decision" value="approved"
+                                            class="btn btn-primary btn-lg py-3 fw-black uppercase tracking-widest shadow-gold">
+                                            <span class="material-symbols-outlined align-middle me-2">check_circle</span>
+                                            Aprobar Propuesta
+                                        </button>
+                                        <button type="submit" name="decision" value="rejected"
+                                            class="btn btn-outline-danger btn-lg py-3 fw-bold uppercase tracking-widest">
+                                            <span class="material-symbols-outlined align-middle me-2">cancel</span> Rechazar
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                            <h5 class="text-white fw-bold mb-2">Propuesta Aprobada</h5>
-                            <p class="text-success small mb-0">Nuestro equipo está generando la factura correspondiente para
-                                iniciar el proyecto.</p>
-                        </div>
-                    <?php endif; ?>
-
-                    <div class="glass-morphism p-4 rounded-5 border-white-10">
-                        <h5 class="text-white fw-bold mb-4 uppercase tracking-widest small">Información Adicional</h5>
-
-                        <?php if (!\Core\Auth::isClient() && $budget['status'] == 'approved'): ?>
-                            <div class="mb-4">
-                                <a href="<?php echo url('invoice/createFromBudget/' . $budget['id']); ?>"
-                                    class="btn btn-primary w-100 py-3 fw-black uppercase tracking-widest shadow-gold">
-                                    <span class="material-symbols-outlined align-middle me-2">receipt_long</span> Generar
-                                    Factura
-                                </a>
-                                <p class="text-center text-white-50 x-small mt-2">Esta acción permitirá al cliente realizar
-                                    el pago.</p>
+                        <?php elseif ($budget['status'] == 'approved'): ?>
+                            <div
+                                class="glass-morphism p-4 rounded-5 border-success border-opacity-25 bg-success bg-opacity-10 text-center mb-4">
+                                <div class="rounded-circle bg-success text-white mx-auto d-flex align-items-center justify-content-center mb-3"
+                                    style="width: 50px; height: 50px;">
+                                    <span class="material-symbols-outlined">check</span>
+                                </div>
+                                <h5 class="text-white fw-bold mb-2">Propuesta Aprobada</h5>
+                                <p class="text-success small mb-0">Nuestro equipo está generando la factura correspondiente
+                                    para
+                                    iniciar el proyecto.</p>
                             </div>
                         <?php endif; ?>
 
-                        <ul class="list-unstyled text-white-50 small">
-                            <li class="mb-3 d-flex gap-3">
-                                <span class="material-symbols-outlined text-primary fs-5">schedule</span>
-                                <span>Tiempo de entrega estimado: <strong>
-                                        <?php echo $budget['timeline_weeks']; ?> semanas
-                                    </strong>.</span>
-                            </li>
-                            <li class="mb-3 d-flex gap-3">
-                                <span class="material-symbols-outlined text-primary fs-5">account_balance_wallet</span>
-                                <span>Moneda: <strong>
-                                        <?php echo $budget['currency']; ?>
-                                    </strong>.</span>
-                            </li>
-                        </ul>
-                        <button onclick="window.print()"
-                            class="btn btn-outline-light w-100 py-3 d-flex align-items-center justify-content-center gap-2">
-                            <span class="material-symbols-outlined fs-5">picture_as_pdf</span> Descargar PDF
-                        </button>
+                        <div class="glass-morphism p-4 rounded-5 border-white-10">
+                            <h5 class="text-white fw-bold mb-4 uppercase tracking-widest small">Información Adicional
+                            </h5>
+
+                            <?php if (!\Core\Auth::isClient() && $budget['status'] == 'approved'): ?>
+                                <div class="mb-4">
+                                    <a href="<?php echo url('invoice/createFromBudget/' . $budget['id']); ?>"
+                                        class="btn btn-primary w-100 py-3 fw-black uppercase tracking-widest shadow-gold">
+                                        <span class="material-symbols-outlined align-middle me-2">receipt_long</span>
+                                        Generar
+                                        Factura
+                                    </a>
+                                    <p class="text-center text-white-50 x-small mt-2">Esta acción permitirá al cliente
+                                        realizar
+                                        el pago.</p>
+                                </div>
+                            <?php endif; ?>
+
+                            <ul class="list-unstyled text-white-50 small">
+                                <li class="mb-3 d-flex gap-3">
+                                    <span class="material-symbols-outlined text-primary fs-5">schedule</span>
+                                    <span>Tiempo de entrega estimado: <strong>
+                                            <?php echo $budget['timeline_weeks']; ?> semanas
+                                        </strong>.</span>
+                                </li>
+                                <li class="mb-3 d-flex gap-3">
+                                    <span
+                                        class="material-symbols-outlined text-primary fs-5">account_balance_wallet</span>
+                                    <span>Moneda: <strong>
+                                            <?php echo $budget['currency']; ?>
+                                        </strong>.</span>
+                                </li>
+                            </ul>
+                            <button onclick="window.print()"
+                                class="btn btn-outline-light w-100 py-3 d-flex align-items-center justify-content-center gap-2">
+                                <span class="material-symbols-outlined fs-5">picture_as_pdf</span> Descargar PDF
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
