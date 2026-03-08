@@ -73,7 +73,6 @@ class DashboardController extends Controller
         $dailyData = $this->service->getDailyPerformance();
         $monthlyData = $this->service->getMonthlyPerformance();
         $resourceStats = $this->service->getResourceDistribution();
-        $recentLeads = $this->service->getRecentLeadsWithScores();
         $widgetConfig = $this->service->getWidgetConfig(Auth::user()['id']);
 
         $recent_tickets = $this->service->getRecentTicketsWithClients(10);
@@ -85,7 +84,6 @@ class DashboardController extends Controller
             'monthly_perf' => $monthlyData,
             'resource_stats' => $resourceStats,
             'tickets' => $recent_tickets,
-            'recent_leads' => $recentLeads,
             'widget_config' => $widgetConfig
         ]);
     }
