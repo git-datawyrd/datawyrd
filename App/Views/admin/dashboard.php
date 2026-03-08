@@ -78,8 +78,8 @@
                     ?>
                     <div class="widget-wrapper col-12 <?php
                     // Dynamic column widths based on widget type
-                    echo in_array($key, ['performance_chart', 'recent_tickets']) ? 'col-lg-8' :
-                        (in_array($key, ['resource_dist', 'recent_leads']) ? 'col-lg-4' : 'col-12');
+                    echo in_array($key, ['performance_chart']) ? 'col-lg-8' :
+                        (in_array($key, ['resource_dist']) ? 'col-lg-4' : 'col-12');
                     ?>" data-widget-id="<?php echo $key; ?>">
                         <div class="widget-container h-100 position-relative">
                             <!-- Drag Handle -->

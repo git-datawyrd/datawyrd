@@ -138,7 +138,6 @@ class DashboardController extends Controller
             'stats_cards',
             'performance_chart',
             'resource_dist',
-            'recent_leads',
             'recent_tickets'
         ];
 
