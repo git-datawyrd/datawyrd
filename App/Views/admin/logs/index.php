@@ -22,6 +22,15 @@
                         </div>
                     </li>
                 <?php endfor; ?>
+                <li>
+                    <hr class="dropdown-divider border-white-10">
+                </li>
+                <li>
+                    <button class="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-1"
+                        onclick="applyFilters()">
+                        <span class="material-symbols-outlined fs-6">check</span> Aplicar
+                    </button>
+                </li>
             </ul>
         </div>
 
@@ -59,26 +68,32 @@
                         </div>
                     </li>
                 <?php endforeach; ?>
+                <li class="position-sticky bottom-0 bg-midnight pt-2 mt-1 border-top border-white-10">
+                    <button class="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-1"
+                        onclick="applyFilters()">
+                        <span class="material-symbols-outlined fs-6">check</span> Aplicar
+                    </button>
+                </li>
             </ul>
         </div>
 
-        <select class="form-select bg-midnight border-white-10 text-white w-auto rounded-3" id="filter-level">
+        <select class="form-select bg-midnight border-white-10 text-white w-auto rounded-3" id="filter-level"
+            onchange="applyFilters()">
             <option value="">Todos los niveles</option>
             <option value="INFO">INFO</option>
             <option value="WARN">WARN</option>
             <option value="ERROR">ERROR</option>
         </select>
-        <button class="btn btn-outline-light rounded-3" onclick="applyFilters()" title="Aplicar Filtros">
-            <span class="material-symbols-outlined fs-5 align-middle">filter_alt</span>
-        </button>
         <a href="#" id="export-csv" class="btn btn-primary rounded-3 d-flex align-items-center gap-1"
             title="Descargar CSV">
             <span class="material-symbols-outlined fs-5">download</span> CSV
         </a>
-        <button class="btn btn-outline-light rounded-3" onclick="location.href='<?php echo url('admin/log'); ?>'"
-            title="Limpiar todo">
-            <span class="material-symbols-outlined fs-5 align-middle">mop</span>
-        </button>
+        <?php if (!empty($_GET['level']) || !empty($_GET['year']) || !empty($_GET['month'])): ?>
+            <button class="btn btn-outline-light rounded-3" onclick="location.href='<?php echo url('admin/log'); ?>'"
+                title="Limpiar todo">
+                <span class="material-symbols-outlined fs-5 align-middle">mop</span>
+            </button>
+        <?php endif; ?>
     </div>
 </div>
 
