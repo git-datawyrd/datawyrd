@@ -45,8 +45,8 @@
                     </div>
 
                     <!-- Client Info -->
-                    <div class="row mb-5">
-                        <div class="col-6">
+                    <div class="row mb-5 align-items-end">
+                        <div class="col-md-6">
                             <p class="text-primary x-small fw-bold uppercase tracking-widest mb-3">Preparado para:</p>
                             <h4 class="text-white h6 fw-bold mb-1">
                                 <?php echo $budget['client_name']; ?>
@@ -60,79 +60,73 @@
                                     <?php echo $budget['client_email']; ?>
                                 </p>
                             </div>
-                            <div class="col-6 text-end">
-                                <p class="text-primary x-small fw-bold uppercase tracking-widest mb-3">Ticket
-                                    Referencia:
-                                </p>
-                                <h4 class="text-white h6 fw-bold mb-0">#
-                                    <?php echo $budget['ticket_number']; ?>
-                                </h4>
-                            </div>
                         </div>
-
-                        <!-- Scope -->
-                        <div class="mb-5">
-                            <h5
-                                class="text-white small fw-bold uppercase tracking-widest mb-3 border-bottom border-white-5 pb-2">
-                                Alcance de la Propuesta</h5>
-                            <p class="text-white-50 small lh-lg">
-                                <?php echo nl2br($budget['scope']); ?>
+                        <div class="col-md-6 text-end">
+                            <p class="text-primary x-small fw-bold uppercase tracking-widest mb-3">Ticket Referencia:
                             </p>
+                            <h4 class="text-white h5 fw-black mb-0">#<?php echo $budget['ticket_number']; ?></h4>
                         </div>
+                    </div>
 
-                        <!-- Items Table -->
-                        <div class="mb-5">
-                            <h5
-                                class="text-white small fw-bold uppercase tracking-widest mb-3 border-bottom border-white-5 pb-2">
-                                Desglose de Inversión</h5>
-                            <table class="table table-dark table-borderless align-middle mt-3">
-                                <thead>
-                                    <tr class="x-small text-white-50 uppercase border-bottom border-white-10">
-                                        <th class="p-3">Descripción</th>
-                                        <th class="p-3 text-center">Cant.</th>
-                                        <th class="p-3 text-end">Precio Unit.</th>
-                                        <th class="p-3 text-end">Total</th>
+                    <!-- Scope -->
+                    <div class="mb-5 bg-white-5 p-4 rounded-4 border border-white-5">
+                        <h5
+                            class="text-white small fw-bold uppercase tracking-widest mb-3 border-bottom border-white-5 pb-2">
+                            <span class="material-symbols-outlined fs-5 align-middle me-2">description</span>
+                            Alcance de la Propuesta
+                        </h5>
+                        <p class="text-white-50 small lh-lg mb-0 text-justify">
+                            <?php echo nl2br($budget['scope']); ?>
+                        </p>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="mb-5">
+                        <h5
+                            class="text-white small fw-bold uppercase tracking-widest mb-3 border-bottom border-white-5 pb-2">
+                            Desglose de Inversión</h5>
+                        <table class="table table-dark table-borderless align-middle mt-3">
+                            <thead>
+                                <tr class="x-small text-white-50 uppercase border-bottom border-white-10">
+                                    <th class="p-3">Descripción</th>
+                                    <th class="p-3 text-center">Cant.</th>
+                                    <th class="p-3 text-end">Precio Unit.</th>
+                                    <th class="p-3 text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($items as $item): ?>
+                                    <tr>
+                                        <td class="p-3">
+                                            <p class="text-white small mb-0 fw-bold">
+                                                <?php echo $item['description']; ?>
+                                            </p>
+                                        </td>
+                                        <td class="p-3 text-center text-white-50 small">
+                                            <?php echo number_format($item['quantity'], 2); ?>
+                                        </td>
+                                        <td class="p-3 text-end text-white-50 small">$
+                                            <?php echo number_format($item['unit_price'], 2); ?>
+                                        </td>
+                                        <td class="p-3 text-end text-white small fw-bold">$
+                                            <?php echo number_format($item['total'], 2); ?>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($items as $item): ?>
-                                        <tr>
-                                            <td class="p-3">
-                                                <p class="text-white small mb-0 fw-bold">
-                                                    <?php echo $item['description']; ?>
-                                                </p>
-                                            </td>
-                                            <td class="p-3 text-center text-white-50 small">
-                                                <?php echo number_format($item['quantity'], 2); ?>
-                                            </td>
-                                            <td class="p-3 text-end text-white-50 small">$
-                                                <?php echo number_format($item['unit_price'], 2); ?>
-                                            </td>
-                                            <td class="p-3 text-end text-white small fw-bold">$
-                                                <?php echo number_format($item['total'], 2); ?>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <!-- Totals -->
-                        <div class="row justify-content-end">
-                            <div class="col-md-5">
+                    <div class="row justify-content-end">
+                        <div class="col-md-6 col-lg-5">
+                            <div class="glass-morphism p-4 rounded-4 border-white-10">
                                 <div class="d-flex justify-content-between text-white-50 small mb-2">
                                     <span>Subtotal:</span>
-                                    <span>$
-                                        <?php echo number_format($budget['subtotal'], 2); ?>
-                                    </span>
+                                    <span class="fw-bold">$<?php echo number_format($budget['subtotal'], 2); ?></span>
                                 </div>
                                 <div class="d-flex justify-content-between text-white-50 small mb-3">
-                                    <span>IVA (
-                                        <?php echo number_format($budget['tax_rate'], 0); ?>%):
-                                    </span>
-                                    <span>$
-                                        <?php echo number_format($budget['tax_amount'], 2); ?>
-                                    </span>
+                                    <span>IVA (<?php echo number_format($budget['tax_rate'], 0); ?>%):</span>
+                                    <span class="fw-bold">$<?php echo number_format($budget['tax_amount'], 2); ?></span>
                                 </div>
                                 <div
                                     class="d-flex justify-content-between align-items-center text-white border-top border-white-10 pt-3 h4 fw-black">
