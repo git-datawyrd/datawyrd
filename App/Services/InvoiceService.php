@@ -56,14 +56,15 @@ class InvoiceService
             $stmtTicket->execute([$budget['ticket_id']]);
             $client_id = $stmtTicket->fetchColumn();
 
-            $sql = "INSERT INTO invoices (invoice_number, client_id, budget_id, issue_date, due_date, subtotal, tax_amount, total, status, created_by) 
-                    VALUES (?, ?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 7 DAY), ?, ?, ?, 'unpaid', ?)";
+            $sql = "INSERT INTO invoices (invoice_number, client_id, budget_id, service_reference, issue_date, due_date, subtotal, tax_amount, total, status, created_by) 
+                    VALUES (?, ?, ?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 7 DAY), ?, ?, ?, 'unpaid', ?)";
             $stmt = $this->db->prepare($sql);
 
             $stmt->execute([
                 $invoice_number,
                 $client_id,
                 $budget_id,
+                $budget['service_reference'],
                 $budget['subtotal'],
                 $budget['tax_amount'],
                 $budget['total'],

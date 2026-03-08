@@ -31,7 +31,8 @@
                             <div>
                                 <h2 class="text-white h5 mb-0 fw-black"><?php echo getenv('COMPANY_NAME'); ?></h2>
                                 <p class="text-white-50 x-small mb-0 uppercase tracking-widest">
-                                    <?php echo getenv('COMPANY_SLOGAN'); ?></p>
+                                    <?php echo getenv('COMPANY_SLOGAN'); ?>
+                                </p>
                             </div>
                         </div>
                         <div class="text-end x-small text-white-50">
@@ -41,6 +42,20 @@
                             <p class="mb-0">Válido por:
                                 <?php echo $budget['valid_days']; ?> días
                             </p>
+                        </div>
+                    </div>
+
+                    <!-- Service Reference -->
+                    <div
+                        class="mb-5 bg-primary bg-opacity-10 p-4 rounded-4 border border-primary border-opacity-20 d-flex align-items-center gap-3">
+                        <div class="bg-primary p-3 rounded-circle text-white shadow-gold">
+                            <span class="material-symbols-outlined fs-4 align-middle">verified</span>
+                        </div>
+                        <div>
+                            <p class="text-primary x-small fw-bold uppercase tracking-widest mb-1">Servicio Solicitado:
+                            </p>
+                            <h4 class="text-white h5 fw-black mb-0"><?php echo $budget['service_reference'] ?: 'N/D'; ?>
+                            </h4>
                         </div>
                     </div>
 

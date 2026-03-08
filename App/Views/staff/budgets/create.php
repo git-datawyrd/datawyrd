@@ -38,6 +38,15 @@
                                 value="Propuesta para <?php echo $ticket['service_name']; ?>" required>
                         </div>
                         <div class="mb-4">
+                            <label class="text-white-50 small mb-2 uppercase fw-bold tracking-widest">Servicio
+                                Solicitado (Pilar - Servicio)</label>
+                            <input type="text" name="service_reference"
+                                class="form-control bg-steel border-white-10 text-white p-3"
+                                value="<?php echo $ticket['category_name'] . ' - ' . $ticket['plan_name']; ?>" required>
+                            <p class="x-small text-white-50 mt-1 mb-0 italic">Ejemplo: Innovación de Datos - Plan
+                                Premium</p>
+                        </div>
+                        <div class="mb-4">
                             <label class="text-white-50 small mb-2 uppercase fw-bold tracking-widest">Alcance del
                                 Proyecto (Scope)</label>
                             <textarea name="scope" class="form-control bg-steel border-white-10 text-white p-3" rows="6"

@@ -69,9 +69,10 @@
 
 - ✅ **Sistema de Tickets** con estados dinámicos
 - ✅ **Chat Integrado** para comunicación cliente-staff
-- ✅ **Generación de Presupuestos** con items personalizables
-- ✅ **Facturación Automática** con tracking de pagos
+- ✅ **Generación de Presupuestos** con items personalizables y referencia explícita de Servicio
+- ✅ **Facturación Automática** con tracking de pagos y herencia de metadatos de servicio
 - ✅ **Workspace de Proyectos** para intercambio de archivos
+- ✅ **Identidad Corporativa Estandarizada** desde variables de entorno (.env)
 
 ### 🔒 Seguridad Enterprise
 - ✅ **Protección CSRF Global**: Filtro automático en el router para todas las peticiones POST.
@@ -513,17 +514,11 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 
 ## 📊 Roadmap
 
-### ✅ Versión 2.0.0 a 2.6.0 (Actual)
-- [x] Evolución 9.7: Premium Admin UI & Executive Design (Modo Claro).
-- [x] Evolución 9.6: Refinamiento UX, CMS & Hardening.
-- [x] Nueva capa de Middleware (Auth/RBAC centralizado).
-- [x] Hardening de Seguridad: CSP, HSTS, Rate Limiting.
-- [x] Gestión funcional de planes (Alta/Baja/Orden) en CMS.
-- [x] Pricing Adaptativo ("Cotizar") con botones dinámicos.
-- [x] Filtros de multi-selección dinámicos en Admin.
-- [x] Narrativa corporativa de crecimiento sostenible en Home.
-- [x] Fase 4: Inteligencia (Lead Scoring) y Seguridad (Inmutabilidad/Argon2id).
-- [x] FinOps: Integración en tiempo real con MercadoPago Webhooks y datos estáticos desde `.env`.
+- [x] Evolución 2.0 a 2.6.0: Premium Admin UI, Executive Design & FinOps integration.
+- [x] Estandarización de Identidad Corporativa (Branding Dinámico vía `.env`).
+- [x] Implementación de Referencia de Servicio (Pilar-Servicio) en flujo comercial.
+- [x] Auditoría visual de grillas y armonía UX en vistas de Budget/Invoice.
+- [x] Hardening de Seguridad: CSP, HSTS, Rate Limiting y Zero-Hardcode Certified.
 
 ### 🔮 Versión 3.0 (Próxima)
 - [ ] Aplicación Móvil Companion.

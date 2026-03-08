@@ -27,11 +27,12 @@ class BudgetController extends Controller
         $db = Database::getInstance()->getConnection();
 
         // Get ticket info
-        $stmt = $db->prepare("SELECT t.*, u.name as client_name, sp.name as plan_name, sp.price as plan_price, s.name as service_name
+        $stmt = $db->prepare("SELECT t.*, u.name as client_name, sp.name as plan_name, sp.price as plan_price, s.name as service_name, sc.name as category_name
                              FROM tickets t 
                              JOIN users u ON t.client_id = u.id 
                              JOIN service_plans sp ON t.service_plan_id = sp.id 
                              JOIN services s ON sp.service_id = s.id
+                             JOIN service_categories sc ON s.category_id = sc.id
                              WHERE t.id = ?");
         $stmt->execute([$ticket_id]);
         $ticket = $stmt->fetch();
@@ -59,6 +60,7 @@ class BudgetController extends Controller
         try {
             $ticket_id = $_POST['ticket_id'];
             $title = $_POST['title'];
+            $service_reference = $_POST['service_reference'] ?? '';
             $scope = $_POST['scope'];
             $timeline = $_POST['timeline_weeks'];
             $items = $_POST['items']; // Array of items
@@ -74,13 +76,14 @@ class BudgetController extends Controller
             $budget_number = 'DW-B' . date('Y') . '-' . strtoupper(bin2hex(random_bytes(2)));
 
             // 1. Insert Budget
-            $sql = "INSERT INTO budgets (budget_number, ticket_id, title, scope, timeline_weeks, subtotal, tax_rate, tax_amount, total, created_by, status) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'sent')";
+            $sql = "INSERT INTO budgets (budget_number, ticket_id, title, service_reference, scope, timeline_weeks, subtotal, tax_rate, tax_amount, total, created_by, status) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'sent')";
             $stmt = $db->prepare($sql);
             $stmt->execute([
                 $budget_number,
                 $ticket_id,
                 $title,
+                $service_reference,
                 $scope,
                 $timeline,
                 $subtotal,

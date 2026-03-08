@@ -33,7 +33,8 @@
                         class="rounded-circle shadow-gold mb-3" style="width: 60px; height: 60px; object-fit: cover;">
                     <h2 class="text-white h5 mb-1 fw-black"><?php echo getenv('COMPANY_NAME'); ?></h2>
                     <p class="text-white-50 small mb-0">
-                        <?php echo getenv('COMPANY_ADDRESS'); ?><br><?php echo getenv('COMPANY_MAIL'); ?></p>
+                        <?php echo getenv('COMPANY_ADDRESS'); ?><br><?php echo getenv('COMPANY_MAIL'); ?>
+                    </p>
                 </div>
                 <div class="col-6 text-end">
                     <h4 class="text-primary fw-black mb-1">FACTURA</h4>
@@ -49,8 +50,8 @@
                 </div>
             </div>
 
-            <div class="row mb-5">
-                <div class="col-6">
+            <div class="row mb-5 align-items-end">
+                <div class="col-md-6 border-end border-white-10">
                     <p class="text-primary x-small fw-bold uppercase tracking-widest mb-3">Cliente:</p>
                     <h4 class="text-white h6 fw-bold mb-1">
                         <?php echo $invoice['client_name']; ?>
@@ -68,6 +69,12 @@
                             <?php echo $invoice['client_phone'] ?: 'N/D'; ?>
                         </p>
                     </div>
+                </div>
+                <div class="col-md-6 ps-md-4">
+                    <p class="text-primary x-small fw-bold uppercase tracking-widest mb-3">Servicio Solicitado:</p>
+                    <h5 class="text-white h6 fw-bold mb-0 text-primary italic">
+                        <?php echo $invoice['service_reference'] ?: 'N/D'; ?>
+                    </h5>
                 </div>
             </div>
 
