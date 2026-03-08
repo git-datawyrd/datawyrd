@@ -213,7 +213,7 @@ class TicketController extends Controller
         // Get chat messages
         $stmt = $db->prepare("SELECT m.*, u.name as user_name, u.role as user_role 
                              FROM chat_messages m 
-                             JOIN users u ON m.user_id = u.id 
+                             LEFT JOIN users u ON m.user_id = u.id 
                              WHERE m.ticket_id = ? ORDER BY m.created_at ASC");
         $stmt->execute([$id]);
         $messages = $stmt->fetchAll();
