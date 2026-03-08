@@ -240,7 +240,7 @@ class InvoiceController extends Controller
                     'title' => 'Pago Factura #' . $invoice['invoice_number'],
                     'quantity' => 1,
                     'unit_price' => (float) $amount,
-                    'currency_id' => $invoice['currency'] ?? 'USD'
+                    'currency_id' => \Core\Config::get('payment.mp_currency_id') ?: 'ARS'
                 ]
             ],
             'external_reference' => (string) $invoice_id,
