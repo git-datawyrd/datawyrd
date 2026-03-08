@@ -771,30 +771,50 @@ button:disabled {
 
 /* Print Engine for PDF Generation */
 @media print {
+
     /* 1. Reset Global Mínimo y Ajuste de Color Activo */
-    body, main, html { 
-        background: #FFFFFF !important; 
-        color: #000000 !important; 
-        font-family: Arial, sans-serif !important; 
-        -webkit-print-color-adjust: exact !important; 
-        print-color-adjust: exact !important; 
+    body,
+    main,
+    html {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        font-family: Arial, sans-serif !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
     }
-    
+
     /* 2. Ocultar entorno App */
-    #main-sidebar, header, footer, nav, .btn, .sticky-top, .sticky-bottom, .dropdown,
-    .quick-actions, .actions-row, .toast-container, [title="Acceso Clientes"], 
-    [title="Ir al Dashboard"], #sidebar-overlay, .badge:not(.print-visible) {
+    #main-sidebar,
+    header,
+    footer,
+    nav,
+    .btn,
+    .sticky-top,
+    .sticky-bottom,
+    .dropdown,
+    .quick-actions,
+    .actions-row,
+    .toast-container,
+    [title="Acceso Clientes"],
+    [title="Ir al Dashboard"],
+    #sidebar-overlay,
+    .badge:not(.print-visible) {
         display: none !important;
     }
-    
+
     main {
         padding: 0 !important;
         margin: 0 !important;
         overflow: visible !important;
+        max-height: none !important;
     }
 
     /* 3. Reestablecer contenedores principales a White/Flat */
-    .glass-morphism.printable-doc, .printable-doc {
+    .glass-morphism.printable-doc,
+    .printable-doc {
         background: #FFFFFF !important;
         border: none !important;
         backdrop-filter: none !important;
@@ -804,57 +824,104 @@ button:disabled {
         padding: 0 !important;
         border-radius: 0 !important;
     }
-    
+
     .glass-morphism:not(.printable-doc) {
         display: none !important;
     }
 
     /* 4. Tipografía en contraste negro duro */
-    *, .text-white, .text-white-50, .text-muted, p, h1, h2, h3, h4, h5, h6, td, th { 
-        color: #000000 !important; 
+    *,
+    .text-white,
+    .text-white-50,
+    .text-muted,
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    td,
+    th {
+        color: #000000 !important;
+        text-shadow: none !important;
     }
 
-    .text-primary, .text-accent {
+    .text-primary,
+    .text-accent {
         color: #000000 !important;
         font-weight: bold !important;
     }
 
-    /* 5. Tabla de Invoice Optimizada */
-    table { 
-        width: 100% !important; 
-        border-collapse: collapse !important; 
+    /* 5. Tabla de Invoice Optimizada y Reset ABSOLUTO de Bootstrap .table-dark */
+    .table-dark,
+    .table {
+        --bs-table-bg: transparent !important;
+        --bs-table-color: #000000 !important;
+        --bs-table-striped-bg: transparent !important;
+        --bs-table-active-bg: transparent !important;
+        --bs-table-hover-bg: transparent !important;
+        background-color: transparent !important;
         color: #000 !important;
-    }
-    table thead th { 
-        border-bottom: 2px solid #000000 !important; 
-        background-color: #F8F9FA !important; 
-        color: #000000 !important; 
-        font-weight: bold !important; 
-        padding-bottom: 10px !important;
-    }
-    table tbody td { 
-        border-bottom: 1px solid #DDDDDD !important; 
-        padding: 10px 0 !important;
-    }
-    
-    /* Clean up borders and backgrounds */
-    .border-white-10, .border-white-5, .border-bottom {
-        border-color: #000000 !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
     }
 
-    .bg-white-5, .bg-midnight, .bg-steel, .bg-deep-black {
+    .table-dark th,
+    .table-dark td,
+    .table th,
+    .table td {
+        background-color: transparent !important;
+        color: #000000 !important;
+    }
+
+    table thead th,
+    .table-dark thead th {
+        border-bottom: 2px solid #000000 !important;
+        background-color: #F8F9FA !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+        padding-bottom: 10px !important;
+    }
+
+    table tbody td {
+        border-bottom: 1px solid #DDDDDD !important;
+        padding: 10px 0 !important;
+    }
+
+    /* Clean up borders and backgrounds */
+    .border-white-10,
+    .border-white-5,
+    .border-bottom,
+    .border-top {
+        border-color: #DDDDDD !important;
+    }
+
+    .bg-white-5,
+    .bg-midnight,
+    .bg-steel,
+    .bg-deep-black {
         background: transparent !important;
         border: none !important;
     }
 
     /* Grid layout fixes for printing */
-    .col-lg-10, .col-lg-9, .col-lg-8 {
+    .col-lg-10,
+    .col-lg-9,
+    .col-lg-8 {
         width: 100% !important;
         flex: 0 0 100% !important;
         max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    .shadow-gold, .shadow-2xl {
+    .row {
+        margin: 0 !important;
+    }
+
+    .shadow-gold,
+    .shadow-2xl {
         box-shadow: none !important;
     }
 
@@ -863,10 +930,16 @@ button:disabled {
         filter: invert(0) !important;
         -webkit-filter: invert(0) !important;
         display: inline-block !important;
+        max-width: 100px !important;
     }
 
-    .print-only { display: block !important; }
-    .no-print { display: none !important; }
+    .print-only {
+        display: block !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
 }
 
 /* --- SKELETON SCREENS (Sprint 4) --- */
