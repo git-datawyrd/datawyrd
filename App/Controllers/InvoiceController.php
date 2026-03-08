@@ -192,4 +192,88 @@ class InvoiceController extends Controller
 
         $this->redirect('/invoice/show/' . $id);
     }
+    /**
+     * Iniciar Checkout con MercadoPago
+     */
+    public function payMp()
+    {
+        if (!Auth::isClient()) {
+            $this->redirect('/dashboard');
+        }
+
+        $invoice_id = $_POST['invoice_id'] ?? null;
+        $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
+
+        if (!$invoice_id || $amount <= 0) {
+            Session::flash('error', 'Datos de pago inválidos.');
+            $this->redirect('/invoice');
+        }
+
+        $db = Database::getInstance()->getConnection();
+
+        // Ensure invoice belongs to user
+        $stmt = $db->prepare("SELECT * FROM invoices WHERE id = ? AND client_id = ?");
+        $stmt->execute([$invoice_id, Auth::user()['id']]);
+        $invoice = $stmt->fetch();
+
+        if (!$invoice) {
+            Session::flash('error', 'Factura no encontrada.');
+            $this->redirect('/invoice');
+        }
+
+        $pending = $invoice['total'] - $invoice['paid_amount'];
+        if ($amount > $pending) {
+            Session::flash('error', 'El monto supera el total adeudado.');
+            $this->redirect('/invoice/show/' . $invoice_id);
+        }
+
+        $mpToken = \Core\Config::get('payment.mp_access_token');
+        if (empty($mpToken)) {
+            Session::flash('error', 'MercadoPago no configurado.');
+            $this->redirect('/invoice/show/' . $invoice_id);
+        }
+
+        // Send cURL request to MP to create preference
+        $preferenceData = [
+            'items' => [
+                [
+                    'title' => 'Pago Factura #' . $invoice['invoice_number'],
+                    'quantity' => 1,
+                    'unit_price' => $amount,
+                    'currency_id' => 'ARS' // Por defecto MP suele manejar divisa local, ARS y USD segun config. Dejemos ARS.
+                ]
+            ],
+            'external_reference' => (string) $invoice_id,
+            'back_urls' => [
+                'success' => rtrim(\Core\Config::get('app_url') ?? 'http://localhost/datawyrd', '/') . '/invoice/show/' . $invoice_id,
+                'failure' => rtrim(\Core\Config::get('app_url') ?? 'http://localhost/datawyrd', '/') . '/invoice/show/' . $invoice_id,
+                'pending' => rtrim(\Core\Config::get('app_url') ?? 'http://localhost/datawyrd', '/') . '/invoice/show/' . $invoice_id,
+            ],
+            'auto_return' => 'approved',
+            'notification_url' => rtrim(\Core\Config::get('app_url') ?? 'http://localhost/datawyrd', '/') . '/webhook/mercadopago'
+        ];
+
+        $ch = curl_init('https://api.mercadopago.com/checkout/preferences');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $mpToken,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($preferenceData));
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $result = json_decode($response, true);
+
+        if ($httpCode >= 200 && $httpCode < 300 && isset($result['init_point'])) {
+            header('Location: ' . $result['init_point']);
+            exit;
+        } else {
+            \Core\SecurityLogger::log('mp_preference_error', ['response' => $result]);
+            Session::flash('error', 'Error al crear solicitud en MercadoPago.');
+            $this->redirect('/invoice/show/' . $invoice_id);
+        }
+    }
 }

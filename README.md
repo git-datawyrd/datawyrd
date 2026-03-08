@@ -295,6 +295,7 @@ Encuentra todos los detalles técnicos y de configuración en el nuevo ecosistem
 | [docs/CODE_ANALYSIS.md](docs/CODE_ANALYSIS.md) | Análisis profundo del código y la arquitectura. |
 | [docs/SECURITY.md](docs/SECURITY.md) | Manual de mejores prácticas de seguridad. |
 | [docs/ENV_CONFIGURATION_GUIDE.md](docs/ENV_CONFIGURATION_GUIDE.md) | Guía de variables de entorno. |
+| [docs/MERCADOPAGO_INTEGRATION.md](docs/MERCADOPAGO_INTEGRATION.md) | Manual técnico para incorporar llaves y webhooks de MP. |
 
 ---
 
@@ -522,6 +523,7 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 - [x] Filtros de multi-selección dinámicos en Admin.
 - [x] Narrativa corporativa de crecimiento sostenible en Home.
 - [x] Fase 4: Inteligencia (Lead Scoring) y Seguridad (Inmutabilidad/Argon2id).
+- [x] FinOps: Integración en tiempo real con MercadoPago Webhooks y datos estáticos desde `.env`.
 
 ### 🔮 Versión 3.0 (Próxima)
 - [ ] Aplicación Móvil Companion.

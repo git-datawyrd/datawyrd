@@ -131,6 +131,11 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 - [x] **UI Badge Consistency**: Integración de estilos visuales específicos (`badge-dark`) para el estado anulado en dashboards de Admin, Staff y Cliente.
 - [x] **SQL Migration Ready**: Generación de script de migración para actualización de esquema ENUM en producción.
 
+### 10. Evolución 9.9: FinOps Automatizado (Pasarelas de Pago)
+- [x] **MercadoPago Webhooks**: Checkout activo en UI de cliente comunicándose vía cURL con el endpoint de preferencias, reduciendo deuda o activando servicio global sin requerir personal humano.
+- [x] **Pagos Parciales Flexibles**: Se permite seleccionar el monto para abonar partes del adeudo a través de la pasarela MP.
+- [x] **Banking Data Unification**: Las cuentas y alias bancarios manuales dependen del entorno y se inyectan estéticamente en tiempo de capa de vista.
+
 ---
 
 | Color | Hex (Dark) | Hex (Light) | Uso Principal |

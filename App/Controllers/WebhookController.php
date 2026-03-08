@@ -35,12 +35,48 @@ class WebhookController extends Controller
         // 2. Process only payment events
         if (isset($data['type']) && $data['type'] === 'payment') {
             $paymentId = $data['data']['id'] ?? null;
+            if ($paymentId) {
+                // Call MercadoPago API to verify payment status
+                $mpToken = \Core\Config::get('payment.mp_access_token');
 
-            // Note: Here you should call MercadoPago API to verify payment status
-            // using the Payment ID and your Access Token.
-            // Example status check:
-            // $paymentInfo = $this->mpService->getPayment($paymentId);
-            // if ($paymentInfo['status'] === 'approved') { ... }
+                $ch = curl_init("https://api.mercadopago.com/v1/payments/{$paymentId}");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Authorization: Bearer ' . $mpToken
+                ]);
+
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+
+                if ($httpCode === 200) {
+                    $paymentInfo = json_decode($response, true);
+
+                    if (isset($paymentInfo['status']) && $paymentInfo['status'] === 'approved') {
+                        $invoiceId = $paymentInfo['external_reference'] ?? null;
+                        $amount = $paymentInfo['transaction_amount'] ?? 0;
+
+                        if ($invoiceId) {
+                            $db = \Core\Database::getInstance()->getConnection();
+
+                            // 1. Insert automatic receipt
+                            $sql = "INSERT INTO payment_receipts (invoice_id, uploaded_by, filename, filepath, amount, payment_date, status) 
+                                    VALUES (?, 1, 'mercadopago_auto', 'webhook', ?, CURDATE(), 'pending')";
+                            $stmt = $db->prepare($sql);
+                            $stmt->execute([$invoiceId, $amount]);
+
+                            // 2. Confirm payment
+                            $invoiceService = new InvoiceService();
+                            // ID 1 (System Admin) acts as the verifier
+                            $result = $invoiceService->confirmPayment((int) $invoiceId, 1);
+
+                            if (!$result['success']) {
+                                SecurityLogger::log('mp_webhook_confirm_failed', ['invoice_id' => $invoiceId, 'error' => $result['error']]);
+                            }
+                        }
+                    }
+                }
+            }
 
             SecurityLogger::log('webhook_payment_processing', ['id' => $paymentId]);
         }

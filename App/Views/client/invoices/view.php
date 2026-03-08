@@ -128,9 +128,12 @@
             <!-- Notes -->
             <div class="bg-white-5 p-4 rounded-4 border-white-10 mt-5">
                 <h6 class="text-white x-small fw-bold uppercase tracking-widest mb-3">Instrucciones de Pago</h6>
-                <p class="text-white-50 small mb-0">Transferencia Bancaria:<br><strong>Data Wyrd Services
-                        LLC</strong><br>Bank: Ecosistema Digital Bank<br>Account: 1234-5678-9012<br>Reference:
-                    <?php echo $invoice['invoice_number']; ?>
+                <p class="text-white-50 small mb-0">Transferencia Bancaria:<br>
+                    <strong><?php echo \Core\Config::get('bank.account_name'); ?></strong><br>
+                    Banco: <?php echo \Core\Config::get('bank.name'); ?><br>
+                    Cuenta/CBU: <?php echo \Core\Config::get('bank.account_number'); ?><br>
+                    Alias: <?php echo \Core\Config::get('bank.cbu_alias'); ?><br>
+                    Referencia: <?php echo $invoice['invoice_number']; ?>
                 </p>
             </div>
         </div>
@@ -139,7 +142,32 @@
         <div class="row g-4">
             <div class="col-md-6">
                 <?php if ($invoice['status'] == 'unpaid' || $invoice['status'] == 'overdue' || $invoice['status'] == 'partial'): ?>
-                    <div class="glass-morphism p-4 rounded-5 border-primary border-opacity-25 shadow-gold">
+
+                    <?php if (!empty(\Core\Config::get('payment.mp_access_token'))): ?>
+                        <div class="glass-morphism p-4 rounded-5 border-primary border-opacity-25 shadow-gold mb-4">
+                            <h5 class="text-white fw-bold mb-3 small uppercase d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">credit_card</span>
+                                Pagar Online
+                            </h5>
+                            <form action="<?php echo url('invoice/payMp'); ?>" method="POST">
+                                        <?php echo csrf_field(); ?>
+                                <input type="hidden" name="invoice_id" value="<?php echo $invoice['id']; ?>">
+                                <div class="mb-3">
+                                    <label class="text-white-50 x-small mb-2">Monto a Pagar</label>
+                                            <?php $pending = $invoice['total'] - $invoice['paid_amount']; ?>
+                                    <input type="number" step="0.01" name="amount"
+                                        class="form-control bg-steel border-white-10 text-white shadow-none"
+                                        value="<?php echo number_format($pending > 0 ? $pending : $invoice['total'], 2, '.', ''); ?>"
+                                        max="<?php echo number_format($pending > 0 ? $pending : $invoice['total'], 2, '.', ''); ?>"
+                                        required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 py-3 fw-bold uppercase">Pagar con
+                                    MercadoPago</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="glass-morphism p-4 rounded-5 border-white-10">
                         <h5 class="text-white fw-bold mb-3 small uppercase">Reportar Pago</h5>
                         <p class="text-white-50 x-small mb-4">Sube tu comprobante de transferencia para que nuestro equipo
                             valide el pago y active tu servicio.</p>

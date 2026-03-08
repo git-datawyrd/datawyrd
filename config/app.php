@@ -52,5 +52,15 @@ return [
         'font_heading' => getenv('FONT_HEADING') ?: "'Space Grotesk', sans-serif",
         'font_body' => getenv('FONT_BODY') ?: "'Outfit', sans-serif",
         'scale_ratio' => getenv('TYPO_SCALE_RATIO') ?: 1.25,
+    ],
+    'payment' => [
+        'mp_access_token' => getenv('MP_ACCESS_TOKEN') ?: '',
+        'mp_public_key' => getenv('MP_PUBLIC_KEY') ?: '',
+    ],
+    'bank' => [
+        'name' => getenv('BANK_NAME') ?: 'Ecosistema Digital Bank',
+        'account_name' => getenv('BANK_ACCOUNT_NAME') ?: 'Data Wyrd Services LLC',
+        'account_number' => getenv('BANK_ACCOUNT_NUMBER') ?: '1234-5678-9012',
+        'cbu_alias' => getenv('BANK_CBU_ALIAS') ?: 'datawyrd.usd',
     ]
 ];
