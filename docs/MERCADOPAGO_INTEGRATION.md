@@ -35,7 +35,12 @@ Copia las credenciales obtenidas y colócalas en el archivo `.env` en la raíz d
 # ===========================================
 MP_ACCESS_TOKEN=APP_USR-8984920...
 MP_PUBLIC_KEY=APP_USR-3...
+MP_CURRENCY_ID=ARS
+MP_EXCHANGE_RATE=1050.00
 ```
+
+> [!TIP]
+> **Finanzas Cross-Border (Multi-divisa):** DaWyrd OS factura a los clientes en la moneda original (`USD`, por ejemplo), pero si tu cuenta de MercadoPago acepta solo moneda local (ej. Colombia `COP` o Argentina `ARS`), la variable `MP_EXCHANGE_RATE` multiplicará el valor en USD por tu tasa y enviará silenciosamente a MercadoPago la cifra en la divisa declarada en `MP_CURRENCY_ID`. La deuda en DataWyrd bajará normalmente.
 
 **Atención:** El panel de `Pagar Online` solo será visible para el cliente si la variable `MP_ACCESS_TOKEN` no está vacía.
 

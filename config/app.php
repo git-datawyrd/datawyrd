@@ -57,6 +57,7 @@ return [
         'mp_access_token' => getenv('MP_ACCESS_TOKEN') ?: '',
         'mp_public_key' => getenv('MP_PUBLIC_KEY') ?: '',
         'mp_currency_id' => getenv('MP_CURRENCY_ID') ?: 'ARS',
+        'exchange_rate' => getenv('MP_EXCHANGE_RATE') ?: 1,
     ],
     'bank' => [
         'name' => getenv('BANK_NAME') ?: 'Ecosistema Digital Bank',

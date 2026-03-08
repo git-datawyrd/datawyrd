@@ -234,23 +234,37 @@ class InvoiceController extends Controller
         }
 
         // Send cURL request to MP to create preference
+        $appUrl = rtrim(getenv('APP_URL') ?: 'http://localhost/datawyrd', '/');
+
+        // Multi-divisa: Conversión Transparente
+        $invoiceCurrency = $invoice['currency'] ?? 'USD';
+        $mpCurrency = \Core\Config::get('payment.mp_currency_id') ?: 'ARS';
+        $amountToPayMP = $amount;
+
+        if ($invoiceCurrency !== $mpCurrency) {
+            $exchangeRate = (float) \Core\Config::get('payment.exchange_rate') ?: 1;
+            if ($exchangeRate <= 0)
+                $exchangeRate = 1;
+            $amountToPayMP = round($amount * $exchangeRate, 2);
+        }
+
         $preferenceData = [
             'items' => [
                 [
                     'title' => 'Pago Factura #' . $invoice['invoice_number'],
                     'quantity' => 1,
-                    'unit_price' => (float) $amount,
-                    'currency_id' => \Core\Config::get('payment.mp_currency_id') ?: 'ARS'
+                    'unit_price' => (float) $amountToPayMP, // Valor convertido
+                    'currency_id' => $mpCurrency    // Moneda de destino
                 ]
             ],
             'external_reference' => (string) $invoice_id,
             'back_urls' => [
-                'success' => rtrim(\Core\Config::get('app_url') ?? 'http://localhost/datawyrd', '/') . '/invoice/show/' . $invoice_id,
-                'failure' => rtrim(\Core\Config::get('app_url') ?? 'http://localhost/datawyrd', '/') . '/invoice/show/' . $invoice_id,
-                'pending' => rtrim(\Core\Config::get('app_url') ?? 'http://localhost/datawyrd', '/') . '/invoice/show/' . $invoice_id,
+                'success' => $appUrl . '/invoice/show/' . $invoice_id,
+                'failure' => $appUrl . '/invoice/show/' . $invoice_id,
+                'pending' => $appUrl . '/invoice/show/' . $invoice_id,
             ],
             'auto_return' => 'approved',
-            'notification_url' => rtrim(\Core\Config::get('app_url') ?? 'http://localhost/datawyrd', '/') . '/webhook/mercadopago'
+            'notification_url' => $appUrl . '/webhook/mercadopago'
         ];
 
         $ch = curl_init('https://api.mercadopago.com/checkout/preferences');
