@@ -47,7 +47,7 @@
                 </button>
             </div>
 
-            <nav class="flex-grow-1 p-3 mt-2">
+            <nav class="flex-grow-1 p-3 mt-2 overflow-y-auto">
                 <p class="text-white-50 x-small fw-bold uppercase px-3 mb-2 tracking-widest">Menú Principal</p>
 
                 <a href="<?php echo url('dashboard'); ?>"
@@ -246,6 +246,12 @@
 
             .sidebar-responsive.active {
                 transform: translateX(0);
+            }
+
+            #main-sidebar {
+                overflow-y: auto !important;
+                max-height: 100vh;
+                padding-bottom: 80px !important;
             }
 
             .side-header {

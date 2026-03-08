@@ -274,6 +274,12 @@
                 transform: translateX(0);
             }
 
+            #main-sidebar {
+                overflow-y: auto !important;
+                max-height: 100vh;
+                padding-bottom: 80px !important;
+            }
+
             .side-header {
                 display: flex;
                 justify-content: space-between;
