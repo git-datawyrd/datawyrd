@@ -22,11 +22,13 @@ class DashboardService
     }
 
     /**
-     * Get recent tickets for admin/staff view with intelligence scoring.
+     * Get actionable recent tickets for admin/staff view with intelligence scoring.
      */
     public function getRecentTicketsWithClients(int $limit = 10): array
     {
-        $tickets = $this->ticketRepo->getRecentWithClients($limit);
+        // Excluimos estados finales o que no requieren acción inmediata para el dashboard
+        $exclude = ['closed', 'void', 'budget_rejected', 'resolved'];
+        $tickets = $this->ticketRepo->getRecentWithClients($limit, $exclude);
 
         $leadService = new \App\Services\CRM\LeadService();
         $intelService = new \App\Services\CRM\IntelligenceService();

@@ -112,6 +112,13 @@
                         </td>
                     </tr>
                 <?php endforeach; ?>
+                <?php if (empty($tickets)): ?>
+                    <tr>
+                        <td colspan="6" class="p-5 text-center text-white-50 italic">
+                            No hay solicitudes pendientes que requieran acción inmediata.
+                        </td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
