@@ -25,8 +25,9 @@ class IntelligenceService
      */
     public function calculateDelayRisk(array $ticket): array
     {
-        // Only active tickets can be at risk of delay
-        if (in_array($ticket['status'], ['resolved', 'closed', 'cancelled'])) {
+        // Only active/pending tickets can be at risk of delay. 
+        // End or terminal states should not trigger SLA warnings.
+        if (in_array($ticket['status'], ['resolved', 'closed', 'cancelled', 'void', 'budget_rejected', 'active'])) {
             return ['is_at_risk' => false, 'risk_reason' => ''];
         }
 
