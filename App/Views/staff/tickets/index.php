@@ -97,11 +97,18 @@
                                 </td>
                                 <td class="p-4">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="x-small rounded-circle bg-white-10 p-1">
-                                            <span class="material-symbols-outlined fs-6 text-white-50">person</span>
-                                        </div>
-                                        <span class="text-white small">
+                                        <span class="text-white small fw-bold">
                                             <?php echo $t['client_name']; ?>
+                                        </span>
+                                        <?php
+                                        $score = $t['lead_score'] ?? 0;
+                                        $scoreClass = $score >= 75 ? 'bg-gold text-deep-black' : ($score >= 40 ? 'bg-primary' : 'bg-white-10 text-white-50');
+                                        ?>
+                                        <span
+                                            class="badge <?php echo $scoreClass; ?> rounded-pill x-small px-2 py-1 fw-bold"
+                                            style="font-size: 0.65rem;" title="Lead Intelligence Score">
+                                            <?php echo $score; ?> pts
+                                            <?php if ($score >= 75): ?> 🔥<?php endif; ?>
                                         </span>
                                     </div>
                                 </td>

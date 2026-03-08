@@ -48,13 +48,23 @@ class TicketController extends Controller
         }
 
         $tickets = $stmt->fetchAll();
+        $isClient = Auth::isClient();
 
-        // 🧠 Predictive Analytics Integration
+        // 🧠 Intelligence Services Integration
         $intelligence = new \App\Services\CRM\IntelligenceService();
+        $leadService = new \App\Services\CRM\LeadService();
+
         foreach ($tickets as &$t) {
+            // Predictivve Delay Risk
             $riskData = $intelligence->calculateDelayRisk($t);
             $t['is_at_risk'] = $riskData['is_at_risk'];
             $t['risk_reason'] = $riskData['risk_reason'];
+
+            // Lead Intelligence Score (Only for Admin/Staff)
+            if (!$isClient) {
+                $clientId = $t['client_id'] ?? null;
+                $t['lead_score'] = $clientId ? $leadService->calculateScore($clientId) : 0;
+            }
         }
 
         $view = Auth::role() . '/tickets/index';
