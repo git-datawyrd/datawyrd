@@ -12,10 +12,13 @@
     <div class="table-responsive">
         <table class="table table-dark table-hover mb-0 align-middle">
             <thead class="bg-deep-black">
-                <tr>
-                    <th class="p-4 small uppercase tracking-widest text-white-50">Acciones</th>
-                    <th class="p-4 small uppercase tracking-widest text-white-50">Ticket</th>
-                    <th class="p-4 small uppercase tracking-widest text-white-50">Cliente</th>
+                <tr class="x-small uppercase text-white-50 tracking-widest">
+                    <th class="p-4 border-0">Acciones</th>
+                    <th class="p-4 border-0">Nº Ticket</th>
+                    <th class="p-4 border-0">Cliente</th>
+                    <th class="p-4 border-0">Servicio / Plan</th>
+                    <th class="p-4 border-0">Estado</th>
+                    <th class="p-4 border-0">Fecha</th>
                 </tr>
             </thead>
             <tbody id="adminTicketsTable">
@@ -40,16 +43,13 @@
                         data-search="<?php echo strtolower($ticket['ticket_number'] . ' ' . $ticket['client_name'] . ' ' . $ticket['subject']); ?>">
                         <td class="p-4">
                             <a href="<?php echo url('ticket/detail/' . $ticket['id']); ?>"
-                                class="btn btn-outline-primary btn-sm rounded-3 d-inline-flex align-items-center gap-1 fw-bold">
-                                <span class="material-symbols-outlined fs-6">settings</span> Gestionar
+                                class="btn btn-outline-white btn-sm rounded-pill px-3 border-white-10 x-small uppercase fw-bold">
+                                Ver Detalle
                             </a>
                         </td>
                         <td class="p-4">
-                            <span class="text-white fw-bold d-block">
+                            <span class="fw-black text-primary font-monospace">
                                 <?php echo htmlspecialchars($ticket['ticket_number']); ?>
-                            </span>
-                            <span class="x-small text-white-50">
-                                <?php echo htmlspecialchars(substr($ticket['subject'], 0, 30)); ?>...
                             </span>
                         </td>
                         <td class="p-4">
@@ -67,6 +67,48 @@
                                     <?php if ($score >= 75): ?> 🔥<?php endif; ?>
                                 </span>
                             </div>
+                        </td>
+                        <td class="p-4">
+                            <div class="small text-white">
+                                <?php echo htmlspecialchars($ticket['service_name'] ?? 'Sin Servicio'); ?>
+                            </div>
+                            <div class="x-small text-white-50">
+                                <?php echo htmlspecialchars($ticket['plan_name'] ?? 'Plan Base'); ?>
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <?php
+                            $statusClass = [
+                                'open' => 'bg-danger-subtle text-danger',
+                                'in_analysis' => 'bg-warning-subtle text-warning',
+                                'budget_sent' => 'bg-info-subtle text-info',
+                                'budget_approved' => 'bg-success-subtle text-success',
+                                'budget_rejected' => 'bg-danger-subtle text-danger',
+                                'invoiced' => 'bg-info-subtle text-info',
+                                'payment_pending' => 'bg-warning-subtle text-warning',
+                                'active' => 'bg-success-subtle text-success',
+                                'resolved' => 'bg-success-subtle text-success',
+                                'closed' => 'bg-secondary-subtle text-white-50',
+                                'void' => 'bg-dark text-white'
+                            ];
+                            $cls = $statusClass[$ticket['status']] ?? 'bg-white-10';
+                            ?>
+                            <span class="badge <?php echo $cls; ?> x-small uppercase fw-bold tracking-tighter px-2 py-1">
+                                <?php echo translateStatus($ticket['status']); ?>
+                            </span>
+                            <?php if (isset($ticket['is_at_risk']) && $ticket['is_at_risk']): ?>
+                                <span class="badge border border-warning text-warning x-small fw-bold px-2 py-1 ms-2"
+                                    title="<?php echo htmlspecialchars($ticket['risk_reason']); ?>">
+                                    <span class="material-symbols-outlined fs-6 align-middle me-1"
+                                        style="font-size: 14px !important;">warning</span>
+                                    RIESGO ANS
+                                </span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="p-4">
+                            <span class="text-white-50 x-small">
+                                <?php echo date('d/m/Y H:i', strtotime($ticket['created_at'])); ?>
+                            </span>
                         </td>
                     </tr>
                 <?php endforeach; ?>

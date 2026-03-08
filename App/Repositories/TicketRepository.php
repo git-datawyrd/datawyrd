@@ -9,9 +9,11 @@ class TicketRepository extends BaseRepository
 
     public function getRecentWithClients(int $limit = 10)
     {
-        $sql = "SELECT t.*, u.name as client_name 
+        $sql = "SELECT t.*, u.name as client_name, sp.name as plan_name, s.name as service_name 
                 FROM {$this->table} t 
                 JOIN users u ON t.client_id = u.id 
+                LEFT JOIN service_plans sp ON t.service_plan_id = sp.id
+                LEFT JOIN services s ON sp.service_id = s.id
                 ORDER BY t.created_at DESC LIMIT ?";
 
         $stmt = $this->db->prepare($sql);

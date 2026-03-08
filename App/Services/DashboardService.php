@@ -29,8 +29,15 @@ class DashboardService
         $tickets = $this->ticketRepo->getRecentWithClients($limit);
 
         $leadService = new \App\Services\CRM\LeadService();
+        $intelService = new \App\Services\CRM\IntelligenceService();
+
         foreach ($tickets as &$ticket) {
             $ticket['lead_score'] = $leadService->calculateScore($ticket['client_id']);
+
+            // Inyectar riesgo ANS
+            $riskData = $intelService->calculateDelayRisk($ticket);
+            $ticket['is_at_risk'] = $riskData['is_at_risk'];
+            $ticket['risk_reason'] = $riskData['risk_reason'];
         }
 
         return $tickets;
