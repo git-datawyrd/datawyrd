@@ -26,8 +26,9 @@
                 <div class="col-6">
                     <img src="<?php echo url('assets/images/DataWyrd_logo.png'); ?>" alt="Logo"
                         class="rounded-circle shadow-gold mb-3" style="width: 60px; height: 60px; object-fit: cover;">
-                    <h3 class="text-white h5 mb-1 fw-bold">Data Wyrd OS</h3>
-                    <p class="text-white-50 small mb-0">Ruta 66, Distrito Digital<br>contacto@datawyrd.com</p>
+                    <h3 class="text-white h5 mb-1 fw-bold"><?php echo getenv('COMPANY_NAME'); ?></h3>
+                    <p class="text-white-50 small mb-0">
+                        <?php echo getenv('COMPANY_ADDRESS'); ?><br><?php echo getenv('COMPANY_MAIL'); ?></p>
                 </div>
                 <div class="col-6 text-end">
                     <h4 class="text-primary fw-black mb-1 d-flex align-items-center justify-content-end gap-2">

@@ -29,9 +29,9 @@
                                 class="rounded-circle shadow-gold"
                                 style="width: 50px; height: 50px; object-fit: cover;">
                             <div>
-                                <h3 class="text-white h5 mb-0 fw-bold">Data Wyrd OS</h3>
-                                <p class="text-white-50 x-small mb-0 uppercase tracking-widest">Ingeniería de Vanguardia
-                                </p>
+                                <h3 class="text-white h5 mb-0 fw-bold"><?php echo getenv('COMPANY_NAME'); ?></h3>
+                                <p class="text-white-50 x-small mb-0 uppercase tracking-widest">
+                                    <?php echo getenv('COMPANY_SLOGAN'); ?></p>
                             </div>
                         </div>
                         <div class="text-end x-small text-white-50">
