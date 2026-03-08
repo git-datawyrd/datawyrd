@@ -227,7 +227,7 @@ class InvoiceController extends Controller
             $this->redirect('/invoice/show/' . $invoice_id);
         }
 
-        $mpToken = \Core\Config::get('payment.mp_access_token');
+        $mpToken = trim(\Core\Config::get('payment.mp_access_token'));
         if (empty($mpToken)) {
             Session::flash('error', 'MercadoPago no configurado.');
             $this->redirect('/invoice/show/' . $invoice_id);
@@ -239,8 +239,8 @@ class InvoiceController extends Controller
                 [
                     'title' => 'Pago Factura #' . $invoice['invoice_number'],
                     'quantity' => 1,
-                    'unit_price' => $amount,
-                    'currency_id' => 'ARS' // Por defecto MP suele manejar divisa local, ARS y USD segun config. Dejemos ARS.
+                    'unit_price' => (float) $amount,
+                    'currency_id' => $invoice['currency'] ?? 'USD'
                 ]
             ],
             'external_reference' => (string) $invoice_id,
