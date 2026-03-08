@@ -16,17 +16,23 @@
                 <table class="table table-dark table-hover mb-0 align-middle">
                     <thead class="bg-deep-black">
                         <tr class="x-small uppercase text-white-50 tracking-widest">
+                            <th class="p-4 border-0 text-start">Acciones</th>
                             <th class="p-4 border-0">Nº Factura</th>
                             <th class="p-4 border-0">Ref. Presupuesto</th>
                             <th class="p-4 border-0">Fecha Emisión</th>
                             <th class="p-4 border-0">Total</th>
                             <th class="p-4 border-0">Estado</th>
-                            <th class="p-4 border-0 text-end">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($invoices as $inv): ?>
                             <tr>
+                                <td class="p-4 text-start">
+                                    <a href="<?php echo url('invoice/show/' . $inv['id']); ?>"
+                                        class="btn btn-outline-white btn-sm rounded-pill px-3 border-white-10 x-small uppercase fw-bold">
+                                        Ver Factura
+                                    </a>
+                                </td>
                                 <td class="p-4 text-white small fw-bold">
                                     <?php echo $inv['invoice_number']; ?>
                                 </td>
@@ -50,12 +56,6 @@
                                         class="badge <?php echo $invStatus->getBadgeClass(); ?> x-small uppercase fw-bold px-2 py-1">
                                         <?php echo $invStatus->getLabel(); ?>
                                     </span>
-                                </td>
-                                <td class="p-4 text-end">
-                                    <a href="<?php echo url('invoice/show/' . $inv['id']); ?>"
-                                        class="btn btn-outline-white btn-sm rounded-pill px-3 border-white-10 x-small uppercase fw-bold">
-                                        Ver Factura
-                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

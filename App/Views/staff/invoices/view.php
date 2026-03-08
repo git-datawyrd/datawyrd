@@ -20,7 +20,7 @@
         </div>
 
         <div
-            class="glass-morphism p-5 rounded-5 border-white-10 shadow-2xl bg-white-5 mb-5 position-relative overflow-hidden">
+            class="glass-morphism p-5 rounded-5 border-white-10 shadow-2xl bg-white-5 mb-5 position-relative overflow-hidden printable-doc">
             <!-- Background Decoration -->
             <div class="position-absolute top-0 end-0 opacity-10 p-5">
                 <span class="material-symbols-outlined display-1 text-white">receipt</span>

@@ -20,7 +20,7 @@
         </div>
 
         <div
-            class="glass-morphism p-5 rounded-5 border-white-10 shadow-2xl bg-white-5 mb-5 position-relative overflow-hidden">
+            class="glass-morphism p-5 rounded-5 border-white-10 shadow-2xl bg-white-5 mb-5 position-relative overflow-hidden printable-doc">
 
             <!-- Invoice Content -->
             <div class="row mb-5 pb-5 border-bottom border-white-10">

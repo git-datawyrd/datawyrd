@@ -18,17 +18,23 @@
                 <table class="table table-dark table-hover mb-0 align-middle">
                     <thead class="bg-deep-black">
                         <tr class="x-small uppercase text-white-50 tracking-widest">
+                            <th class="p-4 border-0 text-start">Acciones</th>
                             <th class="p-4 border-0">Nº Ticket</th>
                             <th class="p-4 border-0">Asunto</th>
                             <th class="p-4 border-0">Plan</th>
                             <th class="p-4 border-0">Estado</th>
                             <th class="p-4 border-0">Fecha</th>
-                            <th class="p-4 border-0 text-end">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($tickets as $t): ?>
                             <tr>
+                                <td class="p-4 text-start">
+                                    <a href="<?php echo url('ticket/detail/' . $t['id']); ?>"
+                                        class="btn btn-outline-white btn-sm rounded-pill px-3 border-white-10 x-small uppercase fw-bold">
+                                        Ver Detalles
+                                    </a>
+                                </td>
                                 <td class="p-4">
                                     <span class="fw-black text-primary font-monospace">
                                         <?php echo $t['ticket_number']; ?>
@@ -70,12 +76,6 @@
                                     <span class="text-white-50 x-small">
                                         <?php echo date('d/m/Y H:i', strtotime($t['created_at'])); ?>
                                     </span>
-                                </td>
-                                <td class="p-4 text-end">
-                                    <a href="<?php echo url('ticket/detail/' . $t['id']); ?>"
-                                        class="btn btn-outline-white btn-sm rounded-pill px-3 border-white-10 x-small uppercase fw-bold">
-                                        Ver Detalles
-                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
