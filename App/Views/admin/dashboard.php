@@ -87,7 +87,8 @@
                     <div class="widget-wrapper col-12 <?php
                     // Dynamic column widths based on widget type
                     echo in_array($key, ['performance_chart']) ? 'col-lg-8' :
-                        (in_array($key, ['resource_dist']) ? 'col-lg-4' : 'col-12');
+                        (in_array($key, ['resource_dist']) ? 'col-lg-4' :
+                            (in_array($key, ['bi_indicators', 'insight_alerts']) ? 'col-lg-6' : 'col-12'));
                     ?>" data-widget-id="<?php echo $key; ?>">
                         <div class="widget-container h-100 position-relative">
                             <!-- Drag Handle -->
@@ -334,7 +335,50 @@
             });
         }
 
-        // 3. Search
+        // 3. Conversion Funnel Chart
+        function initConversionFunnelChart() {
+            const funnelEl = document.getElementById('conversionFunnelChart');
+            if (!funnelEl) return;
+            const ctx = funnelEl.getContext('2d');
+            
+            const convData = <?php echo json_encode($stats['conversions']); ?>;
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Leads', 'Tickets', 'Budgets', 'Invoices'],
+                    datasets: [{
+                        label: 'Conversión %',
+                        data: [100, convData.leads_to_tickets, convData.tickets_to_budgets, convData.budgets_to_invoices],
+                        backgroundColor: ['#30C5FF', '#5C4D7D', '#9d8437', '#D4AF37'],
+                        borderRadius: 10,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', titleFont: { size: 10 }, bodyFont: { size: 10 } }
+                    },
+                    scales: {
+                        x: { display: false, beginAtZero: true, max: 100 },
+                        y: { 
+                            grid: { display: false }, 
+                            ticks: { 
+                                color: 'rgba(255,255,255,0.7)', 
+                                font: { size: 10, weight: 'bold' } 
+                            } 
+                        }
+                    }
+                }
+            });
+        }
+        initConversionFunnelChart();
+
+        // 4. Search
         const searchInput = document.getElementById('adminSearchInput');
         const rows = document.querySelectorAll('.ticket-row');
         if (searchInput) {

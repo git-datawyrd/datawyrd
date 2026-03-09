@@ -283,7 +283,9 @@ class DashboardService
             'stats_cards' => ['is_visible' => 1, 'sort_order' => 1],
             'performance_chart' => ['is_visible' => 1, 'sort_order' => 2],
             'resource_dist' => ['is_visible' => 1, 'sort_order' => 3],
-            'recent_tickets' => ['is_visible' => 1, 'sort_order' => 4]
+            'bi_indicators' => ['is_visible' => 1, 'sort_order' => 4],
+            'recent_tickets' => ['is_visible' => 1, 'sort_order' => 5],
+            'insight_alerts' => ['is_visible' => 1, 'sort_order' => 6]
         ];
 
         return array_merge($defaults, $config);

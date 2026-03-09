@@ -136,7 +136,9 @@ class DashboardController extends Controller
             'stats_cards',
             'performance_chart',
             'resource_dist',
-            'recent_tickets'
+            'bi_indicators',
+            'recent_tickets',
+            'insight_alerts'
         ];
 
         $payload = [];

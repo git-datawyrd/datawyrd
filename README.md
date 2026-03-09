@@ -530,7 +530,8 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 
 ### 📊 Versión 3.0 (Desplegada)
 - [x] Evolución 10.0: Inteligencia, Automatización y Multi-Tenant (Desplegado).
-- [x] Dashboard de Business Intelligence nativo con `AnalyticsService`.
+- [x] Dashboard de Business Intelligence con **Funnel Chart** interactivo.
+- [x] Sistema de **Insight Alerts** proactivos basados en IA de negocio.
 - [x] Motor de Reglas (`RuleEngine`) para automatización de procesos.
 - [x] Ecosistema de Observabilidad y Métricas de Negocio.
 - [x] Infraestructura Multi-Tenant (Middleware & DB Isolation).

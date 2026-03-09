@@ -144,6 +144,7 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 - [x] **Observabilidad Avanzada**: `MetricsCollector` para monitoreo de performance y métricas de negocio.
 - [x] **Multi-Tenant Foundation**: Infraestructura lista con `TenantResolverMiddleware` y esquema SQL para aislamiento de datos.
 - [x] **Pruebas de Calidad**: Suite de tests unitarios para servicios analíticos críticos.
+- [x] **Dashboard UI Evolution**: Implementación de widgets avanzados (`bi_indicators`, `insight_alerts`) con gráficos de embudo (Funnel Chart) en tiempo real.
 
 ---
 
