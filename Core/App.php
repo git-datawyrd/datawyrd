@@ -128,6 +128,7 @@ class App
     protected array $middlewareMap = [
         'auth' => \App\Middlewares\AuthMiddleware::class,
         'role' => \App\Middlewares\RoleMiddleware::class,
+        'tenant' => \App\Middlewares\TenantResolverMiddleware::class,
     ];
 
     /**

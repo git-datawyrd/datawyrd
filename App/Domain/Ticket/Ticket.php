@@ -23,6 +23,16 @@ class Ticket
         $this->priority = $data['priority'] ?? 'normal';
     }
 
+    /**
+     * Trigger a domain event (to be intercepted by RuleEngine via Listeners).
+     */
+    public function dispatchEvent(string $eventName, array $context = []): void
+    {
+        // En esta fase, preparamos la infraestructura.
+        // El despachador será invocado cuando se definan eventos concretos.
+        // \Core\EventDispatcher::dispatch(...)
+    }
+
     // Getters
     public function getId(): ?int
     {

@@ -12,6 +12,8 @@ class DashboardService
 {
     private $ticketRepo;
     private $userRepo;
+    private $analyticsService;
+    private $insightEngine;
     private $db;
 
     public function __construct(\App\Repositories\TicketRepository $ticketRepo, \App\Repositories\UserRepository $userRepo, \PDO $db)
@@ -19,6 +21,8 @@ class DashboardService
         $this->ticketRepo = $ticketRepo;
         $this->userRepo = $userRepo;
         $this->db = $db;
+        $this->analyticsService = new \App\Analytics\AnalyticsService($db);
+        $this->insightEngine = new \App\Insights\InsightEngine($db, $this->analyticsService);
     }
 
     /**
@@ -87,7 +91,10 @@ class DashboardService
             'active_services' => $this->db->query("SELECT COUNT(*) FROM active_services WHERE status = 'active'")->fetchColumn(),
             'paid_invoices_pct' => $paidPct,
             'total_users' => $this->db->query("SELECT COUNT(*) FROM users")->fetchColumn(),
-            'users_breakdown' => $usersBreakdown
+            'users_breakdown' => $usersBreakdown,
+            'conversions' => $this->analyticsService->getCommercialConversions(),
+            'financial' => $this->analyticsService->getFinancialKPIs(),
+            'insights' => $this->insightEngine->getActiveInsights()
         ];
     }
 

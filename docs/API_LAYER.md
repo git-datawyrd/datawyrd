@@ -38,6 +38,18 @@ Todas las peticiones a `/api/*` son interceptadas por `Core\App` y delegadas a `
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/v1/projects` | Lista servicios activos y progreso. | Token JWT |
 
+### 3. Analíticas (`analytics`)
+| Método | Endpoint | Descripción | Requisitos |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/analytics/conversions` | Tasas de conversión L->T->I. | Token JWT |
+| `GET` | `/api/v1/analytics/financial` | KPIs de Revenue y ARPU. | Token JWT (Admin) |
+
+### 4. Automatización (`automation`)
+| Método | Endpoint | Descripción | Requisitos |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/automation/rules` | Lista reglas activas. | Token JWT (Admin) |
+| `GET` | `/api/v1/automation/logs` | Historial de ejecuciones. | Token JWT (Admin) |
+
 ---
 
 ## 🛠️ Implementación para Desarrolladores
