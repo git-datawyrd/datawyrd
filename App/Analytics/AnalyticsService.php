@@ -57,7 +57,7 @@ class AnalyticsService
     {
         $counts = [
             'client' => "SELECT COUNT(*) FROM users WHERE role = 'client'",
-            'tickets' => "SELECT COUNT(*) FROM tickets",
+            'tickets' => "SELECT COUNT(*) FROM tickets WHERE status != 'void'",
             'budgets' => "SELECT COUNT(*) FROM tickets WHERE status IN ('budget_sent', 'pending_approval')",
             'invoices' => "SELECT COUNT(*) FROM invoices",
             'paid_invoices' => "SELECT COUNT(*) FROM invoices WHERE status = 'paid'"

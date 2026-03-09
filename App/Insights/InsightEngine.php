@@ -28,7 +28,15 @@ class InsightEngine
         $insights = [];
 
         // 1. Check for overdue invoices
-        $overdueInvoices = $this->db->query("SELECT id, total FROM invoices WHERE status = 'unpaid' AND due_date < CURDATE()")->fetchAll();
+        $overdueInvoices = $this->db->query("
+            SELECT i.id, i.total 
+            FROM invoices i
+            JOIN budgets b ON i.budget_id = b.id
+            JOIN tickets t ON b.ticket_id = t.id
+            WHERE i.status = 'unpaid' 
+            AND i.due_date < CURDATE()
+            AND t.status != 'void'
+        ")->fetchAll();
         if (count($overdueInvoices) > 0) {
             $insights[] = [
                 'type' => 'alert',
@@ -52,7 +60,7 @@ class InsightEngine
         }
 
         // 3. High conversion probability leads
-        $highScoreLeads = $this->db->query("SELECT id, name FROM users WHERE role = 'client' AND id IN (SELECT client_id FROM tickets) LIMIT 3")->fetchAll();
+        $highScoreLeads = $this->db->query("SELECT id, name FROM users WHERE role = 'client' AND id IN (SELECT client_id FROM tickets WHERE status != 'void') LIMIT 3")->fetchAll();
         foreach ($highScoreLeads as $lead) {
             $insights[] = [
                 'type' => 'opportunity',
