@@ -14,10 +14,12 @@ use Exception;
 class InvoiceService
 {
     private $db;
+    private $invoiceRepo;
 
-    public function __construct()
+    public function __construct(\App\Repositories\InvoiceRepositoryInterface $invoiceRepo = null)
     {
         $this->db = Database::getInstance()->getConnection();
+        $this->invoiceRepo = $invoiceRepo ?? new \App\Repositories\InvoiceRepository($this->db);
     }
 
     /**
@@ -26,18 +28,14 @@ class InvoiceService
     public function createFromBudget(int $budget_id, int $created_by): array
     {
         // Obtener presupuesto
-        $stmt = $this->db->prepare("SELECT * FROM budgets WHERE id = ? AND status = 'approved'");
-        $stmt->execute([$budget_id]);
-        $budget = $stmt->fetch();
+        $budget = $this->invoiceRepo->getApprovedBudget($budget_id);
 
         if (!$budget) {
             return ['success' => false, 'error' => 'Presupuesto no encontrado o no aprobado'];
         }
 
         // Verificar si ya existe factura
-        $stmt = $this->db->prepare("SELECT id FROM invoices WHERE budget_id = ?");
-        $stmt->execute([$budget_id]);
-        if ($stmt->fetch()) {
+        if ($this->invoiceRepo->hasInvoiceForBudget($budget_id)) {
             return ['success' => false, 'error' => 'Ya existe una factura para este presupuesto.'];
         }
 
@@ -52,40 +50,33 @@ class InvoiceService
             $invoice_number = 'DW-INV-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(2)));
 
             // Obtener client_id del ticket
-            $stmtTicket = $this->db->prepare("SELECT client_id FROM tickets WHERE id = ?");
-            $stmtTicket->execute([$budget['ticket_id']]);
-            $client_id = $stmtTicket->fetchColumn();
+            $client_id = $this->invoiceRepo->getClientIdByTicket($budget['ticket_id']);
 
-            $sql = "INSERT INTO invoices (invoice_number, client_id, budget_id, service_reference, issue_date, due_date, subtotal, tax_amount, total, status, created_by) 
-                    VALUES (?, ?, ?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 7 DAY), ?, ?, ?, 'unpaid', ?)";
-            $stmt = $this->db->prepare($sql);
-
-            $stmt->execute([
-                $invoice_number,
-                $client_id,
-                $budget_id,
-                $budget['service_reference'],
-                $budget['subtotal'],
-                $budget['tax_amount'],
-                $budget['total'],
-                $created_by
+            $invoiceId = $this->invoiceRepo->createInvoice([
+                'invoice_number' => $invoice_number,
+                'client_id' => $client_id,
+                'budget_id' => $budget_id,
+                'service_reference' => $budget['service_reference'],
+                'subtotal' => $budget['subtotal'],
+                'tax_amount' => $budget['tax_amount'],
+                'total' => $budget['total'],
+                'created_by' => $created_by
             ]);
-            $invoice_id = $this->db->lastInsertId();
 
             // Actualizar estado del ticket a 'invoiced'
-            $this->db->prepare("UPDATE tickets SET status = 'invoiced', updated_at = NOW() WHERE id = ?")->execute([$budget['ticket_id']]);
+            $this->invoiceRepo->updateTicketStatus($budget['ticket_id'], 'invoiced');
 
             AuditService::log('invoice_generated', [
-                'invoice_id' => $invoice_id,
+                'invoice_id' => $invoiceId,
                 'budget_id' => $budget_id
             ], 'INFO');
 
             // Notificar al Cliente
-            Notification::send($client_id, 'invoice_generated', 'Factura Generada', "Se ha generado automáticamente la factura $invoice_number para tu servicio.", "/invoice/show/" . $invoice_id);
+            Notification::send($client_id, 'invoice_generated', 'Factura Generada', "Se ha generado automáticamente la factura $invoice_number para tu servicio.", "/invoice/show/" . $invoiceId);
 
             // Dispatch Event (Evolution 2.0)
             \Core\EventDispatcher::dispatch(new \App\Events\InvoiceIssued([
-                'invoice_id' => $invoice_id,
+                'invoice_id' => $invoiceId,
                 'client_id' => $client_id,
                 'amount' => $budget['total']
             ]));
@@ -93,7 +84,7 @@ class InvoiceService
             if ($ownsTransaction) {
                 $this->db->commit();
             }
-            return ['success' => true, 'invoice_id' => $invoice_id];
+            return ['success' => true, 'invoice_id' => $invoiceId];
 
         } catch (Exception $e) {
             if ($ownsTransaction) {
@@ -121,55 +112,40 @@ class InvoiceService
 
         try {
             // Get total pending amounts in receipts
-            $stmtMonto = $this->db->prepare("SELECT SUM(amount) FROM payment_receipts WHERE invoice_id = ? AND status = 'pending'");
-            $stmtMonto->execute([$invoice_id]);
-            $amount_paid_now = (float) $stmtMonto->fetchColumn();
+            $amount_paid_now = $this->invoiceRepo->getPendingPaymentReceiptsSum($invoice_id);
 
             $new_paid_amount = $invoice['paid_amount'] + $amount_paid_now;
 
             // Check if fully paid
             $is_fully_paid = $new_paid_amount >= $invoice['total'];
             $new_status = $is_fully_paid ? 'paid' : 'partial';
-            $paid_at_sql = $is_fully_paid ? 'NOW()' : 'NULL';
 
             // 1. Actualizar estado y pago de la factura
-            $this->db->prepare("UPDATE invoices SET status = ?, paid_amount = ?, paid_at = $paid_at_sql WHERE id = ?")
-                ->execute([$new_status, $new_paid_amount, $invoice_id]);
+            $this->invoiceRepo->updateInvoicePayment($invoice_id, $new_status, $new_paid_amount, $is_fully_paid);
 
             // 2. Actualizar estado del comprobante
-            $this->db->prepare("UPDATE payment_receipts SET status = 'verified', verified_by = ?, verified_at = NOW() WHERE invoice_id = ? AND status = 'pending'")
-                ->execute([$verified_by, $invoice_id]);
+            $this->invoiceRepo->verifyPendingReceipts($invoice_id, $verified_by);
 
             // 3. Obtener detalles de la factura para crear/verificar Servicio Activo
-            $stmt = $this->db->prepare("SELECT i.*, b.ticket_id, b.title as budget_title FROM invoices i JOIN budgets b ON i.budget_id = b.id WHERE i.id = ?");
-            $stmt->execute([$invoice_id]);
-            $inv = $stmt->fetch();
-
-            $stmtTicket = $this->db->prepare("SELECT service_plan_id FROM tickets WHERE id = ?");
-            $stmtTicket->execute([$inv['ticket_id']]);
-            $plan_id = $stmtTicket->fetchColumn();
+            $inv = $this->invoiceRepo->getInvoiceWithBudgetDetails($invoice_id);
+            $plan_id = $this->invoiceRepo->getServicePlanIdByTicket($inv['ticket_id']);
 
             // 4. Verificar si ya existe un Servicio Activo para esta factura (evitar duplicados)
-            $stmtCheck = $this->db->prepare("SELECT id FROM active_services WHERE invoice_id = ? LIMIT 1");
-            $stmtCheck->execute([$invoice_id]);
-            $existingService = $stmtCheck->fetchColumn();
+            $existingService = $this->invoiceRepo->hasActiveServiceForInvoice($invoice_id);
 
             if (!$existingService) {
                 // 5. Crear Servicio Activo (primer pago: parcial o total)
-                $sql = "INSERT INTO active_services (client_id, ticket_id, invoice_id, service_plan_id, name, start_date, activated_by, status) 
-                        VALUES (?, ?, ?, ?, ?, CURDATE(), ?, 'active')";
-                $this->db->prepare($sql)->execute([
-                    $inv['client_id'],
-                    $inv['ticket_id'],
-                    $invoice_id,
-                    $plan_id,
-                    $inv['budget_title'],
-                    $verified_by
+                $this->invoiceRepo->createActiveService([
+                    'client_id' => $inv['client_id'],
+                    'ticket_id' => $inv['ticket_id'],
+                    'invoice_id' => $invoice_id,
+                    'service_plan_id' => $plan_id,
+                    'name' => $inv['budget_title'],
+                    'activated_by' => $verified_by
                 ]);
 
                 // 6. Cerrar el Ticket de Pre-Venta al activar el servicio
-                $this->db->prepare("UPDATE tickets SET status = 'closed', updated_at = NOW() WHERE id = ?")
-                    ->execute([$inv['ticket_id']]);
+                $this->invoiceRepo->updateTicketStatus($inv['ticket_id'], 'closed');
 
                 AuditService::log('service_activated', [
                     'invoice_id' => $invoice_id,
@@ -247,8 +223,6 @@ class InvoiceService
 
     private function findInvoiceById(int $id): ?array
     {
-        $stmt = $this->db->prepare("SELECT * FROM invoices WHERE id = ?");
-        $stmt->execute([$id]);
-        return $stmt->fetch() ?: null;
+        return $this->invoiceRepo->findInvoiceById($id);
     }
 }

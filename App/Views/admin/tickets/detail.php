@@ -76,6 +76,20 @@
                             </p>
                         </div>
                     </div>
+
+                    <?php if (!empty($tasks)): ?>
+                        <div class="mb-3">
+                            <label class="text-info x-small uppercase fw-bold tracking-widest d-block mb-2">Items de Acción (IA)</label>
+                            <div class="space-y-2">
+                                <?php foreach ($tasks as $task): ?>
+                                    <div class="d-flex align-items-center gap-2 bg-white-5 p-2 rounded-3 border border-white-5">
+                                        <span class="material-symbols-outlined text-info fs-6">task_alt</span>
+                                        <span class="text-white-50 x-small"><?php echo $task['description']; ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <?php if (!\Core\Auth::isClient()): ?>
@@ -101,6 +115,19 @@
                                 Generar Presupuesto
                             </a>
                         <?php endif; ?>
+                    </div>
+
+                    <hr class="border-white-10 my-4">
+                    <div class="mb-4">
+                        <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-3">Copilot GAI</label>
+                        <button type="button" id="btn-generate-summary" class="btn btn-outline-info btn-sm w-100 fw-bold py-2 mb-3 d-flex align-items-center justify-content-center gap-2">
+                            <span class="material-symbols-outlined fs-6">auto_awesome</span>
+                            Generar Resumen de IA
+                        </button>
+                        <div id="ai-summary-container" class="bg-info bg-opacity-10 border border-info border-opacity-25 p-3 rounded-4 d-none">
+                            <p class="text-info x-small uppercase fw-black mb-2 tracking-widest">Resumen del Caso</p>
+                            <div id="ai-summary-content" class="text-white-50 small" style="line-height: 1.6;"></div>
+                        </div>
                     </div>
 
                     <form action="<?php echo url('ticket/updateStatus'); ?>" method="POST">
@@ -196,12 +223,17 @@
             </div>
 
             <div class="p-3 border-top border-white-10 bg-deep-black bg-opacity-30">
-                <form action="<?php echo url('chat/send'); ?>" method="POST" class="d-flex gap-2">
+                <form action="<?php echo url('chat/send'); ?>" method="POST" class="d-flex gap-2 align-items-center">
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
-                    <input type="text" name="message" class="form-control bg-steel border-white-10 text-white p-3"
-                        placeholder="Escribe un mensaje..." required autocomplete="off">
-                    <button type="submit" class="btn btn-primary px-4 d-flex align-items-center justify-content-center">
+                    <div class="position-relative flex-grow-1">
+                        <input type="text" name="message" id="chat-input" class="form-control bg-steel border-white-10 text-white p-3 pe-5"
+                            placeholder="Escribe un mensaje..." required autocomplete="off">
+                        <button type="button" id="btn-ai-rewrite" class="btn position-absolute top-50 end-0 translate-middle-y text-primary p-0 me-3" title="Mejorar tono con IA">
+                            <span class="material-symbols-outlined">magic_button</span>
+                        </button>
+                    </div>
+                    <button type="submit" class="btn btn-primary px-4 py-3 d-flex align-items-center justify-content-center">
                         <span class="material-symbols-outlined">send</span>
                     </button>
                 </form>
@@ -237,4 +269,82 @@
             })
             .catch(err => console.error('Error refreshing chat:', err));
     }, 5000);
+    // AI Summary logic
+    const btnSummary = document.getElementById('btn-generate-summary');
+    const summaryContainer = document.getElementById('ai-summary-container');
+    const summaryContent = document.getElementById('ai-summary-content');
+
+    if (btnSummary) {
+        btnSummary.addEventListener('click', async () => {
+            const originalHtml = btnSummary.innerHTML;
+            btnSummary.disabled = true;
+            btnSummary.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando...';
+
+            try {
+                const response = await fetch('<?php echo url("AI/generateSummary/" . $ticket["id"]); ?>');
+                const data = await response.json();
+
+                if (data.success) {
+                    summaryContent.innerHTML = data.summary.replace(/\n/g, '<br>');
+                    summaryContainer.classList.remove('d-none');
+                    btnSummary.classList.add('d-none'); // Hide button after success
+                } else {
+                    alert(data.error || 'Error al generar el resumen');
+                }
+            } catch (error) {
+                console.error('AI Error:', error);
+                alert('No se pudo conectar con el servicio de IA.');
+            } finally {
+                btnSummary.disabled = false;
+                btnSummary.innerHTML = originalHtml;
+            }
+        });
+    }
+
+    // AI Rewrite logic
+    const btnRewrite = document.getElementById('btn-ai-rewrite');
+    const chatInput = document.getElementById('chat-input');
+
+    if (btnRewrite) {
+        btnRewrite.addEventListener('click', async () => {
+            const draft = chatInput.value.trim();
+            if (!draft) return;
+
+            const originalIcon = btnRewrite.innerHTML;
+            btnRewrite.classList.add('spinning');
+            btnRewrite.disabled = true;
+
+            try {
+                const response = await fetch('<?php echo url("AI/rewriteDraft"); ?>', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ draft: draft })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    chatInput.value = data.rewritten;
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Copilot Error:', error);
+            } finally {
+                btnRewrite.classList.remove('spinning');
+                btnRewrite.disabled = false;
+                btnRewrite.innerHTML = originalIcon;
+            }
+        });
+    }
 </script>
+
+<style>
+@keyframes spin {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+.spinning span {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+</style>

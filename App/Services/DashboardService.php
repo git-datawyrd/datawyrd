@@ -54,8 +54,9 @@ class DashboardService
      */
     public function getLatestTicketId(int $clientId): ?int
     {
-        $stmt = $this->db->prepare("SELECT id FROM tickets WHERE client_id = ? ORDER BY created_at DESC LIMIT 1");
-        $stmt->execute([$clientId]);
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+        $stmt = $this->db->prepare("SELECT id FROM tickets WHERE client_id = ? AND tenant_id = ? ORDER BY created_at DESC LIMIT 1");
+        $stmt->execute([$clientId, $tenantId]);
         $id = $stmt->fetchColumn();
         return $id ? (int) $id : null;
     }
@@ -65,32 +66,56 @@ class DashboardService
      */
     public function getAdminStats(): array
     {
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
         $ticketStats = $this->ticketRepo->getStats();
 
         // 1. % Tickets Cerrados: closed / (total - void)
-        $totalTickets = (int) $this->db->query("SELECT COUNT(*) FROM tickets")->fetchColumn();
-        $voidTickets = (int) $this->db->query("SELECT COUNT(*) FROM tickets WHERE status = 'void'")->fetchColumn();
-        $closedTickets = (int) $this->db->query("SELECT COUNT(*) FROM tickets WHERE status = 'closed'")->fetchColumn();
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM tickets WHERE tenant_id = ?");
+        $stmt->execute([$tenantId]);
+        $totalTickets = (int) $stmt->fetchColumn();
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM tickets WHERE status = 'void' AND tenant_id = ?");
+        $stmt->execute([$tenantId]);
+        $voidTickets = (int) $stmt->fetchColumn();
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM tickets WHERE status = 'closed' AND tenant_id = ?");
+        $stmt->execute([$tenantId]);
+        $closedTickets = (int) $stmt->fetchColumn();
 
         $validTickets = $totalTickets - $voidTickets;
         $closedPct = $validTickets > 0 ? round(($closedTickets / $validTickets) * 100) : 0;
 
         // 2. % Monto Pagado
-        $invoiceTotals = $this->db->query("SELECT SUM(total) as total_amount, SUM(paid_amount) as total_paid FROM invoices")->fetch(PDO::FETCH_ASSOC);
+        $stmt = $this->db->prepare("SELECT SUM(total) as total_amount, SUM(paid_amount) as total_paid FROM invoices WHERE tenant_id = ?");
+        $stmt->execute([$tenantId]);
+        $invoiceTotals = $stmt->fetch(PDO::FETCH_ASSOC);
+
         $totalAmount = (float) ($invoiceTotals['total_amount'] ?? 0);
         $totalPaid = (float) ($invoiceTotals['total_paid'] ?? 0);
         $paidPct = $totalAmount > 0 ? round(($totalPaid / $totalAmount) * 100) : 0;
 
         // 3. Desglose Usuarios
-        $usersBreakdown = $this->db->query("SELECT role, COUNT(*) as count FROM users GROUP BY role")->fetchAll(PDO::FETCH_KEY_PAIR);
+        $stmt = $this->db->prepare("SELECT role, COUNT(*) as count FROM users WHERE tenant_id = ? GROUP BY role");
+        $stmt->execute([$tenantId]);
+        $usersBreakdown = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        // 4. Active Services
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM active_services WHERE status = 'active' AND tenant_id = ?");
+        $stmt->execute([$tenantId]);
+        $activeServices = $stmt->fetchColumn();
+
+        // 5. Total Users
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE tenant_id = ?");
+        $stmt->execute([$tenantId]);
+        $totalUsers = $stmt->fetchColumn();
 
         return [
             'total_tickets' => $totalTickets,
             'open_tickets' => $ticketStats['open'],
             'closed_tickets_pct' => $closedPct,
-            'active_services' => $this->db->query("SELECT COUNT(*) FROM active_services WHERE status = 'active'")->fetchColumn(),
+            'active_services' => $activeServices,
             'paid_invoices_pct' => $paidPct,
-            'total_users' => $this->db->query("SELECT COUNT(*) FROM users")->fetchColumn(),
+            'total_users' => $totalUsers,
             'users_breakdown' => $usersBreakdown,
             'conversions' => $this->analyticsService->getCommercialConversions(),
             'financial' => $this->analyticsService->getFinancialKPIs(),
@@ -103,19 +128,24 @@ class DashboardService
      */
     public function getDailyPerformance(int $days = 30): array
     {
-        $stmtTickets = $this->db->query("SELECT DATE(created_at) as date, COUNT(*) as count FROM tickets 
-                                    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL $days DAY) 
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+
+        $stmtTickets = $this->db->prepare("SELECT DATE(created_at) as date, COUNT(*) as count FROM tickets 
+                                    WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND tenant_id = ?
                                     GROUP BY date");
+        $stmtTickets->execute([$days, $tenantId]);
         $ticketsByDate = $stmtTickets->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $stmtUsers = $this->db->query("SELECT DATE(created_at) as date, COUNT(*) as count FROM users 
-                                 WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL $days DAY) 
+        $stmtUsers = $this->db->prepare("SELECT DATE(created_at) as date, COUNT(*) as count FROM users 
+                                 WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND tenant_id = ?
                                  GROUP BY date");
+        $stmtUsers->execute([$days, $tenantId]);
         $usersByDate = $stmtUsers->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $stmtClients = $this->db->query("SELECT DATE(created_at) as date, COUNT(*) as count FROM users 
-                                   WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL $days DAY) AND role = 'client'
+        $stmtClients = $this->db->prepare("SELECT DATE(created_at) as date, COUNT(*) as count FROM users 
+                                   WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? DAY) AND role = 'client' AND tenant_id = ?
                                    GROUP BY date");
+        $stmtClients->execute([$days, $tenantId]);
         $clientsByDate = $stmtClients->fetchAll(PDO::FETCH_KEY_PAIR);
 
         $dailyData = [];
@@ -137,19 +167,24 @@ class DashboardService
      */
     public function getMonthlyPerformance(int $months = 12): array
     {
-        $stmtTicketsM = $this->db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM tickets 
-                                     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL $months MONTH) 
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+
+        $stmtTicketsM = $this->db->prepare("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM tickets 
+                                     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? MONTH) AND tenant_id = ?
                                      GROUP BY month");
+        $stmtTicketsM->execute([$months, $tenantId]);
         $ticketsByMonth = $stmtTicketsM->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $stmtUsersM = $this->db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM users 
-                                   WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL $months MONTH) 
+        $stmtUsersM = $this->db->prepare("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM users 
+                                   WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? MONTH) AND tenant_id = ?
                                    GROUP BY month");
+        $stmtUsersM->execute([$months, $tenantId]);
         $usersByMonth = $stmtUsersM->fetchAll(PDO::FETCH_KEY_PAIR);
 
-        $stmtClientsM = $this->db->query("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM users 
-                                     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL $months MONTH) AND role = 'client'
+        $stmtClientsM = $this->db->prepare("SELECT DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count FROM users 
+                                     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL ? MONTH) AND role = 'client' AND tenant_id = ?
                                      GROUP BY month");
+        $stmtClientsM->execute([$months, $tenantId]);
         $clientsByMonth = $stmtClientsM->fetchAll(PDO::FETCH_KEY_PAIR);
 
         $monthlyData = [];
@@ -168,14 +203,17 @@ class DashboardService
 
     public function getResourceDistribution(): array
     {
-        $stmt = $this->db->query("
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+        $stmt = $this->db->prepare("
             SELECT sc.name as category, t.status, COUNT(*) as count 
             FROM tickets t 
             JOIN service_plans sp ON t.service_plan_id = sp.id 
             JOIN services s ON sp.service_id = s.id 
             JOIN service_categories sc ON s.category_id = sc.id 
+            WHERE t.tenant_id = ?
             GROUP BY sc.name, t.status
         ");
+        $stmt->execute([$tenantId]);
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $distribution = [];
@@ -197,10 +235,15 @@ class DashboardService
      */
     public function getRecentLeadsWithScores(int $limit = 5): array
     {
-        $stmt = $this->db->query("SELECT u.id, u.name, u.email, u.company, u.created_at,
-                                  (SELECT COUNT(*) FROM tickets WHERE client_id = u.id) as ticket_count
-                                  FROM users u WHERE u.role = 'client' 
-                                  ORDER BY u.created_at DESC LIMIT $limit");
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+        $stmt = $this->db->prepare("SELECT u.id, u.name, u.email, u.company, u.created_at,
+                                  (SELECT COUNT(*) FROM tickets WHERE client_id = u.id AND tenant_id = ?) as ticket_count
+                                  FROM users u WHERE u.role = 'client' AND u.tenant_id = ?
+                                  ORDER BY u.created_at DESC LIMIT ?");
+        $stmt->bindValue(1, $tenantId);
+        $stmt->bindValue(2, $tenantId);
+        $stmt->bindValue(3, $limit, PDO::PARAM_INT);
+        $stmt->execute();
         $leads = $stmt->fetchAll();
 
         $leadService = new \App\Services\CRM\LeadService();

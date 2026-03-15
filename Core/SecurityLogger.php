@@ -65,12 +65,15 @@ class SecurityLogger
             $payload = json_encode($data['details']);
             $signatureHash = hash('sha256', $lastHash . $data['action'] . $payload . $data['timestamp'] . $data['ip']);
 
-            $sql = "INSERT INTO audit_logs (request_id, user_id, user_email, user_role, action, details, level, ip_address, user_agent, request_uri, request_method, signature_hash, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $tenantId = Config::get('current_tenant_id', 1);
+
+            $sql = "INSERT INTO audit_logs (request_id, tenant_id, user_id, user_email, user_role, action, details, level, ip_address, user_agent, request_uri, request_method, signature_hash, created_at) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             $stmt = $db->prepare($sql);
             $stmt->execute([
                 $data['request_id'],
+                $tenantId,
                 $data['user_id'],
                 $data['user_email'],
                 Auth::user()['role'] ?? 'guest',

@@ -536,7 +536,13 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 - [x] Ecosistema de Observabilidad y Métricas de Negocio.
 - [x] Infraestructura Multi-Tenant (Middleware & DB Isolation).
 
-### 🔮 Próximos Pasos (Evolución 11.0)
+### 🔮 Próximos Pasos (Evolución 11.0 y Misión Enterprise)
+- [ ] **Módulo GAI (Generative AI Integration)**: Asistencia LLM para auto-resúmenes de tickets y extracción de action items.
+- [ ] **Data Wyrd Multi-Tenant & SaaS Core**: Habilitación nativa de inquilinos.
+- [ ] **Pipelines CI/CD & Test-Driven**: Extender cobertura PHPUnit al 80% y generar flujos de despliegue inmutables.
+- [ ] **CQRS & Event Sourcing (FinOps)**: Auditoría infalible de pagos transaccionales mediante historial de eventos puros.
+- [ ] **Dockerización Genérica**: Contenerización de la plataforma para escalabilidad horizontal en clústeres.
+- [ ] **Real-Time Absoluto**: Integración de WebSockets nativa.
 - [ ] Aplicación Móvil Companion conectada vía API v1.
 - [ ] Expansión de motor de reglas para integraciones externas (Webhooks out).
 - [ ] Dashboard UI Builder para roles Staff y Cliente.

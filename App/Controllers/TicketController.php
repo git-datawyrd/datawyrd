@@ -7,6 +7,7 @@ use App\Models\User;
 use Core\Session;
 use Core\Auth;
 use Core\Mail;
+use App\Services\AIService;
 use PDO;
 
 class TicketController extends Controller
@@ -180,6 +181,25 @@ class TicketController extends Controller
 
             Session::flash('success', '¡Solicitud recibida! Hemos enviado detalles a tu correo.');
 
+            // 🤖 GAI-02: Extracción de Action Items (E11-007)
+            $aiService = new AIService();
+            if ($aiService->isEnabled()) {
+                $lastTicketId = $db->lastInsertId();
+                $tasks = $aiService->extractActionItems($description);
+                if ($tasks && is_array($tasks)) {
+                    $taskSql = "INSERT INTO ticket_tasks (ticket_id, description) VALUES (?, ?)";
+                    $taskStmt = $db->prepare($taskSql);
+                    foreach ($tasks as $task) {
+                        $taskStmt->execute([$lastTicketId, $task]);
+                    }
+                    
+                    // Insertar mensaje de sistema informando de las tareas sugeridas
+                    $sysMsg = "🤖 Copilot GAI ha analizado tu requerimiento y sugerido " . count($tasks) . " tareas iniciales.";
+                    $db->prepare("INSERT INTO chat_messages (ticket_id, user_id, message, message_type) VALUES (?, 0, ?, 'system')")
+                      ->execute([$lastTicketId, $sysMsg]);
+                }
+            }
+
             // AUTO-LOGIN: Set user in session so they can access the dashboard immediately
             session_regenerate_id(true);
             Session::set('user', $user);
@@ -241,13 +261,19 @@ class TicketController extends Controller
             $invoice = $stmt->fetch();
         }
 
+        // Get AI Action Items
+        $stmt = $db->prepare("SELECT * FROM ticket_tasks WHERE ticket_id = ? ORDER BY id ASC");
+        $stmt->execute([$id]);
+        $tasks = $stmt->fetchAll();
+
         $layout = Auth::role();
         $this->viewLayout(Auth::role() . '/tickets/detail', $layout, [
             'title' => 'Detalle de Ticket: ' . $ticket['ticket_number'],
             'ticket' => $ticket,
             'messages' => $messages,
             'budget' => $budget,
-            'invoice' => $invoice
+            'invoice' => $invoice,
+            'tasks' => $tasks
         ]);
     }
 

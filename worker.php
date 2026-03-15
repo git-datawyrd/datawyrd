@@ -46,6 +46,13 @@ while (true) {
                 $class = $job['job_class'];
                 $payload = json_decode($job['payload'], true);
 
+                // Set tenant context for this job (Zero Trust Segregation)
+                if (isset($job['tenant_id'])) {
+                    \Core\Config::set('current_tenant_id', (int) $job['tenant_id']);
+                } else {
+                    \Core\Config::set('current_tenant_id', 1); // Default system tenant
+                }
+
                 if (class_exists($class)) {
                     $instance = new $class();
                     if (method_exists($instance, 'handle')) {
@@ -53,7 +60,7 @@ while (true) {
 
                         // Success: delete job
                         $db->prepare("DELETE FROM jobs WHERE id = ?")->execute([$job['id']]);
-                        echo "[" . date('Y-m-d H:i:s') . "] Completed Job ID {$job['id']}\n";
+                        echo "[" . date('Y-m-d H:i:s') . "] Completed Job ID {$job['id']} for Tenant {$job['tenant_id']}\n";
                     } else {
                         throw new \Exception("Method handle() missing in {$class}");
                     }

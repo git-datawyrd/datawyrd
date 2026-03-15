@@ -158,6 +158,12 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 
 ---
 
-## 📅 Próximos Pasos Certificados
+## 📅 Próximos Pasos Certificados (Evolución 11.0 & Misión Enterprise)
 1.  **Mobile Companion App**: Iniciar desarrollo de frontend móvil conectando al `ApiRouter` v1 que actualmente está habilitado.
 2.  **Deploy Final**: Test en producción y monitorización de Worker.php (Supervisor) y Cron.
+3.  **Módulo GAI (Generative AI Integration)**: Asistencia LLM para auto-resúmenes de tickets y extracción de action items.
+4.  **Data Wyrd Multi-Tenant & SaaS Core**: Habilitación nativa de inquilinos.
+5.  **Pipelines CI/CD & Test-Driven**: Extender cobertura PHPUnit al 80% y generar flujos de despliegue inmutables.
+6.  **CQRS & Event Sourcing (FinOps)**: Auditoría infalible de pagos transaccionales mediante historial de eventos puros.
+7.  **Dockerización Genérica**: Contenerización de la plataforma para escalabilidad horizontal en clústeres.
+8.  **Real-Time Absoluto**: Integración de WebSockets nativa.

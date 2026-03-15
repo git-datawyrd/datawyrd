@@ -19,7 +19,7 @@ class TicketService
     private $ticketRepo;
     private $auditService;
 
-    public function __construct(\App\Repositories\TicketRepository $ticketRepo, \PDO $db, \App\Services\AuditService $auditService)
+    public function __construct(\App\Repositories\TicketRepositoryInterface $ticketRepo, \PDO $db, \App\Services\AuditService $auditService)
     {
         $this->ticketRepo = $ticketRepo;
         $this->db = $db;
@@ -54,21 +54,16 @@ class TicketService
             $ticketNumber = $this->generateTicketNumber();
 
             // Crear ticket
-            $sql = "INSERT INTO tickets (ticket_number, client_id, service_plan_id, subject, description, priority, status, created_at) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                $ticketNumber,
-                $clientId,
-                $data['service_plan_id'],
-                $data['subject'],
-                $data['description'],
-                $data['priority'] ?? 'normal',
-                TicketStatus::OPEN
-            ]);
-
-            $ticketId = $this->db->lastInsertId();
+            $ticketData = [
+                'ticket_number' => $ticketNumber,
+                'client_id' => $clientId,
+                'service_plan_id' => $data['service_plan_id'],
+                'subject' => $data['subject'],
+                'description' => $data['description'],
+                'priority' => $data['priority'] ?? 'normal',
+                'status' => TicketStatus::OPEN
+            ];
+            $ticketId = $this->ticketRepo->createTicket($ticketData);
 
             // Registrar en auditoría
             $this->auditService->log('ticket_created', [
@@ -138,9 +133,7 @@ class TicketService
             }
 
             // Actualizar estado
-            $sql = "UPDATE tickets SET status = ?, updated_at = NOW() WHERE id = ?";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$newStatus, $ticketId]);
+            $this->ticketRepo->updateStatus($ticketId, $newStatus);
 
             // Registrar en auditoría
             $this->auditService->log('ticket_status_changed', [
@@ -189,9 +182,7 @@ class TicketService
         }
 
         try {
-            $sql = "UPDATE tickets SET assigned_to = ?, updated_at = NOW() WHERE id = ?";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([$staffId, $ticketId]);
+            $this->ticketRepo->assignTicket($ticketId, $staffId);
 
             // Registrar en auditoría
             $this->auditService->log('ticket_assigned', [
@@ -218,12 +209,7 @@ class TicketService
      */
     private function getTicket(int $ticketId): ?array
     {
-        $sql = "SELECT * FROM tickets WHERE id = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$ticketId]);
-        $ticket = $stmt->fetch();
-
-        return $ticket ?: null;
+        return $this->ticketRepo->find($ticketId);
     }
 
     /**
@@ -239,31 +225,23 @@ class TicketService
      */
     private function getOrCreateClient(array $data): int
     {
-        // Buscar cliente existente
-        $sql = "SELECT id FROM users WHERE email = ?";
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$data['email']]);
-        $client = $stmt->fetch();
+        $client = $this->ticketRepo->getClientByEmail($data['email']);
 
         if ($client) {
             return $client['id'];
         }
 
         // Crear nuevo cliente
-        $sql = "INSERT INTO users (uuid, name, email, phone, company, password, role, is_active, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, 'client', 1, NOW())";
+        $clientData = [
+            'uuid' => bin2hex(random_bytes(16)),
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'phone' => $data['phone'] ?? null,
+            'company' => $data['company'] ?? null,
+            'password' => \Core\Auth::hashPassword(bin2hex(random_bytes(8)))
+        ];
 
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            bin2hex(random_bytes(16)),
-            $data['name'],
-            $data['email'],
-            $data['phone'] ?? null,
-            $data['company'] ?? null,
-            \Core\Auth::hashPassword(bin2hex(random_bytes(8)))
-        ]);
-
-        return $this->db->lastInsertId();
+        return $this->ticketRepo->createClient($clientData);
     }
 
     /**
@@ -271,14 +249,7 @@ class TicketService
      */
     private function sendCreationNotification(int $ticketId, int $clientId): void
     {
-        $sql = "SELECT u.email, u.name, t.ticket_number, t.subject 
-                FROM tickets t 
-                JOIN users u ON t.client_id = u.id 
-                WHERE t.id = ?";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$ticketId]);
-        $data = $stmt->fetch();
+        $data = $this->ticketRepo->getTicketWithClientAndPlan($ticketId);
 
         if ($data) {
             Mail::send(
@@ -294,14 +265,7 @@ class TicketService
      */
     private function sendStatusChangeNotification(int $ticketId, string $newStatus): void
     {
-        $sql = "SELECT u.email, t.ticket_number 
-                FROM tickets t 
-                JOIN users u ON t.client_id = u.id 
-                WHERE t.id = ?";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$ticketId]);
-        $data = $stmt->fetch();
+        $data = $this->ticketRepo->getTicketWithClientAndPlan($ticketId);
 
         if ($data) {
             $status = TicketStatus::fromString($newStatus);

@@ -1,1 +1,4 @@
 [2026-03-04 09:28:46] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"culerias@gmail.com"}
+[2026-03-10 19:29:06] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"hboadar@gmail.com"}
+[2026-03-10 19:29:23] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"admin@datawyrd.com"}
+[2026-03-15 09:54:16] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"admin@datawyrd.com"}

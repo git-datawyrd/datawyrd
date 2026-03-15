@@ -1,169 +1,106 @@
 <?php
 namespace Core;
 
-use Exception;
-use ReflectionClass;
-use ReflectionMethod;
-use ReflectionParameter;
-
 /**
- * Simple Dependency Injection Container
+ * Dependency Injection Container
  */
 class Container
 {
-    private array $instances = [];
+    private static ?Container $instance = null;
     private array $bindings = [];
+    private array $instances = [];
 
-    /**
-     * Bind a class or interface to a resolver.
-     */
-    public function bind(string $abstract, $concrete = null, bool $shared = false): void
+    public static function getInstance(): Container
     {
-        if ($concrete === null) {
-            $concrete = $abstract;
+        if (self::$instance === null) {
+            self::$instance = new self();
         }
-        $this->bindings[$abstract] = [
-            'concrete' => $concrete,
-            'shared' => $shared
-        ];
+        return self::$instance;
     }
 
-    /**
-     * Register a singleton binding.
-     */
-    public function singleton(string $abstract, $concrete = null): void
+    public function bind(string $abstract, callable $concrete): void
     {
-        $this->bind($abstract, $concrete, true);
+        $this->bindings[$abstract] = $concrete;
     }
 
-    /**
-     * Register an existing instance as a singleton.
-     */
-    public function instance(string $abstract, $instance): void
+    public function singleton(string $abstract, callable $concrete): void
     {
-        $this->instances[$abstract] = $instance;
+        $this->bind($abstract, function ($container) use ($concrete, $abstract) {
+            if (!isset($this->instances[$abstract])) {
+                $this->instances[$abstract] = $concrete($container);
+            }
+            return $this->instances[$abstract];
+        });
     }
 
-    /**
-     * Resolve the given type from the container.
-     */
     public function get(string $abstract)
     {
-        // 1. Check if we already have a shared instance
         if (isset($this->instances[$abstract])) {
             return $this->instances[$abstract];
         }
 
-        // 2. Get the concrete implementation and sharing status
-        $concrete = $this->bindings[$abstract]['concrete'] ?? $abstract;
-        $shared = $this->bindings[$abstract]['shared'] ?? false;
-
-        // 3. Resolve the object
-        if ($concrete instanceof \Closure) {
-            $object = $concrete($this);
-        } else {
-            $object = $this->build($concrete);
+        if (isset($this->bindings[$abstract])) {
+            return $this->bindings[$abstract]($this);
         }
 
-        // 4. Store if shared
-        if ($shared) {
-            $this->instances[$abstract] = $object;
-        }
-
-        return $object;
+        return $this->build($abstract);
     }
 
-    /**
-     * Build an instance of the given class.
-     */
     public function build(string $concrete)
     {
-        $reflection = new ReflectionClass($concrete);
+        if (!class_exists($concrete)) {
+            throw new \Exception("Class {$concrete} does not exist");
+        }
+        
+        $reflector = new \ReflectionClass($concrete);
 
-        if (!$reflection->isInstantiable()) {
-            throw new Exception("Class {$concrete} is not instantiable.");
+        if (!$reflector->isInstantiable()) {
+            throw new \Exception("Class {$concrete} is not instantiable");
         }
 
-        $constructor = $reflection->getConstructor();
+        $constructor = $reflector->getConstructor();
 
-        if (null === $constructor) {
-            return new $concrete;
+        if (is_null($constructor)) {
+            return new $concrete();
         }
 
         $parameters = $constructor->getParameters();
         $dependencies = $this->resolveDependencies($parameters);
 
-        return $reflection->newInstanceArgs($dependencies);
+        return $reflector->newInstanceArgs($dependencies);
     }
 
-    /**
-     * Resolve dependencies for parameters.
-     */
-    private function resolveDependencies(array $parameters): array
+    protected function resolveDependencies(array $parameters)
     {
         $dependencies = [];
 
         foreach ($parameters as $parameter) {
             $type = $parameter->getType();
 
-            if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+            if ($type && !$type->isBuiltin() && $type instanceof \ReflectionNamedType) {
                 $dependencies[] = $this->get($type->getName());
-            } elseif ($parameter->isDefaultValueAvailable()) {
-                $dependencies[] = $parameter->getDefaultValue();
             } else {
-                throw new Exception("Cannot resolve parameter {$parameter->getName()}");
+                if ($parameter->isDefaultValueAvailable()) {
+                    $dependencies[] = $parameter->getDefaultValue();
+                } else {
+                    throw new \Exception("Cannot resolve parameter {$parameter->name}");
+                }
             }
         }
 
         return $dependencies;
     }
 
-    /**
-     * Resolve a method with dependencies.
-     */
-    public function call($instance, string $method, array $extraParams = [])
+    public function instance(string $abstract, $instance): void
     {
-        $reflection = new ReflectionMethod($instance, $method);
-        $parameters = $reflection->getParameters();
-        $dependencies = [];
+        $this->instances[$abstract] = $instance;
+    }
 
-        $positionalIndex = 0;
-
-        foreach ($parameters as $parameter) {
-            $name = $parameter->getName();
-            $type = $parameter->getType();
-
-            // 1. Variadic parameter (...$params)
-            if ($parameter->isVariadic()) {
-                // Collect all remaining extraParams from current positionalIndex
-                $remaining = array_slice($extraParams, $positionalIndex);
-                // If extraParams is associative but we are at the end, this still works
-                // variadic must be an array of arguments
-                $dependencies = array_merge($dependencies, $remaining);
-                break; // Variadic must be the last parameter
-            }
-
-            // 2. Match by Class/Type hint (Dependency Injection)
-            if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
-                $dependencies[] = $this->get($type->getName());
-            }
-            // 3. Match by Name (associative array)
-            elseif (array_key_exists($name, $extraParams)) {
-                $dependencies[] = $extraParams[$name];
-            }
-            // 4. Match by Position (for URL parameters like $slug)
-            elseif (array_key_exists($positionalIndex, $extraParams)) {
-                $dependencies[] = $extraParams[$positionalIndex];
-                $positionalIndex++;
-            }
-            // 5. Default Value
-            elseif ($parameter->isDefaultValueAvailable()) {
-                $dependencies[] = $parameter->getDefaultValue();
-            } else {
-                throw new Exception("Cannot resolve parameter {$name} for method {$method}");
-            }
+    public function call($instance, string $method, array $parameters = [])
+    {
+        if (!method_exists($instance, $method)) {
+            throw new \Exception("Method {$method} does not exist on class " . get_class($instance));
         }
-
-        return $reflection->invokeArgs($instance, $dependencies);
+        return call_user_func_array([$instance, $method], $parameters);
     }
 }
