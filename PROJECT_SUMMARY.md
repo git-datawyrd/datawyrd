@@ -1,6 +1,6 @@
-**Estado al:** 15 de Marzo, 2026 (Enterprise Evolution: GAI, Real-Time & FinOps)  
-**Versión:** 11.0.0  
-**Estado:** ✅ **Evolución 11.0: Módulo GAI, Reactor WebSockets e Inmutabilidad Contable (Desplegado)**
+**Estado al:** 15 de Marzo, 2026 (Premium Showcase & Commercial Hardening)  
+**Versión:** 11.2.0  
+**Estado:** ✅ **Evolución 11.2: Showcase Inmersivo, Pre-selección de Planes y Blindaje Comercial (Desplegado)**
 
 ## 🎯 Visión del Proyecto
 Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto rendimiento. Con la implementación de la **Fase 4**, el sistema cuenta ahora con seguridad criptográfica impenetrable, observabilidad inmutable y rutinas analíticas de IA que evitan cuellos de botella mediante asincronía y CRON.
@@ -150,7 +150,10 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Real-Time Reactor**: Servidor WebSocket nativo (Ratchet + Redis) para notificaciones y chat instantáneo.
     - [x] **FinOps Event Sourcing**: Migración a modelo inmutable de eventos contables para facturación infalible.
     - [x] **CI/CD Pipeline**: Automatización de pruebas unitarias y despliegue vía GitHub Actions.
-    - [x] **Multi-Currency Webhooks**: Corrección y blindaje de conversión monetaria dinámica (u$d/ARS) vía metadatos.
+    - [x] **Multi-Currency Dynamic Conversion**: Blindaje total de la pasarela de MercadoPago. El sistema ahora garantiza que los cobros y registros contables reflejen la conversión exacta (u$d a ARS) sin pérdida de precisión ni saldo negativo erróneo.
+    - [x] **Enterprise Showcase (Data Wyrd OS)**: Sección inmersiva en la Home con diseño Glassmorphism coordinado con la estética de Diferenciación Estratégica.
+    - [x] **Automated Funnel (Pre-select Logic)**: Los botones de producto ahora inyectan parámetros de pre-selección en el formulario de contacto, eliminando fricción del cliente.
+    - [x] **Agencia Digital & Productos**: Integración de la nueva categoría "Productos" en la navegación global (Header/Footer).
 
 ---
 

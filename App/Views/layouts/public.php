@@ -61,6 +61,8 @@ $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_
                                 href="<?php echo url('#pilares'); ?>">Ver Todos</a></li>
                     </ul>
                 </div>
+                <a href="<?php echo url('#dw-os-showcase'); ?>"
+                    class="text-white text-decoration-none x-small transition-colors hover-gold tracking-widest">Productos</a>
                 <a href="<?php echo url('blog'); ?>"
                     class="text-white text-decoration-none x-small transition-colors hover-gold tracking-widest">Blog</a>
                 <a href="<?php echo url('ticket/request'); ?>"
@@ -214,6 +216,8 @@ $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_
                         <li class="mb-2"><a href="<?php echo url('#como-trabajamos'); ?>"
                                 class="text-white-50 text-decoration-none hover-gold transition-colors">Cómo
                                 Trabajamos</a></li>
+                        <li class="mb-2"><a href="<?php echo url('#dw-os-showcase'); ?>"
+                                class="text-white-50 text-decoration-none hover-gold transition-colors">Productos</a></li>
                         <li class="mb-2"><a href="<?php echo url('blog'); ?>"
                                 class="text-white-50 text-decoration-none hover-gold transition-colors">Blog</a></li>
                         <li class="mb-2"><a href="<?php echo url('ticket/request'); ?>"

@@ -195,6 +195,26 @@
 
         contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    // Pre-select plan from URL (E11-OS)
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const preselect = urlParams.get('preselect');
+        
+        if (preselect) {
+            // Mapping from PHP
+            const plans = <?php echo json_encode(array_map(function($p) use ($service) {
+                return ['id' => $p['id'], 'name' => $service['name'] . ' - ' . $p['name']];
+            }, $plans)); ?>;
+            
+            const targetPlan = plans.find(p => p.name.includes(preselect));
+            if (targetPlan) {
+                setTimeout(() => {
+                    orderPlan(targetPlan.id, targetPlan.name);
+                }, 500);
+            }
+        }
+    });
 </script>
 
 <style>
