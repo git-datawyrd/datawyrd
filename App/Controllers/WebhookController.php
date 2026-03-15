@@ -54,7 +54,17 @@ class WebhookController extends Controller
 
                     if (isset($paymentInfo['status']) && $paymentInfo['status'] === 'approved') {
                         $invoiceId = $paymentInfo['external_reference'] ?? null;
-                        $amount = $paymentInfo['transaction_amount'] ?? 0;
+                        $transactionAmount = $paymentInfo['transaction_amount'] ?? 0;
+                        
+                        // 🚀 Multi-Currency Fix: Check metadata for original amount
+                        $metadata = $paymentInfo['metadata'] ?? [];
+                        if (!empty($metadata['original_amount'])) {
+                            $amount = (float) $metadata['original_amount'];
+                        } else {
+                            // Fallback: Inverse conversion using current rate
+                            $exchangeRate = (float) \Core\Config::get('payment.exchange_rate') ?: 1;
+                            $amount = $transactionAmount / $exchangeRate;
+                        }
 
                         if ($invoiceId) {
                             $db = \Core\Database::getInstance()->getConnection();

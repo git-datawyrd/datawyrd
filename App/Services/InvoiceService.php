@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Domain\Invoice\InvoiceStatus;
 use App\Policies\InvoicePolicy;
 use App\Services\AuditService;
+use App\Services\FinOpsService;
 use App\Models\Notification;
 use Core\Database;
 use Exception;
@@ -63,6 +64,14 @@ class InvoiceService
                 'created_by' => $created_by
             ]);
 
+            // 🚀 Event Sourcing (E11-012)
+            $finOps = new FinOpsService();
+            $finOps->recordEvent($invoiceId, 'CREATE', $budget['total'], [
+                'budget_id' => $budget_id,
+                'subtotal' => $budget['subtotal'],
+                'tax_amount' => $budget['tax_amount']
+            ], $created_by);
+
             // Actualizar estado del ticket a 'invoiced'
             $this->invoiceRepo->updateTicketStatus($budget['ticket_id'], 'invoiced');
 
@@ -114,14 +123,19 @@ class InvoiceService
             // Get total pending amounts in receipts
             $amount_paid_now = $this->invoiceRepo->getPendingPaymentReceiptsSum($invoice_id);
 
-            $new_paid_amount = $invoice['paid_amount'] + $amount_paid_now;
+            // 🚀 Event Sourcing (E11-013)
+            $finOps = new FinOpsService();
+            $finOps->recordEvent($invoice_id, 'APPLY_PAYMENT', $amount_paid_now, [
+                'batch_confirmation' => true,
+                'verified_by' => $verified_by
+            ], $verified_by);
 
-            // Check if fully paid
-            $is_fully_paid = $new_paid_amount >= $invoice['total'];
-            $new_status = $is_fully_paid ? 'paid' : 'partial';
+            // Proyectar el estado actualizado basado en eventos
+            $finOps->syncInvoiceProjection($invoice_id);
+            $balance = $finOps->calculateBalance($invoice_id);
 
-            // 1. Actualizar estado y pago de la factura
-            $this->invoiceRepo->updateInvoicePayment($invoice_id, $new_status, $new_paid_amount, $is_fully_paid);
+            $is_fully_paid = $balance['is_fully_paid'];
+            $new_status = $balance['is_void'] ? 'void' : ($is_fully_paid ? 'paid' : 'partial');
 
             // 2. Actualizar estado del comprobante
             $this->invoiceRepo->verifyPendingReceipts($invoice_id, $verified_by);

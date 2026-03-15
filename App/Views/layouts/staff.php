@@ -340,6 +340,7 @@
     </script>
     <script src="<?php echo url('assets/js/session_monitor.js'); ?>"></script>
     <script src="<?php echo url('assets/js/notifications.js'); ?>"></script>
+    <script src="<?php echo url('assets/js/realtime.js'); ?>"></script>
 </body>
 
 </html>

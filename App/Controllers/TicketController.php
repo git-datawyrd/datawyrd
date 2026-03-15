@@ -8,6 +8,7 @@ use Core\Session;
 use Core\Auth;
 use Core\Mail;
 use App\Services\AIService;
+use App\Services\RealTimeService;
 use PDO;
 
 class TicketController extends Controller
@@ -326,6 +327,13 @@ class TicketController extends Controller
             if ($client_id) {
                 \App\Models\Notification::send($client_id, 'ticket_update', 'Actualización de Ticket', "Tu ticket " . ($info['ticket_number'] ?? '') . " ha cambiado a estado: " . translateStatus($status), '/ticket/detail/' . $id);
             }
+
+            // 🚀 Real-Time Broadcast (E11-011)
+            RealTimeService::broadcast('ticket_status_update', [
+                'ticket_id' => $id,
+                'ticket_number' => $info['ticket_number'] ?? 'unknown',
+                'status' => translateStatus($status)
+            ]);
 
             $this->redirect('/ticket/detail/' . $id);
         }

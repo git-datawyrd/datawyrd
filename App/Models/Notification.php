@@ -14,7 +14,19 @@ class Notification
         $sql = "INSERT INTO notifications (user_id, type, title, message, link, is_read, created_at) 
                 VALUES (?, ?, ?, ?, ?, 0, NOW())";
         $stmt = $db->prepare($sql);
-        return $stmt->execute([$user_id, $type, $title, $message, $link]);
+        $res = $stmt->execute([$user_id, $type, $title, $message, $link]);
+
+        if ($res) {
+            // 🚀 Real-Time Broadcast (E11-011)
+            \App\Services\RealTimeService::sendToUser($user_id, 'notification', [
+                'type' => $type,
+                'title' => $title,
+                'message' => $message,
+                'link' => $link
+            ]);
+        }
+
+        return $res;
     }
 
     /**

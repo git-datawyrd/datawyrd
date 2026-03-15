@@ -4,6 +4,7 @@ namespace App\Controllers;
 use Core\Controller;
 use Core\Database;
 use Core\Auth;
+use App\Services\RealTimeService;
 
 class ChatController extends Controller
 {
@@ -36,6 +37,21 @@ class ChatController extends Controller
         if ($result) {
             // Update ticket updated_at
             $db->prepare("UPDATE tickets SET updated_at = NOW() WHERE id = ?")->execute([$ticket_id]);
+
+            // 🚀 Real-Time Broadcast (E11-010)
+            RealTimeService::broadcast('new_message', [
+                'ticket_id' => $ticket_id,
+                'user_id' => $user_id,
+                'user_name' => Auth::user()['name'],
+                'user_role' => Auth::role(),
+                'message' => $message,
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if (isset($_POST['is_ajax'])) {
+                $this->json(['success' => true]);
+                return;
+            }
 
             $this->redirect('/ticket/detail/' . $ticket_id);
         }

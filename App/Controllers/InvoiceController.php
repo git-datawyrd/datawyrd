@@ -264,7 +264,13 @@ class InvoiceController extends Controller
                 'pending' => $appUrl . '/invoice/show/' . $invoice_id,
             ],
             'auto_return' => 'approved',
-            'notification_url' => $appUrl . '/webhook/mercadopago'
+            'notification_url' => $appUrl . '/webhook/mercadopago',
+            'metadata' => [
+                'invoice_id' => $invoice_id,
+                'original_amount' => $amount,
+                'original_currency' => $invoiceCurrency,
+                'exchange_rate' => $exchangeRate ?? 1
+            ]
         ];
 
         $ch = curl_init('https://api.mercadopago.com/checkout/preferences');

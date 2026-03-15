@@ -42,21 +42,21 @@ La ejecución se dividirá en 4 Sprints principales, abordando desde la infraest
 ### Fase 3 (Sprint 3): Reactor en Tiempo Real (WebSockets)
 *Experiencia de usuario con fricción cero.*
 
-| ID | Tarea | Tipo | Prioridad | Criterios de Aceptación |
-|----|-------|------|-----------|------------------------|
-| `E11-009` | **Integración Servidor WebSocket** | DevOps / BE | Media | Incluir un servidor *loop* asíncrono en Docker (Ej: Ratchet o Swoole) manejado por Supervidor o un Worker PHP largo. |
-| `E11-010` | **Chat Real-Time (Pub/Sub)** | UI / BE | Baja | Reemplazar el *polling* AJAX del Chat por WebSockets y actualizar DOM. |
-| `E11-011` | **Notificaciones Push en Vivo** | UI / BE | Media | Badges, campana y alertas ("Toasts") lanzadas al Cliente apenas cambia el estado de *Ticket* o *Factura*, sin recargar. |
+| ID | Tarea | Tipo | Prioridad | Criterios de Aceptación | Estado |
+|----|-------|------|-----------|------------------------|--------|
+| `E11-009` | **Integración Servidor WebSocket** | DevOps / BE | Media | Incluir un servidor *loop* asíncrono en Docker (Ej: Ratchet o Swoole) manejado por Supervidor o un Worker PHP largo. | ✅ Finalizado |
+| `E11-010` | **Chat Real-Time (Pub/Sub)** | UI / BE | Baja | Reemplazar el *polling* AJAX del Chat por WebSockets y actualizar DOM. | ✅ Finalizado |
+| `E11-011` | **Notificaciones Push en Vivo** | UI / BE | Media | Badges, campana y alertas ("Toasts") lanzadas al Cliente apenas cambia el estado de *Ticket* o *Factura*, sin recargar. | ✅ Finalizado |
 
 ### Fase 4 (Sprint 4): FinOps Enterprise e Inmutabilidad (Event Sourcing)
 *Garantizar cero fallas en contabilidad matemática y DevOps finales.*
 
-| ID | Tarea | Tipo | Prioridad | Criterios de Aceptación |
-|----|-------|------|-----------|------------------------|
-| `E11-012` | **Evolución Schema DB a Event Sourcing** | Base de Datos | Alta | Crear tabla maestra `invoice_events` donde se guarden los comandos (CREATE, APPLY_PAYMENT, VOID, DISCOUNT). |
-| `E11-013` | **Event Sourcing Processor** | Back-End | Crítica | El cálculo del balance de una Invoice ya no leerá la columna `amount`, sino que derivará del `EventStore`. |
-| `E11-014` | **CI/CD Pipeline** | DevOps | Alta | GitHub Actions validando que 100% test units en FinOps (Facturas) pasen antes del merge de todo PR hacia `main`. |
-| `E11-015` | **Aumento Test Coverage a 80%** | Testing | Media | Añadir Integration/Unit tests que validen el flujo de AI, Repository y WebSockets. |
+| ID | Tarea | Tipo | Prioridad | Criterios de Aceptación | Estado |
+|----|-------|------|-----------|------------------------|--------|
+| `E11-012` | **Evolución Schema DB a Event Sourcing** | Base de Datos | Alta | Crear tabla maestra `invoice_events` donde se guarden los comandos (CREATE, APPLY_PAYMENT, VOID, DISCOUNT). | ✅ Finalizado |
+| `E11-013` | **Event Sourcing Processor** | Back-End | Crítica | El cálculo del balance de una Invoice ya no leerá la columna `amount`, sino que derivará del `EventStore`. | ✅ Finalizado |
+| `E11-014` | **CI/CD Pipeline** | DevOps | Alta | GitHub Actions validando que 100% test units en FinOps (Facturas) pasen antes del merge de todo PR hacia `main`. | ✅ Finalizado |
+| `E11-015` | **Aumento Test Coverage a 80%** | Testing | Media | Añadir Integration/Unit tests que validen el flujo de AI, Repository y WebSockets. | ✅ Finalizado |
 
 ---
 

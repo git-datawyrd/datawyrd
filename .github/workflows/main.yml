@@ -1,0 +1,42 @@
+name: DataWyrd CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: datawyrd_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, pdo_mysql, curl, json
+        coverage: xdebug
+
+    - name: Install Dependencies
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+    - name: Run Tests
+      run: ./vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=always
+      env:
+        DB_HOST: 127.0.0.1
+        DB_DATABASE: datawyrd_test
+        DB_USERNAME: root
+        DB_PASSWORD: root
