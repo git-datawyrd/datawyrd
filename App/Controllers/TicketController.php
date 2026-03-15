@@ -187,10 +187,11 @@ class TicketController extends Controller
                 $lastTicketId = $db->lastInsertId();
                 $tasks = $aiService->extractActionItems($description);
                 if ($tasks && is_array($tasks)) {
-                    $taskSql = "INSERT INTO ticket_tasks (ticket_id, description) VALUES (?, ?)";
+                    $tenantId = \Core\Config::get('current_tenant_id', 1);
+                    $taskSql = "INSERT INTO ticket_tasks (ticket_id, tenant_id, description) VALUES (?, ?, ?)";
                     $taskStmt = $db->prepare($taskSql);
                     foreach ($tasks as $task) {
-                        $taskStmt->execute([$lastTicketId, $task]);
+                        $taskStmt->execute([$lastTicketId, $tenantId, $task]);
                     }
                     
                     // Insertar mensaje de sistema informando de las tareas sugeridas
@@ -262,8 +263,9 @@ class TicketController extends Controller
         }
 
         // Get AI Action Items
-        $stmt = $db->prepare("SELECT * FROM ticket_tasks WHERE ticket_id = ? ORDER BY id ASC");
-        $stmt->execute([$id]);
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+        $stmt = $db->prepare("SELECT * FROM ticket_tasks WHERE ticket_id = ? AND tenant_id = ? ORDER BY id ASC");
+        $stmt->execute([$id, $tenantId]);
         $tasks = $stmt->fetchAll();
 
         $layout = Auth::role();
