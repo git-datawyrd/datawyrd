@@ -26,8 +26,7 @@
             información en ventaja competitiva real.
         </p>
         <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 hero-btns">
-            <a href="#contacto" class="btn btn-primary px-4 py-3 shadow-gold fw-bold uppercase tracking-widest">Iniciar
-                Diagnóstico Estratégico</a>
+            <a href="#contacto" class="btn btn-primary px-4 py-3 shadow-gold fw-bold uppercase tracking-widest">Iniciar Diagnóstico</a>
             <a href="#como-trabajamos" class="btn btn-outline-light px-4 py-3 fw-bold uppercase tracking-widest">Ver
                 Cómo Generamos Impacto</a>
         </div>
@@ -461,54 +460,46 @@
 <section id="dw-os-showcase" class="bg-midnight border-top border-white-5 section-fluid-y" style="padding: 7rem 0;">
     <div class="container py-5">
         <div class="row align-items-start g-5">
-            <div class="col-lg-5">
+            <div class="col-lg-5 text-center text-lg-start">
                 <h6 class="text-primary fw-bold text-uppercase tracking-widest mb-3">Producto Exclusivo</h6>
                 <h2 class="display-5 fw-bold text-white mb-4">Data Wyrd <span class="text-gradient">OS</span></h2>
                 <p class="text-white-50 mb-5">Un ecosistema digital completo. No solo creamos tu web, te entregamos la infraestructura necesaria para escalar y dominar tu operación diaria.</p>
                 
-                <div class="row g-4 mb-5">
-                    <div class="col-12">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle bg-white-5 p-2 text-primary d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                                <span class="material-symbols-outlined fs-4">groups</span>
-                            </div>
-                            <div>
-                                <h6 class="text-white mb-1 fw-bold">Gestión de usuarios y roles</h6>
-                                <p class="text-white-50 small mb-0">Control total de accesos y permisos para tu equipo.</p>
-                            </div>
+                <div class="d-inline-flex flex-column text-start gap-4 mb-5">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-white-5 p-2 text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px;">
+                            <span class="material-symbols-outlined fs-4">groups</span>
+                        </div>
+                        <div>
+                            <h6 class="text-white mb-1 fw-bold small">Gestión de usuarios y roles</h6>
+                            <p class="text-white-50 x-small mb-0">Control total de accesos y permisos para tu equipo.</p>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle bg-white-5 p-2 text-primary d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                                <span class="material-symbols-outlined fs-4">chat</span>
-                            </div>
-                            <div>
-                                <h6 class="text-white mb-1 fw-bold">Chat en vivo</h6>
-                                <p class="text-white-50 small mb-0">Conexión instantánea con tus clientes en tiempo real.</p>
-                            </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-white-5 p-2 text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px;">
+                            <span class="material-symbols-outlined fs-4">chat</span>
+                        </div>
+                        <div>
+                            <h6 class="text-white mb-1 fw-bold small">Chat en vivo</h6>
+                            <p class="text-white-50 x-small mb-0">Conexión instantánea con tus clientes en tiempo real.</p>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle bg-white-5 p-2 text-primary d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                                <span class="material-symbols-outlined fs-4">article</span>
-                            </div>
-                            <div>
-                                <h6 class="text-white mb-1 fw-bold">Gestor de contenidos</h6>
-                                <p class="text-white-50 small mb-0">Publica y actualiza información sin depender de terceros.</p>
-                            </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-white-5 p-2 text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px;">
+                            <span class="material-symbols-outlined fs-4">article</span>
+                        </div>
+                        <div>
+                            <h6 class="text-white mb-1 fw-bold small">Gestor de contenidos</h6>
+                            <p class="text-white-50 x-small mb-0">Publica y actualiza información sin depender de terceros.</p>
                         </div>
                     </div>
-                    <div class="col-12">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="rounded-circle bg-white-5 p-2 text-primary d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                                <span class="material-symbols-outlined fs-4">receipt_long</span>
-                            </div>
-                            <div>
-                                <h6 class="text-white mb-1 fw-bold">Gestión de Facturas</h6>
-                                <p class="text-white-50 small mb-0">Control financiero y facturación profesional integrada.</p>
-                            </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-white-5 p-2 text-primary d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px;">
+                            <span class="material-symbols-outlined fs-4">receipt_long</span>
+                        </div>
+                        <div>
+                            <h6 class="text-white mb-1 fw-bold small">Gestión de Facturas</h6>
+                            <p class="text-white-50 x-small mb-0">Control financiero y facturación profesional integrada.</p>
                         </div>
                     </div>
                 </div>
@@ -518,7 +509,7 @@
                 </a>
             </div>
             
-            <div class="col-lg-7">
+            <div class="col-lg-7 d-none d-lg-block">
                 <!-- Premium UI Carousel styled like Strategic Image -->
                 <div id="osCarousel" class="carousel slide carousel-fade glass-morphism p-2 rounded-5 border-white-10 shadow-2xl overflow-hidden hover-lift transition-all" data-bs-ride="carousel">
                     <div class="carousel-indicators" style="bottom: 20px;">

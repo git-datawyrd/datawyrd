@@ -68,14 +68,14 @@ $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_
                 <a href="<?php echo url('ticket/request'); ?>"
                     class="text-white text-decoration-none x-small transition-colors hover-gold tracking-widest">Contacto</a>
             </nav>
-            <div class="ms-md-4">
+            <div class="d-flex align-items-center gap-2 gap-md-4">
                 <?php if (\Core\Auth::check()): ?>
                     <a href="<?php echo url('dashboard'); ?>"
                         class="d-flex flex-column align-items-center text-decoration-none hover-gold transition-colors"
                         title="Ir al Dashboard">
                         <span class="material-symbols-outlined fs-2 text-primary">account_circle</span>
                         <span
-                            class="x-small text-white-50 fw-bold mt-1"><?php echo explode(' ', \Core\Auth::user()['name'])[0]; ?></span>
+                            class="x-small text-white-50 fw-bold mt-1 d-none d-md-block"><?php echo explode(' ', \Core\Auth::user()['name'])[0]; ?></span>
                     </a>
                 <?php else: ?>
                     <a href="<?php echo url('auth/login'); ?>"
@@ -84,9 +84,66 @@ $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_
                         <span class="material-symbols-outlined fs-2 text-primary">login</span>
                     </a>
                 <?php endif; ?>
+
+                <!-- Mobile Hamburger Menu Button -->
+                <button id="mobile-toggle" class="d-md-none btn btn-link p-0 d-flex align-items-center justify-content-center border-0" 
+                        type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+                    <span class="material-symbols-outlined fs-1 text-gradient">menu</span>
+                </button>
             </div>
         </div>
     </header>
+
+    <!-- Mobile Navigation Offcanvas -->
+    <div class="offcanvas offcanvas-end glass-morphism border-start border-white-10 text-white" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+        <div class="offcanvas-header border-bottom border-white-10 py-4">
+            <div class="d-flex align-items-center gap-3">
+                <img src="<?php echo url('assets/images/DataWyrd_logo.png'); ?>" alt="Logo" class="rounded-circle" style="width: 35px; height: 35px; border: 1px solid var(--elegant-gold);">
+                <h5 class="offcanvas-title fw-bold text-gradient" id="mobileMenuLabel">Menú</h5>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="list-group list-group-flush">
+                <a href="<?php echo url(); ?>" class="list-group-item list-group-item-action bg-transparent text-white border-white-5 py-3 px-4 d-flex align-items-center gap-3">
+                    <span class="material-symbols-outlined text-primary">home</span> Inicio
+                </a>
+                
+                <div class="list-group-item bg-transparent text-white border-white-5 p-0">
+                    <a class="d-flex align-items-center justify-content-between py-3 px-4 text-decoration-none text-white w-100" data-bs-toggle="collapse" href="#mobileServices" role="button" aria-expanded="false">
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="material-symbols-outlined text-primary">hub</span> Servicios
+                        </div>
+                        <span class="material-symbols-outlined x-small transition-transform">expand_more</span>
+                    </a>
+                    <div class="collapse bg-white-5" id="mobileServices">
+                        <?php foreach ($navCategories as $navCat): ?>
+                            <a href="<?php echo url('service/category/' . $navCat['slug']); ?>" class="d-block py-2 px-5 text-white-50 text-decoration-none small hover-gold">
+                                <?php echo $navCat['name']; ?>
+                            </a>
+                        <?php endforeach; ?>
+                        <a href="<?php echo url('#pilares'); ?>" class="d-block py-2 px-5 text-primary text-decoration-none small fw-bold">Ver Todos</a>
+                    </div>
+                </div>
+
+                <a href="<?php echo url('#dw-os-showcase'); ?>" class="list-group-item list-group-item-action bg-transparent text-white border-white-5 py-3 px-4 d-flex align-items-center gap-3">
+                    <span class="material-symbols-outlined text-primary">inventory_2</span> Productos
+                </a>
+                <a href="<?php echo url('blog'); ?>" class="list-group-item list-group-item-action bg-transparent text-white border-white-5 py-3 px-4 d-flex align-items-center gap-3">
+                    <span class="material-symbols-outlined text-primary">rss_feed</span> Blog
+                </a>
+                <a href="<?php echo url('ticket/request'); ?>" class="list-group-item list-group-item-action bg-transparent text-white border-0 py-3 px-4 d-flex align-items-center gap-3">
+                    <span class="material-symbols-outlined text-primary">mail</span> Contacto
+                </a>
+            </div>
+            
+            <div class="mt-5 px-4">
+                <a href="<?php echo url('auth/login'); ?>" class="btn btn-primary w-100 py-3 d-flex align-items-center justify-content-center gap-2 shadow-gold">
+                    <span class="material-symbols-outlined">login</span> Área de Clientes
+                </a>
+            </div>
+        </div>
+    </div>
 
     <main id="top">
         <?php echo $content; ?>
@@ -417,10 +474,52 @@ $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_
             .section-padding {
                 padding: 3rem 0;
             }
+
+            /* Mobile Menu Toggle Animation */
+            #mobile-toggle {
+                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            }
+
+            @media (max-width: 768px) {
+                #mobile-toggle {
+                    opacity: 0;
+                    visibility: hidden;
+                    transform: translateX(20px) scale(0.8);
+                }
+                #mobile-toggle.toggle-visible {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateX(0) scale(1);
+                }
+            }
         }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            /* Mobile Toggle Visibility Logic */
+            const mobileToggle = document.getElementById('mobile-toggle');
+            const heroSection = document.querySelector('.hero-bg');
+
+            function handleMobileToggleVisibility() {
+                if (!mobileToggle) return;
+                
+                if (heroSection) {
+                    // Si hay hero, aparecer cuando el scroll pase el 80% de su altura
+                    const triggerHeight = heroSection.offsetHeight * 0.8;
+                    if (window.scrollY > triggerHeight) {
+                        mobileToggle.classList.add('toggle-visible');
+                    } else {
+                        mobileToggle.classList.remove('toggle-visible');
+                    }
+                } else {
+                    // En páginas sin hero, siempre visible
+                    mobileToggle.classList.add('toggle-visible');
+                }
+            }
+
+            window.addEventListener('scroll', handleMobileToggleVisibility);
+            handleMobileToggleVisibility(); // Initial check
+
             // Footer Accordion State Handling
             const collapses = ['footerServices', 'footerNav', 'footerLegal'];
             collapses.forEach(id => {
