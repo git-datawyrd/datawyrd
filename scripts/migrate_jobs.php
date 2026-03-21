@@ -1,0 +1,16 @@
+<?php
+define('BASE_PATH', realpath(__DIR__ . '/..'));
+require_once __DIR__ . '/../config/env.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
+EnvLoader::load(__DIR__ . '/../.env');
+\Core\Config::load();
+
+$db = \Core\Database::getInstance()->getConnection();
+$sql = file_get_contents(__DIR__ . '/../database/create_job_applications.sql');
+try {
+    $db->exec($sql);
+    echo "Migración de jobs ejecutada exitosamente.\n";
+} catch (PDOException $e) {
+    echo "Error ejecutando migración: " . $e->getMessage() . "\n";
+}

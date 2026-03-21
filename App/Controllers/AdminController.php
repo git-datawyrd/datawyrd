@@ -114,12 +114,22 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * Audit Log
-     */
     public function log($method = 'index', ...$params)
     {
         $controller = $this->container->get(\App\Controllers\Admin\LogController::class);
+        if (method_exists($controller, $method)) {
+            $controller->$method(...$params);
+        } else {
+            $controller->index();
+        }
+    }
+
+    /**
+     * Jobs / HR Management
+     */
+    public function jobs($method = 'index', ...$params)
+    {
+        $controller = $this->container->get(\App\Controllers\Admin\JobsCMSController::class);
         if (method_exists($controller, $method)) {
             $controller->$method(...$params);
         } else {

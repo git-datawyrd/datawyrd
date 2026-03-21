@@ -117,6 +117,11 @@
                         <span class="material-symbols-outlined">history_edu</span>
                         Logs de Auditoría
                     </a>
+                    <a href="<?php echo url('admin/jobs'); ?>"
+                        class="nav-link-custom mb-1 <?php echo strpos($_SERVER['REQUEST_URI'], 'admin/jobs') !== false ? 'active' : ''; ?>">
+                        <span class="material-symbols-outlined">work</span>
+                        Módulo de RRHH
+                    </a>
                 <?php endif; ?>
 
                 <div class="mt-auto p-3">

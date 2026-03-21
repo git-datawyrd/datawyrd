@@ -297,6 +297,9 @@ $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_
                         <li class="mb-2"><a href="#"
                                 class="text-white-50 text-decoration-none hover-gold transition-colors">Términos</a>
                         </li>
+                        <li class="mb-2"><a href="<?php echo url('jobs'); ?>"
+                                class="text-white-50 text-decoration-none hover-gold transition-colors">Jobs</a>
+                        </li>
                         <li class="mb-2"><a href="<?php echo url('auth/login'); ?>"
                                 class="text-white-50 text-decoration-none hover-gold transition-colors">Acceso</a></li>
                     </ul>
