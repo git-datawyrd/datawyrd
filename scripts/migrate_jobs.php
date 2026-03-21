@@ -7,10 +7,10 @@ EnvLoader::load(__DIR__ . '/../.env');
 \Core\Config::load();
 
 $db = \Core\Database::getInstance()->getConnection();
-$sql = file_get_contents(__DIR__ . '/../database/create_job_applications.sql');
+$sql = file_get_contents(__DIR__ . '/../database/hr_evolution.sql');
 try {
     $db->exec($sql);
-    echo "Migración de jobs ejecutada exitosamente.\n";
+    echo "Migración de jobs (Fase 2) ejecutada exitosamente.\n";
 } catch (PDOException $e) {
     echo "Error ejecutando migración: " . $e->getMessage() . "\n";
 }

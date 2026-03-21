@@ -4,7 +4,9 @@ namespace App\Controllers\Admin;
 use Core\Controller;
 use Core\View;
 use Core\Session;
+use Core\Validator;
 use App\Models\JobApplication;
+use App\Models\Candidate;
 
 class JobsCMSController extends Controller
 {
@@ -45,8 +47,58 @@ class JobsCMSController extends Controller
 
         $this->viewLayout('admin/jobs/view', 'admin', [
             'title' => 'Detalle de Postulación',
-            'application' => $application
+            'app' => $application
         ]);
+    }
+
+    public function updateApplication($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/jobs/show/' . $id);
+        }
+
+        $status = Validator::sanitizeString($_POST['status'] ?? '');
+        $vacancyName = Validator::sanitizeString($_POST['vacancy_name'] ?? '');
+
+        $model = new JobApplication();
+        $model->updateStatus($id, $status);
+        $model->updateVacancy($id, $vacancyName);
+
+        Session::flash('success', 'Postulación actualizada correctamente.');
+        $this->redirect('/admin/jobs/show/' . $id);
+    }
+
+    public function updateProfile($candidateId)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/jobs');
+        }
+
+        // To redirect back to the correct view we need the job application ID.
+        // The form stays on the application view, so let's redirect back.
+        // Since we don't have the $app ID directly, we could pass it or rely on history.
+        // Assuming we look up the latest application for this candidate to bounce back:
+        $appModel = new JobApplication();
+        $app = $appModel->findByCandidateId($candidateId);
+        $redirectUrl = '/admin/jobs';
+        if (!empty($app)) {
+            $redirectUrl = '/admin/jobs/show/' . $app[0]['id'];
+        }
+
+        $data = [
+            'country' => Validator::sanitizeString($_POST['country'] ?? ''),
+            'city' => Validator::sanitizeString($_POST['city'] ?? ''),
+            'address' => Validator::sanitizeString($_POST['address'] ?? '')
+        ];
+
+        $candidateModel = new Candidate();
+        if ($candidateModel->updateProfile($candidateId, $data)) {
+            Session::flash('success', 'Perfil del candidato actualizado.');
+        } else {
+            Session::flash('error', 'No se pudo actualizar el perfil.');
+        }
+
+        $this->redirect($redirectUrl);
     }
 
     public function export()
@@ -58,7 +110,7 @@ class JobsCMSController extends Controller
         header('Content-Disposition: attachment; filename=candidatos_' . date('Ymd_His') . '.csv');
 
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['ID', 'Nombre', 'Apellido', 'Email', 'Telefono', 'LinkedIn', 'Estado', 'Fecha Registro']);
+        fputcsv($output, ['ID', 'Nombre', 'Apellido', 'Email', 'Telefono', 'LinkedIn', 'País', 'Ciudad', 'Vacante', 'Estado', 'Fecha Registro']);
 
         foreach ($applications as $app) {
             fputcsv($output, [
@@ -68,6 +120,9 @@ class JobsCMSController extends Controller
                 $app['email'],
                 $app['phone'],
                 $app['linkedin_url'],
+                $app['country'] ?? '',
+                $app['city'] ?? '',
+                $app['vacancy_name'],
                 $app['status'],
                 $app['created_at']
             ]);

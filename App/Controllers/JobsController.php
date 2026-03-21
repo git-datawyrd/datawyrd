@@ -7,6 +7,7 @@ use Core\Validator;
 use Core\Session;
 use Core\Config;
 use App\Models\JobApplication;
+use App\Models\Candidate;
 
 class JobsController extends Controller
 {
@@ -37,6 +38,10 @@ class JobsController extends Controller
             'email' => Validator::sanitizeEmail($_POST['email'] ?? ''),
             'phone' => Validator::sanitizeString($_POST['phone'] ?? ''),
             'linkedin_url' => Validator::sanitizeUrl($_POST['linkedin_url'] ?? ''),
+            'country' => Validator::sanitizeString($_POST['country'] ?? ''),
+            'city' => Validator::sanitizeString($_POST['city'] ?? ''),
+            'address' => Validator::sanitizeString($_POST['address'] ?? ''),
+            'vacancy_name' => Validator::sanitizeString($_POST['vacancy_name'] ?? ''),
             'presentation_letter' => Validator::sanitizeString($_POST['presentation_letter'] ?? ''),
             'skills' => $_POST['skills'] ?? [] // Array of selected skills
         ];
@@ -92,6 +97,25 @@ class JobsController extends Controller
         }
 
         $data['cv_path'] = $fileName;
+
+        // Candidate Management
+        $candidateModel = new Candidate();
+        $existingCandidate = $candidateModel->findByEmail($data['email']);
+        
+        if ($existingCandidate) {
+            $candidateId = $existingCandidate['id'];
+            // Optionally update their profile data here if they provided new geographic data
+            $candidateModel->updateProfile($candidateId, $data);
+        } else {
+            $candidateId = $candidateModel->create($data);
+        }
+
+        if (!$candidateId) {
+            Session::flash('error', 'Error al procesar el perfil del candidato.');
+            $this->redirect('/jobs');
+        }
+        
+        $data['candidate_id'] = $candidateId;
 
         // Save application
         $model = new JobApplication();

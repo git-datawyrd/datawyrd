@@ -20,7 +20,7 @@
                     <tr>
                         <th class="ps-4 text-white-50 x-small uppercase tracking-widest py-3 border-bottom border-white-10 text-center" style="width: 5%">ID</th>
                         <th class="text-white-50 x-small uppercase tracking-widest py-3 border-bottom border-white-10">Candidato</th>
-                        <th class="text-white-50 x-small uppercase tracking-widest py-3 border-bottom border-white-10">Contacto</th>
+                        <th class="text-white-50 x-small uppercase tracking-widest py-3 border-bottom border-white-10">Vacante</th>
                         <th class="text-white-50 x-small uppercase tracking-widest py-3 border-bottom border-white-10 text-center">Estado</th>
                         <th class="text-white-50 x-small uppercase tracking-widest py-3 border-bottom border-white-10 text-end pe-4" style="width: 10%">Acciones</th>
                     </tr>
@@ -53,28 +53,35 @@
                                     </div>
                                 </td>
                                 <td class="py-3 border-bottom border-white-5">
-                                    <div class="text-white small d-flex align-items-center gap-2 mb-1">
-                                        <span class="material-symbols-outlined text-white-50" style="font-size: 14px;">mail</span>
-                                        <a href="mailto:<?php echo htmlspecialchars($app['email']); ?>" class="text-white-50 hover-gold text-decoration-none"><?php echo htmlspecialchars($app['email']); ?></a>
+                                    <div class="text-white small fw-bold mb-1">
+                                        <?php echo htmlspecialchars($app['vacancy_name']); ?>
                                     </div>
-                                    <div class="text-white-50 small d-flex align-items-center gap-2">
-                                        <span class="material-symbols-outlined text-white-50" style="font-size: 14px;">phone</span>
-                                        <?php echo htmlspecialchars($app['phone']); ?>
+                                    <div class="text-white-50 x-small d-flex align-items-center gap-1">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">place</span>
+                                        <?php echo !empty($app['city']) || !empty($app['country']) ? htmlspecialchars($app['city'] . ', ' . $app['country']) : 'Ubicación no especificada'; ?>
                                     </div>
                                 </td>
                                 <td class="py-3 text-center border-bottom border-white-5">
                                     <?php
                                     $statusColors = [
                                         'new' => 'bg-info text-info border-info',
-                                        'reviewed' => 'bg-warning text-warning border-warning',
-                                        'shortlisted' => 'bg-primary text-primary border-primary',
+                                        'reviewed' => 'bg-secondary text-secondary border-secondary',
+                                        'contacted' => 'bg-primary text-primary border-primary',
+                                        'unreachable' => 'bg-danger text-danger border-danger',
+                                        'scheduled' => 'bg-warning text-warning border-warning',
+                                        'technical_interview' => 'bg-warning text-warning border-warning',
+                                        'shortlisted' => 'bg-success text-success border-success',
                                         'rejected' => 'bg-danger text-danger border-danger',
                                         'hired' => 'bg-success text-success border-success'
                                     ];
                                     $labels = [
                                         'new' => 'Nuevo',
                                         'reviewed' => 'Revisado',
-                                        'shortlisted' => 'Seleccionado',
+                                        'contacted' => 'Contactado',
+                                        'unreachable' => 'Ilocalizable',
+                                        'scheduled' => 'Agendado',
+                                        'technical_interview' => 'E. Técnica',
+                                        'shortlisted' => 'Finalista',
                                         'rejected' => 'Descartado',
                                         'hired' => 'Contratado'
                                     ];
@@ -84,6 +91,11 @@
                                     <span class="badge <?php echo $colorClass; ?> bg-opacity-10 border border-opacity-25 px-3 py-2 rounded-pill uppercase tracking-widest x-small fw-bold">
                                         <?php echo $labels[$st] ?? $st; ?>
                                     </span>
+                                    <?php if (!empty($app['status_updated_at'])): ?>
+                                    <div class="text-white-50 text-center mt-2" style="font-size: 10px;">
+                                        <?php echo date('d M Y', strtotime($app['status_updated_at'])); ?>
+                                    </div>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="text-end pe-4 py-3 border-bottom border-white-5">
                                     <div class="d-flex justify-content-end gap-2">

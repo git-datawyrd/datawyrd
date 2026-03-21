@@ -34,9 +34,36 @@
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label class="form-label text-white-50 small tracking-widest uppercase">URL Perfil de LinkedIn</label>
-                            <input type="url" name="linkedin_url" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="https://linkedin.com/in/tu-perfil">
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label text-white-50 small tracking-widest uppercase">País (Opcional)</label>
+                                <input type="text" name="country" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="Ej: Argentina">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-white-50 small tracking-widest uppercase">Ciudad (Opcional)</label>
+                                <input type="text" name="city" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="Ej: Bue. Aires">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label text-white-50 small tracking-widest uppercase">Dirección (Opcional)</label>
+                                <input type="text" name="address" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="Ej: Av. Principal 123">
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small tracking-widest uppercase">URL Perfil de LinkedIn</label>
+                                <input type="url" name="linkedin_url" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="https://linkedin.com/in/tu-perfil">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small tracking-widest uppercase">Vacante (Opcional)</label>
+                                <select name="vacancy_name" class="form-select form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3">
+                                    <option value="Candidatura Espontánea">Candidatura Espontánea</option>
+                                    <option value="Data Engineer Semi-Senior">Data Engineer Ssr.</option>
+                                    <option value="Data Analyst Junior">Data Analyst Jr.</option>
+                                    <option value="Arquitecto Cloud AWS">Arquitecto Cloud AWS</option>
+                                    <option value="Fullstack PHP Developer">Fullstack PHP Developer</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="mb-4">

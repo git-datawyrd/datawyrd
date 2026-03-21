@@ -10,21 +10,18 @@ class JobApplication extends Model
     public function create($data)
     {
         $sql = "INSERT INTO {$this->table} 
-                (first_name, last_name, email, phone, linkedin_url, skills, presentation_letter, cv_path, user_id) 
-                VALUES (:first_name, :last_name, :email, :phone, :linkedin_url, :skills, :presentation_letter, :cv_path, :user_id)";
+                (candidate_id, vacancy_name, skills, presentation_letter, cv_path, status, status_updated_at) 
+                VALUES (:candidate_id, :vacancy_name, :skills, :presentation_letter, :cv_path, :status, CURRENT_TIMESTAMP)";
 
         $stmt = $this->db->prepare($sql);
         
         $stmt->execute([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            'linkedin_url' => $data['linkedin_url'] ?? null,
+            'candidate_id' => $data['candidate_id'],
+            'vacancy_name' => $data['vacancy_name'] ?? 'Candidatura Espontánea',
             'skills' => isset($data['skills']) ? json_encode($data['skills'], JSON_UNESCAPED_UNICODE) : null,
             'presentation_letter' => $data['presentation_letter'] ?? null,
             'cv_path' => $data['cv_path'],
-            'user_id' => $data['user_id'] ?? null
+            'status' => 'new'
         ]);
         
         return $this->db->lastInsertId();
@@ -32,13 +29,25 @@ class JobApplication extends Model
 
     public function updateStatus($id, $status)
     {
-        $stmt = $this->db->prepare("UPDATE {$this->table} SET status = :status WHERE id = :id");
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET status = :status, status_updated_at = CURRENT_TIMESTAMP WHERE id = :id");
         return $stmt->execute(['status' => $status, 'id' => $id]);
+    }
+
+    public function updateVacancy($id, $vacancy_name)
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET vacancy_name = :vacancy_name WHERE id = :id");
+        return $stmt->execute(['vacancy_name' => $vacancy_name, 'id' => $id]);
     }
 
     public function findAll()
     {
-        $stmt = $this->db->query("SELECT * FROM {$this->table} ORDER BY created_at DESC");
+        // Join with candidates to get candidate details
+        $sql = "SELECT ja.*, c.first_name, c.last_name, c.email, c.phone, c.linkedin_url, c.country, c.city, c.address 
+                FROM {$this->table} ja 
+                JOIN candidates c ON ja.candidate_id = c.id 
+                ORDER BY ja.created_at DESC";
+                
+        $stmt = $this->db->query($sql);
         $results = $stmt->fetchAll();
         foreach ($results as &$row) {
             if (!empty($row['skills'])) {
@@ -50,12 +59,25 @@ class JobApplication extends Model
 
     public function findById($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = :id");
+        $sql = "SELECT ja.*, c.first_name, c.last_name, c.email, c.phone, c.linkedin_url, c.country, c.city, c.address 
+                FROM {$this->table} ja 
+                JOIN candidates c ON ja.candidate_id = c.id 
+                WHERE ja.id = :id";
+                
+        $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);
         $row = $stmt->fetch();
         if ($row && !empty($row['skills'])) {
             $row['skills'] = json_decode($row['skills'], true);
         }
         return $row;
+    }
+
+    public function findByCandidateId($candidateId)
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE candidate_id = :candidate_id ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['candidate_id' => $candidateId]);
+        return $stmt->fetchAll();
     }
 }
