@@ -32,12 +32,12 @@ class JobsController extends Controller
         $validator = new Validator();
         
         $data = [
-            'first_name' => Validator::sanitize($_POST['first_name'] ?? ''),
-            'last_name' => Validator::sanitize($_POST['last_name'] ?? ''),
-            'email' => strtolower(trim($_POST['email'] ?? '')),
-            'phone' => Validator::sanitize($_POST['phone'] ?? ''),
-            'linkedin_url' => Validator::sanitize($_POST['linkedin_url'] ?? ''),
-            'presentation_letter' => Validator::sanitize($_POST['presentation_letter'] ?? ''),
+            'first_name' => Validator::sanitizeString($_POST['first_name'] ?? ''),
+            'last_name' => Validator::sanitizeString($_POST['last_name'] ?? ''),
+            'email' => Validator::sanitizeEmail($_POST['email'] ?? ''),
+            'phone' => Validator::sanitizeString($_POST['phone'] ?? ''),
+            'linkedin_url' => Validator::sanitizeUrl($_POST['linkedin_url'] ?? ''),
+            'presentation_letter' => Validator::sanitizeString($_POST['presentation_letter'] ?? ''),
             'skills' => $_POST['skills'] ?? [] // Array of selected skills
         ];
 
