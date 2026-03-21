@@ -182,11 +182,11 @@ $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_
         }
 
         // Auto-show PHP Flash Messages as Toasts
-        <?php if (\Core\Session::has('success')): ?>
-            window.addEventListener('load', () => window.toast("<?php echo \Core\Session::flash('success'); ?>", 'success'));
+        <?php if ($msg = \Core\Session::flash('success')): ?>
+            window.addEventListener('load', () => window.toast("<?php echo $msg; ?>", 'success'));
         <?php endif; ?>
-        <?php if (\Core\Session::has('error')): ?>
-            window.addEventListener('load', () => window.toast("<?php echo \Core\Session::flash('error'); ?>", 'danger'));
+        <?php if ($msg = \Core\Session::flash('error')): ?>
+            window.addEventListener('load', () => window.toast("<?php echo $msg; ?>", 'danger'));
         <?php endif; ?>
     </script>
 
