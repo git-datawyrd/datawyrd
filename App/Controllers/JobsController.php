@@ -47,7 +47,7 @@ class JobsController extends Controller
             $this->redirect('/jobs');
         }
 
-        if (!$validator->email($data['email'])) {
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             Session::flash('error', 'El correo electrónico no es válido.');
             $this->redirect('/jobs');
         }
