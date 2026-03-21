@@ -15,9 +15,9 @@ class JobsController extends Controller
      */
     public function index()
     {
-        View::render('public/jobs/index', [
+        $this->viewLayout('public/jobs/index', 'public', [
             'title' => 'Carreras y Postulaciones | ' . Config::get('business.company_name')
-        ], 'layouts/public');
+        ]);
     }
 
     /**

@@ -21,10 +21,10 @@ class JobsCMSController extends Controller
         $model = new JobApplication();
         $applications = $model->findAll();
 
-        View::render('admin/jobs/index', [
+        $this->viewLayout('admin/jobs/index', 'admin', [
             'title' => 'Gestión de Postulantes',
             'applications' => $applications
-        ], 'layouts/admin');
+        ]);
     }
 
     public function show($id)
@@ -43,10 +43,10 @@ class JobsCMSController extends Controller
             $application['status'] = 'reviewed';
         }
 
-        View::render('admin/jobs/view', [
+        $this->viewLayout('admin/jobs/view', 'admin', [
             'title' => 'Detalle de Postulación',
             'application' => $application
-        ], 'layouts/admin');
+        ]);
     }
 
     public function export()
