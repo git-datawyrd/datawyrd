@@ -157,6 +157,7 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Enterprise Showcase (Data Wyrd OS)**: Sección inmersiva en la Home con diseño Glassmorphism coordinado con la estética de Diferenciación Estratégica.
     - [x] **Automated Funnel (Pre-select Logic)**: Los botones de producto ahora inyectan parámetros de pre-selección en el formulario de contacto, eliminando fricción del cliente.
     - [x] **Agencia Digital & Productos**: Integración de la nueva categoría "Productos" en la navegación global (Header/Footer).
+    - [x] **Módulo de Reclutamiento Integrado (HR/Jobs)**: Sistema seguro para recepción de currículums (validación MIME de 5MB), gestión administrativa de candidatos y envíos de emails automatizados con branding para potenciar captación de talento en Data Wyrd.
 
 ---
 

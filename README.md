@@ -42,13 +42,15 @@
   - Paginación automática y sistema de comentarios inteligente.
 - ✅ **CMS Visual** para gestión de servicios, planes e imágenes.
 - ✅ **Formularios Inteligentes** con pre-poblado automático.
+- ✅ **Módulo de Talento (Jobs)**: Recepción segura de currículums y postulación pública.
 
 ### 👥 Sistema Multi-Rol
 
 #### 👑 Panel de Administrador
 - Dashboard con analítica en tiempo real (Chart.js)
 - Gestión completa de usuarios (Admin/Staff/Clientes)
-- Control total del CMS (Servicios, Planes, Blog)
+- Control total del CMS (Servicios, Planes, Blog, RRHH)
+- Panel de Recursos Humanos: Listado de talento, descarga protegida de CVs y exportación CSV
 - Generación de presupuestos y facturas en PDF
 - Monitoreo de tickets y asignación de staff
 
