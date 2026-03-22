@@ -433,6 +433,26 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Branding aplicado', 'success');
     });
 
+    // --- HELPER: Wrapping de texto en Canvas ---
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        let lines = [];
+        for (let n = 0; n < words.length; n++) {
+            const testLine = line + words[n] + ' ';
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && n > 0) {
+                lines.push(line.trim());
+                line = words[n] + ' ';
+            } else {
+                line = testLine;
+            }
+        }
+        lines.push(line.trim());
+        lines.forEach((l, i) => ctx.fillText(l, x, y + (i * lineHeight)));
+        return lines.length;
+    }
+
     // --- Motor de Exportación Nativo Data Wyrd ---
     document.getElementById('export-btn').addEventListener('click', async () => {
         showToast('Procesando imagen...', 'info');
@@ -443,7 +463,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const typeTag = document.querySelector('#format-options .active').dataset.type;
         const date = new Date().toISOString().split('T')[0];
 
-        // Dimensiones del lienzo visible
         renderCanvas.width = canvas.offsetWidth;
         renderCanvas.height = canvas.offsetHeight;
 
@@ -451,86 +470,140 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.fillStyle = '#000000';
         ctx.fillRect(0, 0, renderCanvas.width, renderCanvas.height);
 
-        // 2. Dibujar imagen de fondo (si existe)
+        // 2. Dibujar imagen de fondo
         const bgStyle = canvasBg.style.backgroundImage;
         if (bgStyle && bgStyle !== 'none' && bgStyle !== '') {
-            // Extraer URL correctamente (puede tener comillas simples o dobles)
             const url = bgStyle.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
-            
             await new Promise((resolve) => {
                 const bgImg = new Image();
-                // Solo usamos crossOrigin para URLs externas, no para data:
-                if (!url.startsWith('data:')) {
-                    bgImg.crossOrigin = 'anonymous';
-                }
+                if (!url.startsWith('data:')) bgImg.crossOrigin = 'anonymous';
                 bgImg.onload = () => {
                     const imgRatio = bgImg.naturalWidth / bgImg.naturalHeight;
                     const canvasRatio = renderCanvas.width / renderCanvas.height;
-                    let drawWidth, drawHeight, drawX, drawY;
+                    let dW, dH, dX, dY;
                     if (imgRatio > canvasRatio) {
-                        drawHeight = renderCanvas.height;
-                        drawWidth = drawHeight * imgRatio;
-                        drawX = (renderCanvas.width - drawWidth) / 2;
-                        drawY = 0;
+                        dH = renderCanvas.height; dW = dH * imgRatio;
+                        dX = (renderCanvas.width - dW) / 2; dY = 0;
                     } else {
-                        drawWidth = renderCanvas.width;
-                        drawHeight = drawWidth / imgRatio;
-                        drawX = 0;
-                        drawY = (renderCanvas.height - drawHeight) / 2;
+                        dW = renderCanvas.width; dH = dW / imgRatio;
+                        dX = 0; dY = (renderCanvas.height - dH) / 2;
                     }
-                    ctx.drawImage(bgImg, drawX, drawY, drawWidth, drawHeight);
+                    ctx.drawImage(bgImg, dX, dY, dW, dH);
                     resolve();
                 };
-                bgImg.onerror = (err) => {
-                    console.warn('No se pudo cargar la imagen de fondo:', err);
-                    resolve();
-                };
+                bgImg.onerror = () => resolve();
                 bgImg.src = url;
             });
         }
 
-        // 3. Dibujar Textos — Usar IDs correctos (bug crítico anterior: titleTag no estaba definido)
-        const layerDefs = [
-            { layer: document.getElementById('layer-title'),    el: editableTitle },
-            { layer: document.getElementById('layer-subtitle'), el: editableSubtitle },
-            { layer: document.getElementById('layer-cta'),      el: editableCta }
-        ];
-
+        // 3. Capturar posiciones y estilos desde el DOM
         const canvasRect = canvas.getBoundingClientRect();
+        const padding = 24; // px de margen a cada lado
+        const maxTextWidth = renderCanvas.width - (padding * 2);
 
-        layerDefs.forEach(({ layer, el }) => {
-            if (!el || !el.innerText.trim()) return;
-            if (layer.classList.contains('d-none')) return;
-
-            const rect = el.getBoundingClientRect();
-            const x = (rect.left - canvasRect.left) + (rect.width / 2);
-            const y = (rect.top - canvasRect.top);
-
+        // --- Título ---
+        const titleLayer = document.getElementById('layer-title');
+        if (!titleLayer.classList.contains('d-none') && editableTitle.innerText.trim()) {
+            const titleRect = titleLayer.getBoundingClientRect();
+            const titleY = titleRect.top - canvasRect.top;
+            const titleStyle = window.getComputedStyle(editableTitle);
+            const fontSize = parseFloat(titleStyle.fontSize);
+            const fontWeight = titleStyle.fontWeight || '700';
             ctx.save();
-            const computedStyle = window.getComputedStyle(el);
-            const fontSize = computedStyle.fontSize;
-            const fontWeight = computedStyle.fontWeight;
-            ctx.font = `${fontWeight} ${fontSize} Outfit, sans-serif`;
+            ctx.font = `${fontWeight} ${fontSize}px Outfit, sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
-            ctx.shadowColor = 'rgba(0,0,0,0.85)';
-            ctx.shadowBlur = 12;
+            ctx.shadowColor = 'rgba(0,0,0,0.9)';
+            ctx.shadowBlur = 14;
             ctx.shadowOffsetY = 3;
 
-            // Verificar si tiene efecto branding
-            const brandSpan = el.querySelector('.text-gradient-active');
+            const brandSpan = editableTitle.querySelector('.text-gradient-active');
+            // Si hay branding en alguna parte, aplicamos degradado a todo el título para simplificar
             if (brandSpan) {
-                const grad = ctx.createLinearGradient(x - 150, 0, x + 150, 0);
+                const grad = ctx.createLinearGradient(padding, 0, renderCanvas.width - padding, 0);
                 grad.addColorStop(0, '#D4AF37');
                 grad.addColorStop(1, '#30C5FF');
                 ctx.fillStyle = grad;
             } else {
                 ctx.fillStyle = '#FFFFFF';
             }
-
-            ctx.fillText(el.innerText, x, y);
+            wrapText(ctx, editableTitle.innerText, renderCanvas.width / 2, titleY, maxTextWidth, fontSize * 1.3);
             ctx.restore();
-        });
+        }
+
+        // --- Subtítulo ---
+        const subtitleLayer = document.getElementById('layer-subtitle');
+        if (!subtitleLayer.classList.contains('d-none') && editableSubtitle.innerText.trim()) {
+            const subRect = subtitleLayer.getBoundingClientRect();
+            const subY = subRect.top - canvasRect.top;
+            const subStyle = window.getComputedStyle(editableSubtitle);
+            const subSize = parseFloat(subStyle.fontSize);
+            ctx.save();
+            ctx.font = `400 ${subSize}px Outfit, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = 'rgba(0,0,0,0.9)';
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetY = 2;
+            wrapText(ctx, editableSubtitle.innerText, renderCanvas.width / 2, subY, maxTextWidth, subSize * 1.4);
+            ctx.restore();
+        }
+
+        // --- CTA (Botón Pill) ---
+        const ctaLayer = document.getElementById('layer-cta');
+        if (!ctaLayer.classList.contains('d-none') && editableCta.innerText.trim()) {
+            const ctaRect = ctaLayer.getBoundingClientRect();
+            const ctaY = ctaRect.top - canvasRect.top;
+            const ctaStyle = window.getComputedStyle(editableCta);
+            const ctaSize = parseFloat(ctaStyle.fontSize) || 12;
+            const ctaText = editableCta.innerText.toUpperCase();
+
+            ctx.save();
+            ctx.font = `700 ${ctaSize}px Outfit, sans-serif`;
+            const textMetrics = ctx.measureText(ctaText);
+            const pillW = textMetrics.width + 60;
+            const pillH = ctaSize + 24;
+            const pillX = (renderCanvas.width - pillW) / 2;
+            const pillY = ctaY;
+            const radius = pillH / 2;
+
+            // Dibujar el fondo del botón pill
+            ctx.beginPath();
+            ctx.moveTo(pillX + radius, pillY);
+            ctx.lineTo(pillX + pillW - radius, pillY);
+            ctx.arcTo(pillX + pillW, pillY, pillX + pillW, pillY + pillH, radius);
+            ctx.lineTo(pillX + pillW, pillY + radius);
+            ctx.arcTo(pillX + pillW, pillY + pillH, pillX + pillW - radius, pillY + pillH, radius);
+            ctx.lineTo(pillX + radius, pillY + pillH);
+            ctx.arcTo(pillX, pillY + pillH, pillX, pillY + radius, radius);
+            ctx.lineTo(pillX, pillY + radius);
+            ctx.arcTo(pillX, pillY, pillX + radius, pillY, radius);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(10, 10, 30, 0.85)';
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.6)';
+            ctx.lineWidth = 1.5;
+            ctx.fill();
+            ctx.stroke();
+
+            // Texto del CTA — parte normal blanca + parte branding dorada
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'transparent';
+
+            // Si tiene branding, mezclamos dorado para la parte resaltada
+            const ctaBrand = editableCta.querySelector('.text-gradient-active');
+            if (ctaBrand) {
+                const grad = ctx.createLinearGradient(pillX, 0, pillX + pillW, 0);
+                grad.addColorStop(0, '#D4AF37');
+                grad.addColorStop(1, '#30C5FF');
+                ctx.fillStyle = grad;
+            } else {
+                ctx.fillStyle = '#FFFFFF';
+            }
+            ctx.fillText(ctaText, renderCanvas.width / 2, pillY + pillH / 2);
+            ctx.restore();
+        }
 
         // 4. Descargar como JPG
         try {

@@ -3,3 +3,6 @@
 [2026-03-10 19:29:23] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"admin@datawyrd.com"}
 [2026-03-15 09:54:16] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"admin@datawyrd.com"}
 [2026-03-21 19:43:02] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"admin@datawyrd.com"}
+[2026-03-22 18:49:25] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"admin@datawyrd.com"}
+[2026-03-22 18:49:41] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"admin@datawyrd.com"}
+[2026-03-22 18:49:55] [WARN] login_failed | IP: ::1 | User: guest | Data: {"email":"admin@datawyrd.com"}
