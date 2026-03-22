@@ -147,15 +147,16 @@
 }
 
 .glass-text-container {
-    background: rgba(10, 10, 13, 0.1);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
-    padding: 10px 20px;
+    background: rgba(10, 10, 13, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    text-shadow: 0 4px 20px rgba(0,0,0,1);
+    padding: 12px 30px;
     width: fit-content !important;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid rgba(255,255,255,0.05);
+    left: 50% !important;
+    transform: translateX(-50%);
+    border: 1px solid rgba(255,255,255,0.03);
+    border-radius: 12px;
 }
 
 .draggable-text span:focus {
