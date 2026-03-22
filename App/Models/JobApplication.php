@@ -29,8 +29,31 @@ class JobApplication extends Model
 
     public function updateStatus($id, $status)
     {
+        // Get old status first for logging
+        $current = $this->findById($id);
+        $oldStatus = $current['status'] ?? null;
+
         $stmt = $this->db->prepare("UPDATE {$this->table} SET status = :status, status_updated_at = CURRENT_TIMESTAMP WHERE id = :id");
-        return $stmt->execute(['status' => $status, 'id' => $id]);
+        $success = $stmt->execute(['status' => $status, 'id' => $id]);
+
+        if ($success && $oldStatus !== $status) {
+            $this->logStatusChange($id, $oldStatus, $status);
+        }
+        
+        return $success;
+    }
+
+    private function logStatusChange($applicationId, $old, $new)
+    {
+        $stmt = $this->db->prepare("INSERT INTO job_application_status_logs (application_id, old_status, new_status) VALUES (:app_id, :old, :new)");
+        return $stmt->execute(['app_id' => $applicationId, 'old' => $old, 'new' => $new]);
+    }
+
+    public function getStatusLogs($applicationId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM job_application_status_logs WHERE application_id = :id ORDER BY created_at DESC");
+        $stmt->execute(['id' => $applicationId]);
+        return $stmt->fetchAll();
     }
 
     public function updateVacancy($id, $vacancy_name)
@@ -76,6 +99,18 @@ class JobApplication extends Model
     public function findByCandidateId($candidateId)
     {
         $sql = "SELECT * FROM {$this->table} WHERE candidate_id = :candidate_id ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['candidate_id' => $candidateId]);
+        return $stmt->fetchAll();
+    }
+
+    public function getCandidateHistory($candidateId)
+    {
+        // Get all applications for this candidate with their latest status change date
+        $sql = "SELECT id, vacancy_name, status, created_at, status_updated_at 
+                FROM {$this->table} 
+                WHERE candidate_id = :candidate_id 
+                ORDER BY created_at DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['candidate_id' => $candidateId]);
         return $stmt->fetchAll();

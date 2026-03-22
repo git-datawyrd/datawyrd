@@ -45,9 +45,15 @@ class JobsCMSController extends Controller
             $application['status'] = 'reviewed';
         }
 
+        // Fetch logs and Candidate history
+        $logs = $model->getStatusLogs($id);
+        $history = $model->getCandidateHistory($application['candidate_id']);
+
         $this->viewLayout('admin/jobs/view', 'admin', [
             'title' => 'Detalle de Postulación',
-            'app' => $application
+            'app' => $application,
+            'statusLogs' => $logs,
+            'candidateHistory' => $history
         ]);
     }
 

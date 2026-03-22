@@ -177,7 +177,84 @@
             </div>
         </div>
     </div>
+
+    <!-- Nueva Fila: Línea de Tiempo y Histórico -->
+    <div class="row g-4 mt-2">
+        <!-- Historial de Estatus (Timeline) -->
+        <div class="col-lg-6">
+            <div class="glass-morphism rounded-4 p-4 h-100">
+                <h3 class="h6 text-white fw-bold mb-4 d-flex align-items-center gap-2 border-bottom border-white-10 pb-3">
+                    <span class="material-symbols-outlined text-info">history_edu</span>
+                    Historial de Estados (Timeline)
+                </h3>
+                
+                <?php if (!empty($statusLogs)): ?>
+                    <div class="timeline-container ps-3 border-start border-white-10">
+                        <?php foreach ($statusLogs as $log): ?>
+                            <div class="timeline-item position-relative mb-4">
+                                <span class="position-absolute top-0 start-0 translate-middle rounded-circle bg-accent" style="width: 10px; height: 10px; left: -16px !important; margin-top: 6px;"></span>
+                                <div class="text-white-50 x-small mb-1 uppercase tracking-widest fw-bold">
+                                    <?php echo date('d M Y, H:i', strtotime($log['created_at'])); ?>
+                                </div>
+                                <div class="text-white small">
+                                    Cambio de 
+                                    <span class="text-white-50 text-decoration-line-through"><?php echo htmlspecialchars($log['old_status'] ?? 'inicio'); ?></span>
+                                    a 
+                                    <span class="text-accent fw-bold"><?php echo htmlspecialchars($log['new_status']); ?></span>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="text-white-50 small fst-italic">No hay cambios de estado registrados para esta postulación.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Histórico de Postulaciones -->
+        <div class="col-lg-6">
+            <div class="glass-morphism rounded-4 p-4 h-100">
+                <h3 class="h6 text-white fw-bold mb-4 d-flex align-items-center gap-2 border-bottom border-white-10 pb-3">
+                    <span class="material-symbols-outlined text-gold">recent_actors</span>
+                    Histórico de Postulaciones (Índice)
+                </h3>
+                
+                <div class="list-group list-group-flush bg-transparent">
+                    <?php foreach ($candidateHistory as $hist): ?>
+                        <div class="list-group-item bg-transparent border-white-5 py-3 px-0">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <h4 class="text-white small fw-bold mb-1 text-truncate">
+                                        <?php echo htmlspecialchars($hist['vacancy_name'] ?? 'Candidatura Espontánea'); ?>
+                                    </h4>
+                                    <div class="text-white-50 x-small d-flex align-items-center gap-1">
+                                        <span class="material-symbols-outlined x-small">calendar_today</span>
+                                        <?php echo date('d M Y', strtotime($hist['created_at'])); ?>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-primary bg-opacity-10 border border-primary border-opacity-25 text-primary x-small px-2 py-1 mb-2 d-block">
+                                        <?php echo htmlspecialchars($hist['status']); ?>
+                                    </span>
+                                    <?php if ($hist['id'] != $app['id']): ?>
+                                        <a href="<?php echo url('admin/jobs/show/' . $hist['id']); ?>" class="btn btn-link text-accent p-0 x-small text-decoration-none fw-bold hover-gold">Ver Detalle</a>
+                                    <?php else: ?>
+                                        <span class="badge bg-white-10 text-white-50 x-small px-2 py-1">Actual</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+.text-accent { color: var(--tech-blue) !important; }
+.border-white-5 { border-color: rgba(255, 255, 255, 0.05) !important; }
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {

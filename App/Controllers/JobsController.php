@@ -135,7 +135,7 @@ class JobsController extends Controller
                             Nuestro equipo revisará tu perfil en breve y nos pondremos en contacto contigo si tus habilidades se alinean con nuestras posiciones abiertas.
                         </p>
                         <p style='color: #555; line-height: 1.6;'>
-                            Mientras tanto, te invitamos a conocer más sobre nuestra cultura y proyectos siguiéndonos sutilmente en nuestras redes:
+                            Mientras tanto, te invitamos a conocer más sobre nuestra cultura y proyectos siguiéndonos en nuestras redes:
                         </p>
                         <div style='margin-top: 20px;'>
                             <a href='https://www.linkedin.com/company/datawyrd/' style='display: inline-block; padding: 10px 20px; background-color: #0077b5; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px; font-weight: bold;'>LinkedIn</a>
