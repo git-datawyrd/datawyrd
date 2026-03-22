@@ -37,7 +37,7 @@
                     <span class="material-symbols-outlined fs-5">replay</span> Reemplazar
                 </button>
                 <button type="button" id="export-btn" class="btn btn-gold d-flex align-items-center gap-2 px-4 rounded-pill shadow-lg hover-scale transition-all">
-                    <span class="material-symbols-outlined">download</span> Exportar PNG
+                    <span class="material-symbols-outlined">download</span> Exportar JPG
                 </button>
             </div>
         </div>
@@ -453,21 +453,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Delay para asegurar renderizado de fuentes y efectos
         setTimeout(() => {
-            domtoimage.toJpeg(canvas, options)
+            domtoimage.toJpeg(document.getElementById('social-canvas'), options)
                 .then(dataUrl => {
                     const link = document.createElement('a');
                     link.download = `${platform}_${type}_${date}.jpg`;
                     link.href = dataUrl;
                     document.body.appendChild(link);
                     link.click();
-                    document.body.removeChild(link);
-                    showToast('¡Exportación .JPG completada!', 'success');
+                    link.remove();
+                    showToast('¡Imagen generada con éxito!', 'success');
                 })
                 .catch(error => {
-                    console.error('Error al exportar imagen:', error);
-                    showToast('Error al generar la imagen. Inténtalo de nuevo.', 'error');
+                    console.error('Error al exportar:', error);
+                    showToast('Error en la generación. Inténtalo de nuevo.', 'error');
                 });
-        }, 1000);
+        }, 1500);
     });
 
     updateCanvasSize();
