@@ -204,8 +204,8 @@
 .cursor-pointer { cursor: pointer; }
 </style>
 
-<!-- Librería para Captura de Canvas -->
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<!-- Motor de Captura Moderno -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -436,42 +436,30 @@ document.addEventListener('DOMContentLoaded', () => {
         
         showToast('Generando imagen de alta calidad...', 'info');
 
-        // Nos aseguramos de que el canvas no tenga scroll
-        window.scrollTo(0, 0);
-
-        html2canvas(canvas, {
-            scale: 2,
-            backgroundColor: '#000000',
-            useCORS: true,
-            allowTaint: true,
-            logging: true,
-            x: 0,
-            y: 0,
+        const options = {
             width: canvas.offsetWidth,
             height: canvas.offsetHeight,
-            onclone: (clonedDoc) => {
-                // Forzar que el canvas clonado sea visible
-                const clonedCanvas = clonedDoc.getElementById('social-canvas');
-                clonedCanvas.style.visibility = 'visible';
-                clonedCanvas.style.display = 'block';
+            style: {
+                transform: 'none',
+                left: '0',
+                top: '0'
             }
-        }).then(exportCanvas => {
-            try {
+        };
+
+        domtoimage.toPng(canvas, options)
+            .then(dataUrl => {
                 const link = document.createElement('a');
                 link.download = `${platform}_${type}_${date}.png`;
-                link.href = exportCanvas.toDataURL('image/png', 1.0);
+                link.href = dataUrl;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 showToast('¡Exportación completada!', 'success');
-            } catch (err) {
-                console.error("Error al generar el link de descarga:", err);
-                showToast('Error al descargar la imagen', 'error');
-            }
-        }).catch(err => {
-            console.error("Error en html2canvas:", err);
-            showToast('Error al capturar el canvas', 'error');
-        });
+            })
+            .catch(error => {
+                console.error('Error al exportar imagen:', error);
+                showToast('Error al generar la imagen. Inténtalo de nuevo.', 'error');
+            });
     });
 
     updateCanvasSize();
