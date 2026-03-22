@@ -147,12 +147,15 @@
 }
 
 .glass-text-container {
-    background: rgba(10, 10, 13, 0.3);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    padding-top: 15px;
-    padding-bottom: 15px;
+    background: rgba(10, 10, 13, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    padding: 10px 20px;
+    width: fit-content !important;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
 .draggable-text span:focus {
