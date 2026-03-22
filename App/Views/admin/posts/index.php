@@ -184,17 +184,12 @@
 }
 
 .text-gradient-active {
-    background: linear-gradient(135deg, #fff 0%, #d4af37 50%, #00d2ff 100%);
+    background: linear-gradient(to right, var(--elegant-gold), var(--tech-blue));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-    font-weight: 800;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    background-color: rgba(10, 10, 13, 0.05); /* Muy ligero para ayudar al desenfoque */
-    padding: 2px 10px;
-    border-radius: 4px;
+    font-weight: 900;
+    text-shadow: none !important; /* El gradiente no suele llevar text-shadow para no ensuciar los bordes */
 }
 
 #drop-zone.drag-active {
