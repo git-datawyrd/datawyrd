@@ -18,16 +18,16 @@
                 </div>
 
                 <!-- Text Overlays -->
-                <div id="layer-title" class="draggable-text position-absolute text-white fw-bold fs-2 text-center px-4" style="top: 20%; left: 0; width: 100%; cursor: move; z-index: 10;">
-                    <span contenteditable="true" id="editable-title">TÍTULO DEL POST</span>
+                <div id="layer-title" class="draggable-text position-absolute text-white fw-bold fs-2 text-center px-4 d-none" style="top: 20%; left: 0; width: 100%; cursor: text; z-index: 10;">
+                    <span contenteditable="true" id="editable-title"></span>
                 </div>
 
-                <div id="layer-subtitle" class="draggable-text position-absolute text-white-50 fs-5 text-center px-5" style="top: 40%; left: 0; width: 100%; cursor: move; z-index: 9;">
-                    <span contenteditable="true" id="editable-subtitle">Subtítulo persuasivo para captar atención</span>
+                <div id="layer-subtitle" class="draggable-text position-absolute text-white-50 fs-5 text-center px-5 d-none" style="top: 40%; left: 0; width: 100%; cursor: text; z-index: 9;">
+                    <span contenteditable="true" id="editable-subtitle"></span>
                 </div>
 
-                <div id="layer-cta" class="draggable-text position-absolute text-center" style="top: 80%; left: 0; width: 100%; cursor: move; z-index: 8;">
-                    <span class="btn btn-primary rounded-pill px-4 py-2 fw-bold tracking-widest uppercase x-small shadow-gold" contenteditable="true" id="editable-cta">Saber más</span>
+                <div id="layer-cta" class="draggable-text position-absolute text-center d-none" style="top: 80%; left: 0; width: 100%; cursor: text; z-index: 8;">
+                    <span class="btn btn-primary rounded-pill px-4 py-2 fw-bold tracking-widest uppercase x-small shadow-gold" contenteditable="true" id="editable-cta"></span>
                 </div>
             </div>
 
@@ -40,6 +40,20 @@
                     <span class="material-symbols-outlined">download</span> Exportar PNG
                 </button>
             </div>
+        </div>
+
+        <!-- 4. Herramientas Mágicas (Debajo del Workspace) -->
+        <div class="glass-morphism rounded-4 p-4 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <span class="material-symbols-outlined text-primary fs-3">auto_fix_high</span>
+                <div>
+                    <h4 class="h6 text-white fw-bold mb-1">Efectos Premium</h4>
+                    <p class="text-white-50 x-small mb-0">Selecciona texto en el preview o en los campos y pulsa el botón para aplicar el degradado oficial.</p>
+                </div>
+            </div>
+            <button type="button" id="magic-gradient" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold uppercase x-small tracking-widest">
+                Aplicar Branding
+            </button>
         </div>
     </div>
 
@@ -55,19 +69,37 @@
             <div class="mb-4">
                 <label class="text-white-50 x-small tracking-widest uppercase mb-3 d-block">Contenido del Post</label>
                 
-                <div class="mb-3">
-                    <label class="x-small text-white-50 mb-1">Título</label>
-                    <textarea id="input-title" class="form-control bg-deep-black border-white-10 text-white small" rows="2">TÍTULO DEL POST</textarea>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="x-small text-white-50">Título</label>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-link text-white-50 p-0 me-2 font-size-ctrl" data-target="title" data-dir="down"><span class="material-symbols-outlined fs-6">remove</span></button>
+                            <button type="button" class="btn btn-link text-white-50 p-0 font-size-ctrl" data-target="title" data-dir="up"><span class="material-symbols-outlined fs-6">add</span></button>
+                        </div>
+                    </div>
+                    <textarea id="input-title" class="form-control bg-deep-black border-white-10 text-white small" rows="2" placeholder="Escribe aquí..."></textarea>
                 </div>
                 
-                <div class="mb-3">
-                    <label class="x-small text-white-50 mb-1">Subtítulo</label>
-                    <textarea id="input-subtitle" class="form-control bg-deep-black border-white-10 text-white small" rows="3">Subtítulo persuasivo para captar atención</textarea>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="x-small text-white-50">Subtítulo</label>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-link text-white-50 p-0 me-2 font-size-ctrl" data-target="subtitle" data-dir="down"><span class="material-symbols-outlined fs-6">remove</span></button>
+                            <button type="button" class="btn btn-link text-white-50 p-0 font-size-ctrl" data-target="subtitle" data-dir="up"><span class="material-symbols-outlined fs-6">add</span></button>
+                        </div>
+                    </div>
+                    <textarea id="input-subtitle" class="form-control bg-deep-black border-white-10 text-white small" rows="3" placeholder="Añade una descripción..."></textarea>
                 </div>
 
                 <div class="mb-2">
-                    <label class="x-small text-white-50 mb-1">CTA (Botón)</label>
-                    <input type="text" id="input-cta" class="form-control bg-deep-black border-white-10 text-white small" value="Saber más">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="x-small text-white-50">CTA (Botón)</label>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-link text-white-50 p-0 me-2 font-size-ctrl" data-target="cta" data-dir="down"><span class="material-symbols-outlined fs-6">remove</span></button>
+                            <button type="button" class="btn btn-link text-white-50 p-0 font-size-ctrl" data-target="cta" data-dir="up"><span class="material-symbols-outlined fs-6">add</span></button>
+                        </div>
+                    </div>
+                    <input type="text" id="input-cta" class="form-control bg-deep-black border-white-10 text-white small" value="" placeholder="Texto del botón">
                 </div>
             </div>
 
@@ -92,25 +124,6 @@
             </div>
 
             <hr class="border-white-10 my-4">
-
-            <!-- 4. Herramientas Mágicas -->
-            <div class="mb-4">
-                <label class="text-white-50 x-small tracking-widest uppercase mb-3 d-flex align-items-center gap-2">
-                    <span class="material-symbols-outlined fs-6 text-accent">auto_fix_high</span>
-                    Efectos Premium
-                </label>
-                <div class="glass-morphism border border-white-10 p-3 rounded-3">
-                    <p class="text-white-50 x-small mb-2">Selecciona texto en el preview y pulsa este botón para aplicar el degradado oficial.</p>
-                    <button type="button" id="magic-gradient" class="btn btn-outline-primary btn-sm w-100 rounded-pill py-2">
-                        Aplicar Branding (Varita)
-                    </button>
-                </div>
-            </div>
-            
-            <div class="alert alert-info bg-primary bg-opacity-10 border-primary border-opacity-25 text-primary small d-flex gap-2">
-                <span class="material-symbols-outlined fs-5">info</span>
-                <span>Los textos son editables directamente sobre la imagen. Puedes arrastrarlos para posicionarlos.</span>
-            </div>
         </div>
     </div>
 </div>
@@ -121,9 +134,17 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.draggable-text {
+    cursor: grab;
+}
+
 .draggable-text span:focus {
     outline: 1px dashed var(--elegant-gold);
     padding: 2px 4px;
+}
+
+[contenteditable="true"] {
+    cursor: text;
 }
 
 .text-gradient-active {
@@ -171,14 +192,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const editableCta = document.getElementById('editable-cta');
 
     // Sync: Screen -> Input
-    editableTitle.addEventListener('input', () => inputTitle.value = editableTitle.innerText);
-    editableSubtitle.addEventListener('input', () => inputSubtitle.value = editableSubtitle.innerText);
-    editableCta.addEventListener('input', () => inputCta.value = editableCta.innerText);
+    const syncScreenToInput = (el, input, layer) => {
+        el.addEventListener('input', () => {
+            input.value = el.innerText;
+            if (el.innerText.trim() === '') layer.classList.add('d-none');
+            else layer.classList.remove('d-none');
+        });
+    };
+
+    syncScreenToInput(editableTitle, inputTitle, document.getElementById('layer-title'));
+    syncScreenToInput(editableSubtitle, inputSubtitle, document.getElementById('layer-subtitle'));
+    syncScreenToInput(editableCta, inputCta, document.getElementById('layer-cta'));
 
     // Sync: Input -> Screen
-    inputTitle.addEventListener('input', () => editableTitle.innerText = inputTitle.value);
-    inputSubtitle.addEventListener('input', () => editableSubtitle.innerText = inputSubtitle.value);
-    inputCta.addEventListener('input', () => editableCta.innerText = inputCta.value);
+    const syncInputToScreen = (input, el, layer) => {
+        input.addEventListener('input', () => {
+            el.innerText = input.value;
+            if (input.value.trim() === '') layer.classList.add('d-none');
+            else layer.classList.remove('d-none');
+        });
+    };
+
+    syncInputToScreen(inputTitle, editableTitle, document.getElementById('layer-title'));
+    syncInputToScreen(inputSubtitle, editableSubtitle, document.getElementById('layer-subtitle'));
+    syncInputToScreen(inputCta, editableCta, document.getElementById('layer-cta'));
+
+    // Font Size Controls
+    document.querySelectorAll('.font-size-ctrl').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.dataset.target;
+            const dir = btn.dataset.dir;
+            const el = target === 'title' ? document.getElementById('layer-title') : 
+                       target === 'subtitle' ? document.getElementById('layer-subtitle') : 
+                       document.getElementById('editable-cta').parentElement;
+            
+            let currentSize = parseFloat(window.getComputedStyle(el).fontSize);
+            const step = 2;
+            const newSize = dir === 'up' ? currentSize + step : currentSize - step;
+            el.style.fontSize = newSize + 'px';
+        });
+    });
 
     // Configuration Map
     const dimensions = {
@@ -277,7 +330,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.draggable-text').forEach(layer => {
         layer.addEventListener('mousedown', (e) => {
-            if (e.target.hasAttribute('contenteditable') && document.activeElement === e.target) return;
+            // Permitir selección si se hace clic derecho o si ya tiene el foco y no estamos en modo "mover"
+            // Para diferenciar, usamos la tecla Shift o simplemente detectamos si el clic fue en el borde
+            if (e.target.hasAttribute('contenteditable')) {
+                // Si el usuario mantiene pulsado ALT, movemos. Si no, dejamos que edite/seleccione.
+                if (!e.altKey) return; 
+            }
+            
             activeLayer = layer;
             const layerRect = layer.getBoundingClientRect();
             offset = [
