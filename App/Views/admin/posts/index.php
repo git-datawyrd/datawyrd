@@ -33,7 +33,7 @@
 
             <!-- Canvas Controls Overlay -->
             <div class="position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-center gap-3" style="z-index: 20;">
-                <button type="button" id="replace-btn" class="btn btn-outline-light d-none align-items-center gap-2 px-3 rounded-pill shadow-lg transition-all border-white-20" style="backdrop-filter: blur(10px); background: rgba(0,0,0,0.3);">
+                <button type="button" id="replace-btn" class="btn btn-midnight d-none align-items-center gap-2 px-4 rounded-pill shadow-lg hover-scale transition-all border border-white-10">
                     <span class="material-symbols-outlined fs-5">replay</span> Reemplazar
                 </button>
                 <button type="button" id="export-btn" class="btn btn-gold d-flex align-items-center gap-2 px-4 rounded-pill shadow-lg hover-scale transition-all">
