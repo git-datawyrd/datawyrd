@@ -151,14 +151,23 @@
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     text-shadow: 
-        0 2px 4px rgba(0,0,0,0.8), 
-        0 4px 10px rgba(0,0,0,0.6),
-        0 10px 20px rgba(0,0,0,0.4);
-    padding: 15px 40px;
+        0 1px 2px rgba(0,0,0,1), 
+        0 2px 10px rgba(0,0,0,0.8),
+        0 0 20px rgba(0,0,0,0.5);
+    padding: 10px 40px;
     width: 100% !important;
     left: 0 !important;
     transform: none !important;
     border: none !important;
+    pointer-events: none; /* Dejar que los eventos pasen al span si es necesario, pero daremos eventos al padre para drag con ALT */
+}
+
+.draggable-text {
+    pointer-events: auto;
+}
+
+.draggable-text span {
+    pointer-events: auto;
 }
 
 #social-canvas {
@@ -179,6 +188,8 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    font-weight: 800;
 }
 
 #drop-zone.drag-active {
@@ -249,14 +260,26 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             const target = btn.dataset.target;
             const dir = btn.dataset.dir;
-            const el = target === 'title' ? document.getElementById('layer-title') : 
-                       target === 'subtitle' ? document.getElementById('layer-subtitle') : 
-                       document.getElementById('editable-cta');
             
+            // Apuntamos directo al elemento que tiene el texto configurable
+            let el;
+            if (target === 'title') el = editableTitle;
+            else if (target === 'subtitle') el = editableSubtitle;
+            else el = editableCta;
+            
+            // Obtenemos el tamaño actual del SPAN o elemento interno
             let currentSize = parseFloat(window.getComputedStyle(el).fontSize);
             const step = 2;
             const newSize = dir === 'up' ? currentSize + step : currentSize - step;
+            
+            // Aplicamos al elemento (que heredará su contenedor si es necesario, 
+            // pero mejor aplicar al elemento que renderiza el texto)
             el.style.fontSize = newSize + 'px';
+            
+            // Si es el título o subtítulo, también aplicamos al contenedor para que el line-height se ajuste
+            if (target !== 'cta') {
+                el.parentElement.style.fontSize = newSize + 'px';
+            }
         });
     });
 
