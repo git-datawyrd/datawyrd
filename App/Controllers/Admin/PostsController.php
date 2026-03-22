@@ -7,7 +7,7 @@ use Core\Session;
 use Core\Auth;
 use Core\Validator;
 
-class PostCMSController extends Controller
+class PostsController extends Controller
 {
     public function getMiddlewares(): array
     {
