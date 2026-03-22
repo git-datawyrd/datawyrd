@@ -190,6 +190,11 @@
     display: inline;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
     font-weight: 800;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(10, 10, 13, 0.05); /* Muy ligero para ayudar al desenfoque */
+    padding: 2px 10px;
+    border-radius: 4px;
 }
 
 #drop-zone.drag-active {
