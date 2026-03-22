@@ -184,12 +184,13 @@
 }
 
 .text-gradient-active {
-    background: linear-gradient(to right, var(--elegant-gold), var(--tech-blue));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background: linear-gradient(to right, #D4AF37, #30C5FF) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
     display: inline;
-    font-weight: 900;
-    text-shadow: none !important; /* El gradiente no suele llevar text-shadow para no ensuciar los bordes */
+    font-weight: 800;
+    text-shadow: none !important;
 }
 
 #drop-zone.drag-active {
@@ -442,24 +443,30 @@ document.addEventListener('DOMContentLoaded', () => {
             style: {
                 transform: 'none',
                 left: '0',
-                top: '0'
-            }
+                top: '0',
+                margin: '0'
+            },
+            quality: 1,
+            bgcolor: '#000000'
         };
 
-        domtoimage.toPng(canvas, options)
-            .then(dataUrl => {
-                const link = document.createElement('a');
-                link.download = `${platform}_${type}_${date}.png`;
-                link.href = dataUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showToast('¡Exportación completada!', 'success');
-            })
-            .catch(error => {
-                console.error('Error al exportar imagen:', error);
-                showToast('Error al generar la imagen. Inténtalo de nuevo.', 'error');
-            });
+        // Delay para asegurar renderizado de fuentes y efectos
+        setTimeout(() => {
+            domtoimage.toPng(canvas, options)
+                .then(dataUrl => {
+                    const link = document.createElement('a');
+                    link.download = `${platform}_${type}_${date}.png`;
+                    link.href = dataUrl;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    showToast('¡Exportación completada!', 'success');
+                })
+                .catch(error => {
+                    console.error('Error al exportar imagen:', error);
+                    showToast('Error al generar la imagen. Inténtalo de nuevo.', 'error');
+                });
+        }, 500);
     });
 
     updateCanvasSize();
