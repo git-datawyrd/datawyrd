@@ -118,7 +118,9 @@
             <div class="mb-4">
                 <label class="text-white-50 x-small tracking-widest uppercase mb-2 d-block">Tipo de Contenido</label>
                 <div class="d-flex flex-wrap gap-2" id="format-options">
-                    <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3 py-2 border-white-10 active" data-type="post">Publicación</button>
+                    <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3 py-2 border-white-10 active" data-type="post">Cuadrado (1:1)</button>
+                    <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3 py-2 border-white-10 btn-instagram-only" data-type="portrait" id="btn-portrait">Retrato (4:5) ⭐</button>
+                    <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3 py-2 border-white-10 btn-instagram-only" data-type="portrait_xl" id="btn-portrait-xl">XL (3:4)</button>
                     <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3 py-2 border-white-10" data-type="story" id="btn-story">Historia</button>
                     <button type="button" class="btn btn-outline-light btn-sm rounded-pill px-3 py-2 border-white-10" data-type="frame">Frame (Banner)</button>
                 </div>
@@ -287,11 +289,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Configuration Map
+    // Configuration Map — Dimensiones oficiales por plataforma/tipo
     const dimensions = {
-        instagram: { post: [1080, 1080], story: [1080, 1920], frame: [1080, 566] },
-        linkedin: { post: [1200, 1200], story: null, frame: [1200, 627] },
-        facebook: { post: [1200, 1200], story: [1080, 1920], frame: [1200, 630] }
+        instagram: {
+            post: [1080, 1080],          // 1:1 — Cuadrado clásico
+            portrait: [1080, 1350],       // 4:5 — Retrato, máximo alcance en feed
+            portrait_xl: [1080, 1440],    // 3:4 — XL, nuevo grid 2026
+            story: [1080, 1920],          // 9:16 — Historia
+            frame: [1080, 566]            // 1.91:1 — Banner
+        },
+        linkedin: { post: [1200, 1200], story: null, frame: [1200, 627], portrait: null, portrait_xl: null },
+        facebook: { post: [1200, 1200], story: [1080, 1920], frame: [1200, 630], portrait: null, portrait_xl: null }
     };
 
     function updateCanvasSize() {
@@ -300,6 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dims = dimensions[platform][type];
 
         if (!dims) {
+            // Formato no disponible — volver al cuadrado
+            formatButtons[0].click();
             showToast('Formato no disponible para esta plataforma', 'warning');
             return;
         }
@@ -311,24 +321,45 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.style.width = (w * scale) + 'px';
         canvas.style.height = (h * scale) + 'px';
 
-        // Reset positions to keep them visible when canvas changes ratio
+        // Reset posiciones
         document.getElementById('layer-title').style.top = '20%';
         document.getElementById('layer-subtitle').style.top = '40%';
         document.getElementById('layer-cta').style.top = '80%';
     }
 
-    platformSelect.addEventListener('change', () => {
+    function syncPlatformButtons() {
+        const platform = platformSelect.value;
+        const instagramOnly = document.querySelectorAll('.btn-instagram-only');
         const btnStory = document.getElementById('btn-story');
-        if (platformSelect.value === 'linkedin') {
-            btnStory.classList.add('d-none');
-            if (document.querySelector('#format-options .active').dataset.type === 'story') {
-                formatButtons[0].click();
+        const activeType = document.querySelector('#format-options .active').dataset.type;
+
+        // Ocultar/mostrar botones exclusivos de Instagram
+        instagramOnly.forEach(btn => {
+            if (platform === 'instagram') {
+                btn.classList.remove('d-none');
+            } else {
+                btn.classList.add('d-none');
             }
+        });
+
+        // Ocultar Historia en LinkedIn
+        if (platform === 'linkedin') {
+            btnStory.classList.add('d-none');
         } else {
             btnStory.classList.remove('d-none');
         }
-        updateCanvasSize();
-    });
+
+        // Si el tipo activo no está disponible en la plataforma, resetear al cuadrado
+        if (!dimensions[platform][activeType]) {
+            formatButtons[0].click();
+        } else {
+            updateCanvasSize();
+        }
+    }
+
+    platformSelect.addEventListener('change', syncPlatformButtons);
+    // Inicializar ocultando botones Instagram-only si no estamos en Instagram
+    document.querySelectorAll('.btn-instagram-only').forEach(btn => btn.classList.add('d-none'));
 
     formatButtons.forEach(btn => {
         btn.addEventListener('click', () => {
