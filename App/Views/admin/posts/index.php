@@ -433,15 +433,97 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Branding aplicado', 'success');
     });
 
-    // --- HELPER: Wrapping de texto en Canvas ---
+    // --- HELPER: Extraer segmentos de texto con info de branding ---
+    function getTextSegments(el) {
+        const segments = [];
+        el.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                segments.push({ text: node.textContent, isGradient: false });
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                const isGrad = node.classList && node.classList.contains('text-gradient-active');
+                segments.push({ text: node.innerText || node.textContent, isGradient: isGrad });
+            }
+        });
+        return segments;
+    }
+
+    // --- HELPER: Dibujar texto mixto (blanco + degradado por segmento) con wrap ---
+    function drawMixedText(ctx, el, centerX, startY, maxWidth, lineHeight) {
+        const segments = getTextSegments(el);
+
+        // Construir lista de palabras con info de branding
+        const words = [];
+        segments.forEach(seg => {
+            const parts = seg.text.split(/(\s+)/); // dividir respetando espacios
+            parts.forEach(part => {
+                if (part) words.push({ word: part, isGradient: seg.isGradient });
+            });
+        });
+
+        // Agrupar palabras en líneas respetando maxWidth
+        const lines = [];
+        let currentLine = [];
+        let currentWidth = 0;
+
+        words.forEach(wordObj => {
+            const w = ctx.measureText(wordObj.word).width;
+            if (/^\s+$/.test(wordObj.word)) {
+                // Es un espacio — lo añadimos a la línea actual si hay contenido
+                if (currentLine.length > 0) currentLine.push(wordObj);
+                currentWidth += w;
+            } else if (currentWidth + w > maxWidth && currentLine.length > 0) {
+                // Quitar trailing spaces antes de guardar línea
+                while (currentLine.length && /^\s+$/.test(currentLine[currentLine.length - 1].word)) currentLine.pop();
+                lines.push(currentLine);
+                currentLine = [wordObj];
+                currentWidth = w;
+            } else {
+                currentLine.push(wordObj);
+                currentWidth += w;
+            }
+        });
+        if (currentLine.length) {
+            while (currentLine.length && /^\s+$/.test(currentLine[currentLine.length - 1].word)) currentLine.pop();
+            lines.push(currentLine);
+        }
+
+        // Dibujar líneas
+        lines.forEach((line, lineIdx) => {
+            // Calcular el ancho total de la línea para centrarla
+            const totalWidth = line.reduce((sum, wo) => sum + ctx.measureText(wo.word).width, 0);
+            let x = centerX - totalWidth / 2;
+            const lineY = startY + lineIdx * lineHeight;
+
+            line.forEach(wordObj => {
+                const ww = ctx.measureText(wordObj.word).width;
+                if (/^\s+$/.test(wordObj.word)) {
+                    x += ww; // solo avanzar sin dibujar
+                    return;
+                }
+                if (wordObj.isGradient) {
+                    const grad = ctx.createLinearGradient(x, 0, x + ww, 0);
+                    grad.addColorStop(0, '#D4AF37');
+                    grad.addColorStop(1, '#30C5FF');
+                    ctx.fillStyle = grad;
+                } else {
+                    ctx.fillStyle = '#FFFFFF';
+                }
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'top';
+                ctx.fillText(wordObj.word, x, lineY);
+                x += ww;
+            });
+        });
+    }
+
+    // --- HELPER: Wrapping de texto simple (sin color mixto) ---
     function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
         const words = text.split(' ');
         let line = '';
         let lines = [];
         for (let n = 0; n < words.length; n++) {
             const testLine = line + words[n] + ' ';
-            const metrics = ctx.measureText(testLine);
-            if (metrics.width > maxWidth && n > 0) {
+            if (ctx.measureText(testLine).width > maxWidth && n > 0) {
                 lines.push(line.trim());
                 line = words[n] + ' ';
             } else {
@@ -511,23 +593,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const fontWeight = titleStyle.fontWeight || '700';
             ctx.save();
             ctx.font = `${fontWeight} ${fontSize}px Outfit, sans-serif`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'top';
             ctx.shadowColor = 'rgba(0,0,0,0.9)';
             ctx.shadowBlur = 14;
             ctx.shadowOffsetY = 3;
-
-            const brandSpan = editableTitle.querySelector('.text-gradient-active');
-            // Si hay branding en alguna parte, aplicamos degradado a todo el título para simplificar
-            if (brandSpan) {
-                const grad = ctx.createLinearGradient(padding, 0, renderCanvas.width - padding, 0);
-                grad.addColorStop(0, '#D4AF37');
-                grad.addColorStop(1, '#30C5FF');
-                ctx.fillStyle = grad;
-            } else {
-                ctx.fillStyle = '#FFFFFF';
-            }
-            wrapText(ctx, editableTitle.innerText, renderCanvas.width / 2, titleY, maxTextWidth, fontSize * 1.3);
+            // drawMixedText aplica degradado SOLO a las palabras con .text-gradient-active
+            drawMixedText(ctx, editableTitle, renderCanvas.width / 2, titleY, maxTextWidth, fontSize * 1.3);
             ctx.restore();
         }
 
