@@ -205,8 +205,10 @@
 .cursor-pointer { cursor: pointer; }
 </style>
 
-<!-- Motor de Captura Moderno -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<!-- Motor de Captura Nativo (Sin Dependencias Externas) -->
+<style>
+#social-canvas-render { display: none; } /* Canvas oculto para renderizado de alta calidad */
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -430,44 +432,127 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Branding aplicado', 'success');
     });
 
-    document.getElementById('export-btn').addEventListener('click', () => {
-        const platform = platformSelect.value;
-        const type = document.querySelector('#format-options .active').dataset.type;
-        const date = new Date().toISOString().split('T')[0];
+    // --- Motor de Exportación Nativo Data Wyrd ---
+    document.getElementById('export-btn').addEventListener('click', async () => {
+        showToast('Procesando imagen para redes sociales...', 'info');
         
-        showToast('Generando imagen de alta calidad...', 'info');
+        const renderCanvas = document.createElement('canvas');
+        const ctx = renderCanvas.getContext('2d');
+        const platform = platformSelect.value;
+        const typeTag = document.querySelector('#format-options .active').dataset.type;
+        const date = new Date().toISOString().split('T')[0];
 
-        const options = {
-            width: canvas.offsetWidth,
-            height: canvas.offsetHeight,
-            style: {
-                transform: 'none',
-                left: '0',
-                top: '0',
-                margin: '0',
-                visibility: 'visible'
-            },
-            quality: 0.95,
-            bgcolor: '#000000'
-        };
+        // Dimensiones originales del lienzo
+        renderCanvas.width = canvas.offsetWidth;
+        renderCanvas.height = canvas.offsetHeight;
 
-        // Delay para asegurar renderizado de fuentes y efectos
-        setTimeout(() => {
-            domtoimage.toJpeg(document.getElementById('social-canvas'), options)
-                .then(dataUrl => {
-                    const link = document.createElement('a');
-                    link.download = `${platform}_${type}_${date}.jpg`;
-                    link.href = dataUrl;
-                    document.body.appendChild(link);
-                    link.click();
-                    link.remove();
-                    showToast('¡Imagen generada con éxito!', 'success');
-                })
-                .catch(error => {
-                    console.error('Error al exportar:', error);
-                    showToast('Error en la generación. Inténtalo de nuevo.', 'error');
-                });
-        }, 1500);
+        // 1. Dibujar Fondo (Imagen o Color Negro)
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0, 0, renderCanvas.width, renderCanvas.height);
+
+        const bgStyle = window.getComputedStyle(canvasBg).backgroundImage;
+        if (bgStyle && bgStyle !== 'none') {
+            const url = bgStyle.slice(5, -2).replace(/"/g, "");
+            const bgImg = new Image();
+            bgImg.crossOrigin = "anonymous";
+            bgImg.src = url;
+            
+            await new Promise((resolve) => {
+                bgImg.onload = () => {
+                    // Calculamos object-fit: cover manualmente
+                    const imgRatio = bgImg.width / bgImg.height;
+                    const canvasRatio = renderCanvas.width / renderCanvas.height;
+                    let drawWidth, drawHeight, drawX, drawY;
+
+                    if (imgRatio > canvasRatio) {
+                        drawHeight = renderCanvas.height;
+                        drawWidth = renderCanvas.height * imgRatio;
+                        drawX = (renderCanvas.width - drawWidth) / 2;
+                        drawY = 0;
+                    } else {
+                        drawWidth = renderCanvas.width;
+                        drawHeight = renderCanvas.width / imgRatio;
+                        drawX = 0;
+                        drawY = (renderCanvas.height - drawHeight) / 2;
+                    }
+                    ctx.drawImage(bgImg, drawX, drawY, drawWidth, drawHeight);
+                    resolve();
+                };
+                bgImg.onerror = () => {
+                    console.error("Error al cargar imagen de fondo para exportación");
+                    resolve(); // Continuamos aunque falle el fondo
+                };
+            });
+        }
+
+        // 2. Dibujar Textos (Título, Subtítulo, CTA)
+        const layers = [
+            { el: titleTag, style: window.getComputedStyle(titleTag) },
+            { el: subtitleTag, style: window.getComputedStyle(subtitleTag) },
+            { el: ctaTag, style: window.getComputedStyle(ctaTag) }
+        ];
+
+        layers.forEach(layer => {
+            if (!layer.el.innerText.trim()) return;
+
+            const rect = layer.el.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            // Posición relativa al canvas
+            const x = (rect.left - canvasRect.left) + (rect.width / 2);
+            const y = (rect.top - canvasRect.top);
+
+            ctx.save();
+            
+            // Configurar Fuente
+            const fontSize = layer.style.fontSize;
+            const fontWeight = layer.style.fontWeight;
+            const fontFamily = "'Outfit', sans-serif";
+            ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+
+            // Sombras (Text Shadow alternativo)
+            ctx.shadowColor = "rgba(0,0,0,0.8)";
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 4;
+
+            // ¿Tiene efecto Branding?
+            const span = layer.el.querySelector('.text-gradient-active');
+            if (span) {
+                const text = layer.el.innerText;
+                const gradientText = span.innerText;
+                
+                // Dibujamos el texto normal, y luego el degradado encima del fragmento (simplificado para MVP nativo)
+                // Para simplificar al máximo y asegurar descarga, usamos el color de acento si hay branding
+                const gradient = ctx.createLinearGradient(x - 100, 0, x + 100, 0);
+                gradient.addColorStop(0, "#D4AF37"); // Gold
+                gradient.addColorStop(1, "#30C5FF"); // Tech Blue
+                ctx.fillStyle = gradient;
+            } else {
+                ctx.fillStyle = "#FFFFFF";
+            }
+
+            // Dibujar texto centralizado
+            ctx.fillText(layer.el.innerText, x, y);
+            ctx.restore();
+        });
+
+        // 3. Generar y Descargar
+        try {
+            const dataUrl = renderCanvas.toDataURL("image/jpeg", 0.95);
+            const link = document.createElement('a');
+            link.download = `DataWyrd_${platform}_${typeTag}_${date}.jpg`;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('¡Imagen descargada correctamente!', 'success');
+        } catch (e) {
+            console.error("Error en exportación nativa:", e);
+            showToast('Error de seguridad del navegador. Intenta con otra imagen.', 'error');
+        }
     });
 
     updateCanvasSize();
