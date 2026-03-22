@@ -18,15 +18,15 @@
                 </div>
 
                 <!-- Text Overlays -->
-                <div id="layer-title" class="draggable-text position-absolute text-white fw-bold fs-2 text-center px-4 d-none" style="top: 20%; left: 0; width: 100%; cursor: text; z-index: 10;">
+                <div id="layer-title" class="draggable-text position-absolute text-white fw-bold fs-2 text-center px-4 d-none glass-text-container" style="top: 20%; left: 0; width: 100%; z-index: 10;">
                     <span contenteditable="true" id="editable-title"></span>
                 </div>
 
-                <div id="layer-subtitle" class="draggable-text position-absolute text-white-50 fs-5 text-center px-5 d-none" style="top: 40%; left: 0; width: 100%; cursor: text; z-index: 9;">
+                <div id="layer-subtitle" class="draggable-text position-absolute text-white text-center px-5 d-none glass-text-container" style="top: 40%; left: 0; width: 100%; z-index: 9; font-size: 1.25rem;">
                     <span contenteditable="true" id="editable-subtitle"></span>
                 </div>
 
-                <div id="layer-cta" class="draggable-text position-absolute text-center d-none" style="top: 80%; left: 0; width: 100%; cursor: text; z-index: 8;">
+                <div id="layer-cta" class="draggable-text position-absolute text-center d-none" style="top: 80%; left: 0; width: 100%; z-index: 8;">
                     <span class="btn btn-primary rounded-pill px-4 py-2 fw-bold tracking-widest uppercase x-small shadow-gold" contenteditable="true" id="editable-cta"></span>
                 </div>
             </div>
@@ -129,13 +129,30 @@
 </div>
 
 <style>
-#social-canvas {
-    background: #0a0a0d;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 .draggable-text {
     cursor: grab;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    border: 1px solid transparent;
+    border-radius: 8px;
+}
+
+.draggable-text:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+}
+
+.draggable-text.dragging {
+    cursor: grabbing;
+    opacity: 0.8;
+}
+
+.glass-text-container {
+    background: rgba(10, 10, 13, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 .draggable-text span:focus {
@@ -217,14 +234,14 @@ document.addEventListener('DOMContentLoaded', () => {
     syncInputToScreen(inputSubtitle, editableSubtitle, document.getElementById('layer-subtitle'));
     syncInputToScreen(inputCta, editableCta, document.getElementById('layer-cta'));
 
-    // Font Size Controls
+    // Font Size Controls Corrected
     document.querySelectorAll('.font-size-ctrl').forEach(btn => {
         btn.addEventListener('click', () => {
             const target = btn.dataset.target;
             const dir = btn.dataset.dir;
             const el = target === 'title' ? document.getElementById('layer-title') : 
                        target === 'subtitle' ? document.getElementById('layer-subtitle') : 
-                       document.getElementById('editable-cta').parentElement;
+                       document.getElementById('editable-cta');
             
             let currentSize = parseFloat(window.getComputedStyle(el).fontSize);
             const step = 2;
@@ -256,6 +273,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         canvas.style.width = (w * scale) + 'px';
         canvas.style.height = (h * scale) + 'px';
+
+        // Reset positions to keep them visible when canvas changes ratio
+        document.getElementById('layer-title').style.top = '20%';
+        document.getElementById('layer-subtitle').style.top = '40%';
+        document.getElementById('layer-cta').style.top = '80%';
     }
 
     platformSelect.addEventListener('change', () => {
