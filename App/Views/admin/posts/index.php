@@ -435,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Motor de Exportación Nativo Data Wyrd ---
     document.getElementById('export-btn').addEventListener('click', async () => {
-        showToast('Procesando imagen para redes sociales...', 'info');
+        showToast('Procesando imagen...', 'info');
         
         const renderCanvas = document.createElement('canvas');
         const ctx = renderCanvas.getContext('2d');
@@ -443,106 +443,98 @@ document.addEventListener('DOMContentLoaded', () => {
         const typeTag = document.querySelector('#format-options .active').dataset.type;
         const date = new Date().toISOString().split('T')[0];
 
-        // Dimensiones originales del lienzo
+        // Dimensiones del lienzo visible
         renderCanvas.width = canvas.offsetWidth;
         renderCanvas.height = canvas.offsetHeight;
 
-        // 1. Dibujar Fondo (Imagen o Color Negro)
-        ctx.fillStyle = "#000000";
+        // 1. Fondo negro base
+        ctx.fillStyle = '#000000';
         ctx.fillRect(0, 0, renderCanvas.width, renderCanvas.height);
 
-        const bgStyle = window.getComputedStyle(canvasBg).backgroundImage;
-        if (bgStyle && bgStyle !== 'none') {
-            const url = bgStyle.slice(5, -2).replace(/"/g, "");
-            const bgImg = new Image();
-            bgImg.crossOrigin = "anonymous";
-            bgImg.src = url;
+        // 2. Dibujar imagen de fondo (si existe)
+        const bgStyle = canvasBg.style.backgroundImage;
+        if (bgStyle && bgStyle !== 'none' && bgStyle !== '') {
+            // Extraer URL correctamente (puede tener comillas simples o dobles)
+            const url = bgStyle.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
             
             await new Promise((resolve) => {
+                const bgImg = new Image();
+                // Solo usamos crossOrigin para URLs externas, no para data:
+                if (!url.startsWith('data:')) {
+                    bgImg.crossOrigin = 'anonymous';
+                }
                 bgImg.onload = () => {
-                    // Calculamos object-fit: cover manualmente
-                    const imgRatio = bgImg.width / bgImg.height;
+                    const imgRatio = bgImg.naturalWidth / bgImg.naturalHeight;
                     const canvasRatio = renderCanvas.width / renderCanvas.height;
                     let drawWidth, drawHeight, drawX, drawY;
-
                     if (imgRatio > canvasRatio) {
                         drawHeight = renderCanvas.height;
-                        drawWidth = renderCanvas.height * imgRatio;
+                        drawWidth = drawHeight * imgRatio;
                         drawX = (renderCanvas.width - drawWidth) / 2;
                         drawY = 0;
                     } else {
                         drawWidth = renderCanvas.width;
-                        drawHeight = renderCanvas.width / imgRatio;
+                        drawHeight = drawWidth / imgRatio;
                         drawX = 0;
                         drawY = (renderCanvas.height - drawHeight) / 2;
                     }
                     ctx.drawImage(bgImg, drawX, drawY, drawWidth, drawHeight);
                     resolve();
                 };
-                bgImg.onerror = () => {
-                    console.error("Error al cargar imagen de fondo para exportación");
-                    resolve(); // Continuamos aunque falle el fondo
+                bgImg.onerror = (err) => {
+                    console.warn('No se pudo cargar la imagen de fondo:', err);
+                    resolve();
                 };
+                bgImg.src = url;
             });
         }
 
-        // 2. Dibujar Textos (Título, Subtítulo, CTA)
-        const layers = [
-            { el: titleTag, style: window.getComputedStyle(titleTag) },
-            { el: subtitleTag, style: window.getComputedStyle(subtitleTag) },
-            { el: ctaTag, style: window.getComputedStyle(ctaTag) }
+        // 3. Dibujar Textos — Usar IDs correctos (bug crítico anterior: titleTag no estaba definido)
+        const layerDefs = [
+            { layer: document.getElementById('layer-title'),    el: editableTitle },
+            { layer: document.getElementById('layer-subtitle'), el: editableSubtitle },
+            { layer: document.getElementById('layer-cta'),      el: editableCta }
         ];
 
-        layers.forEach(layer => {
-            if (!layer.el.innerText.trim()) return;
+        const canvasRect = canvas.getBoundingClientRect();
 
-            const rect = layer.el.getBoundingClientRect();
-            const canvasRect = canvas.getBoundingClientRect();
-            
-            // Posición relativa al canvas
+        layerDefs.forEach(({ layer, el }) => {
+            if (!el || !el.innerText.trim()) return;
+            if (layer.classList.contains('d-none')) return;
+
+            const rect = el.getBoundingClientRect();
             const x = (rect.left - canvasRect.left) + (rect.width / 2);
             const y = (rect.top - canvasRect.top);
 
             ctx.save();
-            
-            // Configurar Fuente
-            const fontSize = layer.style.fontSize;
-            const fontWeight = layer.style.fontWeight;
-            const fontFamily = "'Outfit', sans-serif";
-            ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
-            ctx.textAlign = "center";
-            ctx.textBaseline = "top";
+            const computedStyle = window.getComputedStyle(el);
+            const fontSize = computedStyle.fontSize;
+            const fontWeight = computedStyle.fontWeight;
+            ctx.font = `${fontWeight} ${fontSize} Outfit, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.shadowColor = 'rgba(0,0,0,0.85)';
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetY = 3;
 
-            // Sombras (Text Shadow alternativo)
-            ctx.shadowColor = "rgba(0,0,0,0.8)";
-            ctx.shadowBlur = 15;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 4;
-
-            // ¿Tiene efecto Branding?
-            const span = layer.el.querySelector('.text-gradient-active');
-            if (span) {
-                const text = layer.el.innerText;
-                const gradientText = span.innerText;
-                
-                // Dibujamos el texto normal, y luego el degradado encima del fragmento (simplificado para MVP nativo)
-                // Para simplificar al máximo y asegurar descarga, usamos el color de acento si hay branding
-                const gradient = ctx.createLinearGradient(x - 100, 0, x + 100, 0);
-                gradient.addColorStop(0, "#D4AF37"); // Gold
-                gradient.addColorStop(1, "#30C5FF"); // Tech Blue
-                ctx.fillStyle = gradient;
+            // Verificar si tiene efecto branding
+            const brandSpan = el.querySelector('.text-gradient-active');
+            if (brandSpan) {
+                const grad = ctx.createLinearGradient(x - 150, 0, x + 150, 0);
+                grad.addColorStop(0, '#D4AF37');
+                grad.addColorStop(1, '#30C5FF');
+                ctx.fillStyle = grad;
             } else {
-                ctx.fillStyle = "#FFFFFF";
+                ctx.fillStyle = '#FFFFFF';
             }
 
-            // Dibujar texto centralizado
-            ctx.fillText(layer.el.innerText, x, y);
+            ctx.fillText(el.innerText, x, y);
             ctx.restore();
         });
 
-        // 3. Generar y Descargar
+        // 4. Descargar como JPG
         try {
-            const dataUrl = renderCanvas.toDataURL("image/jpeg", 0.95);
+            const dataUrl = renderCanvas.toDataURL('image/jpeg', 0.92);
             const link = document.createElement('a');
             link.download = `DataWyrd_${platform}_${typeTag}_${date}.jpg`;
             link.href = dataUrl;
@@ -551,8 +543,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.removeChild(link);
             showToast('¡Imagen descargada correctamente!', 'success');
         } catch (e) {
-            console.error("Error en exportación nativa:", e);
-            showToast('Error de seguridad del navegador. Intenta con otra imagen.', 'error');
+            console.error('Error en exportación:', e);
+            showToast('Error al generar el archivo. Ver consola para detalles.', 'error');
         }
     });
 
