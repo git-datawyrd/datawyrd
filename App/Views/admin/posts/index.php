@@ -138,7 +138,7 @@
 
 .draggable-text:hover {
     border-color: rgba(212, 175, 55, 0.4);
-    box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.01);
 }
 
 .draggable-text.dragging {
@@ -147,16 +147,22 @@
 }
 
 .glass-text-container {
-    background: rgba(10, 10, 13, 0.01);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    text-shadow: 0 4px 20px rgba(0,0,0,1);
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-shadow: 
+        0 2px 4px rgba(0,0,0,0.8), 
+        0 4px 10px rgba(0,0,0,0.6),
+        0 10px 20px rgba(0,0,0,0.4);
     padding: 15px 40px;
     width: 100% !important;
     left: 0 !important;
     transform: none !important;
-    border-top: 1px solid rgba(255,255,255,0.02);
-    border-bottom: 1px solid rgba(255,255,255,0.02);
+    border: none !important;
+}
+
+#social-canvas {
+    background: #000;
 }
 
 .draggable-text span:focus {
