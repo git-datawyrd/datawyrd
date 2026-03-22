@@ -7,11 +7,14 @@
                 <!-- Background Image Layer -->
                 <div id="canvas-bg" class="position-absolute top-0 start-0 w-100 h-100 bg-size-cover bg-position-center d-none"></div>
                 
-                <!-- Placeholder / Empty State -->
-                <div id="canvas-placeholder" class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white-50 p-4 text-center">
-                    <span class="material-symbols-outlined fs-1 mb-3">image_search</span>
-                    <p class="mb-0 fw-medium">Sube una imagen para comenzar</p>
-                    <small class="opacity-50 mt-2">Formatos sugeridos: JPG, PNG, WEBP</small>
+                <!-- Placeholder / Empty State (Inside Canvas) -->
+                <div id="drop-zone" class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white-50 p-4 text-center cursor-pointer transition-all hover-bg-light" style="z-index: 5;">
+                    <input type="file" id="img-input" class="d-none" accept="image/*">
+                    <div id="canvas-placeholder">
+                        <span class="material-symbols-outlined fs-1 mb-3">cloud_upload</span>
+                        <p class="mb-0 fw-medium">Arrastra o haz clic para subir imagen</p>
+                        <small class="opacity-50 mt-2">JPG, PNG, WEBP (Máx 5MB)</small>
+                    </div>
                 </div>
 
                 <!-- Text Overlays -->
@@ -29,7 +32,10 @@
             </div>
 
             <!-- Canvas Controls Overlay -->
-            <div class="position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-center gap-3">
+            <div class="position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-center gap-3" style="z-index: 20;">
+                <button type="button" id="replace-btn" class="btn btn-outline-light d-none align-items-center gap-2 px-3 rounded-pill shadow-lg transition-all border-white-20" style="backdrop-filter: blur(10px); background: rgba(0,0,0,0.3);">
+                    <span class="material-symbols-outlined fs-5">replay</span> Reemplazar
+                </button>
                 <button type="button" id="export-btn" class="btn btn-gold d-flex align-items-center gap-2 px-4 rounded-pill shadow-lg hover-scale transition-all">
                     <span class="material-symbols-outlined">download</span> Exportar PNG
                 </button>
@@ -45,13 +51,23 @@
                 Configuración del Post
             </h3>
 
-            <!-- 1. Imagen -->
+            <!-- 1. Textos Editables -->
             <div class="mb-4">
-                <label class="text-white-50 x-small tracking-widest uppercase mb-2 d-block">Imagen de Fondo</label>
-                <div id="drop-zone" class="border-2 border-dashed border-white-10 rounded-3 p-4 text-center hover-bg-light transition-all cursor-pointer">
-                    <input type="file" id="img-input" class="d-none" accept="image/*">
-                    <span class="material-symbols-outlined text-white-50 fs-2 mb-2">cloud_upload</span>
-                    <p class="text-white-50 small mb-0">Arrastra o haz clic para subir</p>
+                <label class="text-white-50 x-small tracking-widest uppercase mb-3 d-block">Contenido del Post</label>
+                
+                <div class="mb-3">
+                    <label class="x-small text-white-50 mb-1">Título</label>
+                    <textarea id="input-title" class="form-control bg-deep-black border-white-10 text-white small" rows="2">TÍTULO DEL POST</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="x-small text-white-50 mb-1">Subtítulo</label>
+                    <textarea id="input-subtitle" class="form-control bg-deep-black border-white-10 text-white small" rows="3">Subtítulo persuasivo para captar atención</textarea>
+                </div>
+
+                <div class="mb-2">
+                    <label class="x-small text-white-50 mb-1">CTA (Botón)</label>
+                    <input type="text" id="input-cta" class="form-control bg-deep-black border-white-10 text-white small" value="Saber más">
                 </div>
             </div>
 
@@ -142,6 +158,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvasBg = document.getElementById('canvas-bg');
     const canvasPlaceholder = document.getElementById('canvas-placeholder');
     const magicWand = document.getElementById('magic-gradient');
+    const replaceBtn = document.getElementById('replace-btn');
+
+    // Inputs
+    const inputTitle = document.getElementById('input-title');
+    const inputSubtitle = document.getElementById('input-subtitle');
+    const inputCta = document.getElementById('input-cta');
+    
+    // Canvas Elements
+    const editableTitle = document.getElementById('editable-title');
+    const editableSubtitle = document.getElementById('editable-subtitle');
+    const editableCta = document.getElementById('editable-cta');
+
+    // Sync: Screen -> Input
+    editableTitle.addEventListener('input', () => inputTitle.value = editableTitle.innerText);
+    editableSubtitle.addEventListener('input', () => inputSubtitle.value = editableSubtitle.innerText);
+    editableCta.addEventListener('input', () => inputCta.value = editableCta.innerText);
+
+    // Sync: Input -> Screen
+    inputTitle.addEventListener('input', () => editableTitle.innerText = inputTitle.value);
+    inputSubtitle.addEventListener('input', () => editableSubtitle.innerText = inputSubtitle.value);
+    inputCta.addEventListener('input', () => editableCta.innerText = inputCta.value);
 
     // Configuration Map
     const dimensions = {
@@ -156,13 +193,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const dims = dimensions[platform][type];
 
         if (!dims) {
-            // Disable specific unsupported formats (like LinkedIn Story)
             showToast('Formato no disponible para esta plataforma', 'warning');
             return;
         }
 
         const [w, h] = dims;
-        // Calculate proportional scale to fit in screen
         const maxDisplayWidth = window.innerWidth > 992 ? 500 : 300;
         const scale = maxDisplayWidth / w;
         
@@ -170,12 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.style.height = (h * scale) + 'px';
     }
 
-    // Platform Change
     platformSelect.addEventListener('change', () => {
         const btnStory = document.getElementById('btn-story');
         if (platformSelect.value === 'linkedin') {
             btnStory.classList.add('d-none');
-            // If Story was active, switch to Post
             if (document.querySelector('#format-options .active').dataset.type === 'story') {
                 formatButtons[0].click();
             }
@@ -185,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCanvasSize();
     });
 
-    // Format Change
     formatButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             formatButtons.forEach(b => b.classList.remove('active', 'btn-primary'));
@@ -196,9 +228,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Image Upload
-    dropZone.addEventListener('click', () => imgInput.click());
+    // Image Upload Logic
+    dropZone.addEventListener('click', () => {
+        if (canvasBg.classList.contains('d-none')) {
+            imgInput.click();
+        }
+    });
     
+    replaceBtn.addEventListener('click', () => imgInput.click());
+
     imgInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) handleImage(file);
@@ -213,13 +251,17 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (e) => {
             canvasBg.style.backgroundImage = `url(${e.target.result})`;
             canvasBg.classList.remove('d-none');
-            canvasPlaceholder.classList.add('d-none');
+            
+            // UI Updates
+            dropZone.classList.add('d-none'); // Hide the drop zone completely
+            replaceBtn.classList.remove('d-none');
+            replaceBtn.classList.add('d-flex');
+
             showToast('Imagen cargada correctamente', 'success');
         };
         reader.readAsDataURL(file);
     }
 
-    // Drag & Drop for Image
     dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-active'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-active'));
     dropZone.addEventListener('drop', (e) => {
@@ -229,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         handleImage(file);
     });
 
-    // Drag & Drop for Text Layers (Simple Implementation)
+    // Drag & Drop for Text Layers
     let activeLayer = null;
     let offset = [0, 0];
 
@@ -237,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
         layer.addEventListener('mousedown', (e) => {
             if (e.target.hasAttribute('contenteditable') && document.activeElement === e.target) return;
             activeLayer = layer;
-            const parentRect = canvas.getBoundingClientRect();
             const layerRect = layer.getBoundingClientRect();
             offset = [
                 e.clientX - layerRect.left,
@@ -252,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const parentRect = canvas.getBoundingClientRect();
         let top = e.clientY - parentRect.top - offset[1];
         
-        // Bounds checking
         if (top < 0) top = 0;
         if (top > parentRect.height - activeLayer.offsetHeight) top = parentRect.height - activeLayer.offsetHeight;
 
@@ -261,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('mouseup', () => activeLayer = null);
 
-    // Magic Wand Gradient
     magicWand.addEventListener('click', () => {
         const selection = window.getSelection();
         if (!selection || selection.rangeCount === 0 || selection.toString().trim() === '') {
@@ -276,7 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Branding aplicado', 'success');
     });
 
-    // Export PNG
     document.getElementById('export-btn').addEventListener('click', () => {
         const platform = platformSelect.value;
         const type = document.querySelector('#format-options .active').dataset.type;
@@ -284,14 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         showToast('Generando imagen de alta calidad...', 'info');
 
-        // We temporarily set scale to 1 for high-res export
-        const platformDims = dimensions[platform][type];
-        const originalWidth = canvas.style.width;
-        const originalHeight = canvas.style.height;
-        
-        // Use html2canvas
         html2canvas(canvas, {
-            scale: 2, // Doubling resolution for sharpness (Retina-like)
+            scale: 2,
             backgroundColor: null,
             useCORS: true,
             logging: false
@@ -304,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Init
     updateCanvasSize();
 });
 </script>
