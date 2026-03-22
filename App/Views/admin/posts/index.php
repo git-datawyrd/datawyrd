@@ -31,15 +31,16 @@
                 </div>
             </div>
 
-            <!-- Canvas Controls Overlay -->
-            <div class="position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-center gap-3" style="z-index: 20;">
-                <button type="button" id="replace-btn" class="btn btn-midnight d-none align-items-center gap-2 px-4 rounded-pill shadow-lg hover-scale transition-all border border-white-10">
-                    <span class="material-symbols-outlined fs-5">replay</span> Reemplazar
-                </button>
-                <button type="button" id="export-btn" class="btn btn-gold d-flex align-items-center gap-2 px-4 rounded-pill shadow-lg hover-scale transition-all">
-                    <span class="material-symbols-outlined">download</span> Exportar JPG
-                </button>
-            </div>
+        </div>
+
+        <!-- Canvas Controls (Sacados del área de trabajo para evitar montaje) -->
+        <div class="glass-morphism rounded-4 p-3 d-flex justify-content-center gap-3 mt-4">
+            <button type="button" id="replace-btn" class="btn btn-midnight d-none align-items-center gap-2 px-4 rounded-pill shadow-lg hover-scale transition-all border border-white-10">
+                <span class="material-symbols-outlined fs-5">replay</span> Reemplazar
+            </button>
+            <button type="button" id="export-btn" class="btn btn-gold d-flex align-items-center gap-2 px-4 rounded-pill shadow-lg hover-scale transition-all">
+                <span class="material-symbols-outlined">download</span> Exportar JPG
+            </button>
         </div>
 
         <!-- 4. Herramientas Mágicas (Debajo del Workspace) -->
