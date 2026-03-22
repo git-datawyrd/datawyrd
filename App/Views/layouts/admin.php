@@ -122,6 +122,11 @@
                         <span class="material-symbols-outlined">work</span>
                         Módulo de RRHH
                     </a>
+                    <a href="<?php echo url('admin/posts'); ?>"
+                        class="nav-link-custom mb-1 <?php echo strpos($_SERVER['REQUEST_URI'], 'admin/posts') !== false ? 'active' : ''; ?>">
+                        <span class="material-symbols-outlined">share</span>
+                        Post en RRSS
+                    </a>
                 <?php endif; ?>
 
                 <div class="mt-auto p-3">
