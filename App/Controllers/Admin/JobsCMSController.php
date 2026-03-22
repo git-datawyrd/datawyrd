@@ -51,7 +51,7 @@ class JobsCMSController extends Controller
 
         $this->viewLayout('admin/jobs/view', 'admin', [
             'title' => 'Detalle de Postulación',
-            'app' => $application,
+            'jobApp' => $application,
             'statusLogs' => $logs,
             'candidateHistory' => $history
         ]);

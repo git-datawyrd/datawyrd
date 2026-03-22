@@ -5,11 +5,11 @@
                 <span class="material-symbols-outlined fs-5">arrow_back</span>
                 Volver al listado
             </a>
-            <h1 class="h3 fw-bold text-white mb-1"><span class="text-gradient">Postulación:</span> <?php echo htmlspecialchars($app['vacancy_name']); ?></h1>
-            <p class="text-white-50 small mb-0">Enviada el <?php echo date('d M Y, H:i', strtotime($app['created_at'])); ?></p>
+            <h1 class="h3 fw-bold text-white mb-1"><span class="text-gradient">Postulación:</span> <?php echo htmlspecialchars($jobApp['vacancy_name']); ?></h1>
+            <p class="text-white-50 small mb-0">Enviada el <?php echo date('d M Y, H:i', strtotime($jobApp['created_at'])); ?></p>
         </div>
         <div>
-            <a href="<?php echo url('admin/jobs/downloadCv/' . $app['id']); ?>" class="btn btn-primary d-flex align-items-center gap-2 fw-bold uppercase tracking-widest rounded-3 px-4 py-2 shadow-gold transition-all hover-scale">
+            <a href="<?php echo url('admin/jobs/downloadCv/' . $jobApp['id']); ?>" class="btn btn-primary d-flex align-items-center gap-2 fw-bold uppercase tracking-widest rounded-3 px-4 py-2 shadow-gold transition-all hover-scale">
                 <span class="material-symbols-outlined fs-5">download</span>
                 Descargar CV
             </a>
@@ -43,23 +43,23 @@
                     Perfil del Candidato
                 </h3>
 
-                <form method="POST" action="<?php echo url('admin/jobs/updateProfile/' . $app['candidate_id']); ?>">
+                <form method="POST" action="<?php echo url('admin/jobs/updateProfile/' . $jobApp['candidate_id']); ?>">
                     <?php echo csrf_field(); ?>
                     
                     <div class="row g-4 mb-4">
                         <div class="col-md-6">
                             <label class="text-white-50 x-small tracking-widest uppercase mb-1">Nombre Completo</label>
-                            <div class="text-white fs-5 mb-0 fw-bold"><?php echo htmlspecialchars($app['first_name'] . ' ' . $app['last_name']); ?></div>
+                            <div class="text-white fs-5 mb-0 fw-bold"><?php echo htmlspecialchars($jobApp['first_name'] . ' ' . $jobApp['last_name']); ?></div>
                         </div>
                         <div class="col-md-6">
                             <label class="text-white-50 x-small tracking-widest uppercase mb-1">Contacto</label>
                             <div class="d-flex align-items-center gap-2 mb-1">
                                 <span class="material-symbols-outlined text-white-50" style="font-size: 16px;">mail</span>
-                                <a href="mailto:<?php echo htmlspecialchars($app['email']); ?>" class="text-white hover-gold text-decoration-none"><?php echo htmlspecialchars($app['email']); ?></a>
+                                <a href="mailto:<?php echo htmlspecialchars($jobApp['email']); ?>" class="text-white hover-gold text-decoration-none"><?php echo htmlspecialchars($jobApp['email']); ?></a>
                             </div>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="material-symbols-outlined text-white-50" style="font-size: 16px;">phone</span>
-                                <a href="tel:<?php echo htmlspecialchars($app['phone']); ?>" class="text-white hover-gold text-decoration-none"><?php echo htmlspecialchars($app['phone']); ?></a>
+                                <a href="tel:<?php echo htmlspecialchars($jobApp['phone']); ?>" class="text-white hover-gold text-decoration-none"><?php echo htmlspecialchars($jobApp['phone']); ?></a>
                             </div>
                         </div>
                     </div>
@@ -67,22 +67,22 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label class="text-white-50 x-small tracking-widest uppercase mb-1">Ciudad</label>
-                            <input type="text" name="city" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($app['city'] ?? ''); ?>">
+                            <input type="text" name="city" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($jobApp['city'] ?? ''); ?>">
                         </div>
                         <div class="col-md-6">
                             <label class="text-white-50 x-small tracking-widest uppercase mb-1">País</label>
-                            <input type="text" name="country" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($app['country'] ?? ''); ?>">
+                            <input type="text" name="country" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($jobApp['country'] ?? ''); ?>">
                         </div>
                     </div>
                     
                     <div class="mb-4">
                         <label class="text-white-50 x-small tracking-widest uppercase mb-1">Dirección</label>
-                        <input type="text" name="address" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($app['address'] ?? ''); ?>">
+                        <input type="text" name="address" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($jobApp['address'] ?? ''); ?>">
                     </div>
 
-                    <?php if (!empty($app['linkedin_url'])): ?>
+                    <?php if (!empty($jobApp['linkedin_url'])): ?>
                     <div class="mb-4">
-                        <a href="<?php echo htmlspecialchars($app['linkedin_url']); ?>" target="_blank" class="btn btn-outline-light border-white-10 d-inline-flex align-items-center gap-2 hover-gold transition-all">
+                        <a href="<?php echo htmlspecialchars($jobApp['linkedin_url']); ?>" target="_blank" class="btn btn-outline-light border-white-10 d-inline-flex align-items-center gap-2 hover-gold transition-all">
                             <span class="material-symbols-outlined fs-5">link</span>
                             Ver Perfil de LinkedIn
                         </a>
@@ -102,13 +102,13 @@
                     Manejo de Postulación
                 </h3>
 
-                <form method="POST" action="<?php echo url('admin/jobs/updateApplication/' . $app['id']); ?>">
+                <form method="POST" action="<?php echo url('admin/jobs/updateApplication/' . $jobApp['id']); ?>">
                     <?php echo csrf_field(); ?>
                     
                     <div class="mb-4">
                         <label class="text-white-50 x-small tracking-widest uppercase mb-2">Vacante Actual (Perfil Aplicado)</label>
                         <div class="input-group">
-                            <input type="text" id="vacancyInput" name="vacancy_name" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($app['vacancy_name'] ?? ''); ?>" placeholder="Sin postular a vacante">
+                            <input type="text" id="vacancyInput" name="vacancy_name" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($jobApp['vacancy_name'] ?? ''); ?>" placeholder="Sin postular a vacante">
                             <button type="submit" id="saveVacancyBtn" class="btn btn-outline-success d-none d-flex align-items-center" title="Guardar Cambios">
                                 <span class="material-symbols-outlined fs-6">check</span>
                             </button>
@@ -132,15 +132,15 @@
                                 'hired' => '¡Contratado!'
                             ];
                             foreach ($states as $key => $label) {
-                                $selected = $app['status'] === $key ? 'selected' : '';
+                                $selected = $jobApp['status'] === $key ? 'selected' : '';
                                 echo "<option value=\"{$key}\" {$selected}>{$label}</option>";
                             }
                             ?>
                         </select>
-                        <?php if (!empty($app['status_updated_at'])): ?>
+                        <?php if (!empty($jobApp['status_updated_at'])): ?>
                             <div class="text-white-50 mt-2 x-small">
                                 <span class="material-symbols-outlined x-small align-middle me-1">update</span>
-                                Último cambio: <?php echo date('d M Y, H:i', strtotime($app['status_updated_at'])); ?>
+                                Último cambio: <?php echo date('d M Y, H:i', strtotime($jobApp['status_updated_at'])); ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -155,19 +155,19 @@
                     <span class="material-symbols-outlined text-white-50">description</span>
                     Carta de Presentación
                 </h3>
-                <?php if (!empty($app['presentation_letter'])): ?>
-                    <p class="text-white-50 small" style="white-space: pre-wrap; line-height: 1.7;"><?php echo htmlspecialchars($app['presentation_letter']); ?></p>
+                <?php if (!empty($jobApp['presentation_letter'])): ?>
+                    <p class="text-white-50 small" style="white-space: pre-wrap; line-height: 1.7;"><?php echo htmlspecialchars($jobApp['presentation_letter']); ?></p>
                 <?php else: ?>
                     <p class="text-white-50 small fst-italic">El candidato no incluyó una carta de presentación.</p>
                 <?php endif; ?>
 
-                <?php if (!empty($app['skills'])): ?>
+                <?php if (!empty($jobApp['skills'])): ?>
                     <h3 class="h6 text-white fw-bold mb-3 mt-4 d-flex align-items-center gap-2 border-top border-white-10 pt-4">
                         <span class="material-symbols-outlined text-white-50">psychology</span>
                         Competencias y Skills
                     </h3>
                     <div class="d-flex flex-wrap gap-2">
-                        <?php foreach ($app['skills'] as $skill): ?>
+                        <?php foreach ($jobApp['skills'] as $skill): ?>
                             <span class="badge border border-white-20 text-white bg-dark px-3 py-2 rounded-pill font-monospace small">
                                 <?php echo htmlspecialchars($skill); ?>
                             </span>
@@ -236,7 +236,7 @@
                                     <span class="badge bg-primary bg-opacity-10 border border-primary border-opacity-25 text-primary x-small px-2 py-1 mb-2 d-block">
                                         <?php echo htmlspecialchars($hist['status']); ?>
                                     </span>
-                                    <?php if ($hist['id'] != $app['id']): ?>
+                                    <?php if ($hist['id'] != $jobApp['id']): ?>
                                         <a href="<?php echo url('admin/jobs/show/' . $hist['id']); ?>" class="btn btn-link text-accent p-0 x-small text-decoration-none fw-bold hover-gold">Ver Detalle</a>
                                     <?php else: ?>
                                         <span class="badge bg-white-10 text-white-50 x-small px-2 py-1">Actual</span>
