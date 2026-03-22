@@ -444,29 +444,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 transform: 'none',
                 left: '0',
                 top: '0',
-                margin: '0'
+                margin: '0',
+                visibility: 'visible'
             },
-            quality: 1,
+            quality: 0.95,
             bgcolor: '#000000'
         };
 
         // Delay para asegurar renderizado de fuentes y efectos
         setTimeout(() => {
-            domtoimage.toPng(canvas, options)
+            domtoimage.toJpeg(canvas, options)
                 .then(dataUrl => {
                     const link = document.createElement('a');
-                    link.download = `${platform}_${type}_${date}.png`;
+                    link.download = `${platform}_${type}_${date}.jpg`;
                     link.href = dataUrl;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    showToast('¡Exportación completada!', 'success');
+                    showToast('¡Exportación .JPG completada!', 'success');
                 })
                 .catch(error => {
                     console.error('Error al exportar imagen:', error);
                     showToast('Error al generar la imagen. Inténtalo de nuevo.', 'error');
                 });
-        }, 500);
+        }, 1000);
     });
 
     updateCanvasSize();
