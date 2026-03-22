@@ -436,17 +436,41 @@ document.addEventListener('DOMContentLoaded', () => {
         
         showToast('Generando imagen de alta calidad...', 'info');
 
+        // Nos aseguramos de que el canvas no tenga scroll
+        window.scrollTo(0, 0);
+
         html2canvas(canvas, {
             scale: 2,
-            backgroundColor: null,
+            backgroundColor: '#000000',
             useCORS: true,
-            logging: false
+            allowTaint: true,
+            logging: true,
+            x: 0,
+            y: 0,
+            width: canvas.offsetWidth,
+            height: canvas.offsetHeight,
+            onclone: (clonedDoc) => {
+                // Forzar que el canvas clonado sea visible
+                const clonedCanvas = clonedDoc.getElementById('social-canvas');
+                clonedCanvas.style.visibility = 'visible';
+                clonedCanvas.style.display = 'block';
+            }
         }).then(exportCanvas => {
-            const link = document.createElement('a');
-            link.download = `${platform}_${type}_${date}.png`;
-            link.href = exportCanvas.toDataURL('image/png', 1.0);
-            link.click();
-            showToast('¡Exportación completada!', 'success');
+            try {
+                const link = document.createElement('a');
+                link.download = `${platform}_${type}_${date}.png`;
+                link.href = exportCanvas.toDataURL('image/png', 1.0);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast('¡Exportación completada!', 'success');
+            } catch (err) {
+                console.error("Error al generar el link de descarga:", err);
+                showToast('Error al descargar la imagen', 'error');
+            }
+        }).catch(err => {
+            console.error("Error en html2canvas:", err);
+            showToast('Error al capturar el canvas', 'error');
         });
     });
 
