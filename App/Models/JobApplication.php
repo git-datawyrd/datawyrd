@@ -17,7 +17,7 @@ class JobApplication extends Model
         
         $stmt->execute([
             'candidate_id' => $data['candidate_id'],
-            'vacancy_name' => $data['vacancy_name'] ?? 'Candidatura Espontánea',
+            'vacancy_name' => !empty($data['vacancy_name']) ? $data['vacancy_name'] : null,
             'skills' => isset($data['skills']) ? json_encode($data['skills'], JSON_UNESCAPED_UNICODE) : null,
             'presentation_letter' => $data['presentation_letter'] ?? null,
             'cv_path' => $data['cv_path'],

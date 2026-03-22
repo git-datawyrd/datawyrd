@@ -106,15 +106,14 @@
                     <?php echo csrf_field(); ?>
                     
                     <div class="mb-4">
-                        <label class="text-white-50 x-small tracking-widest uppercase mb-2">Vacante Actual</label>
-                        <select name="vacancy_name" class="form-select bg-deep-black border-white-10 text-white mb-2">
-                            <option value="<?php echo htmlspecialchars($app['vacancy_name']); ?>" selected><?php echo htmlspecialchars($app['vacancy_name']); ?></option>
-                            <option value="Candidatura Espontánea">Candidatura Espontánea</option>
-                            <option value="Data Engineer Semi-Senior">Data Engineer Ssr.</option>
-                            <option value="Data Analyst Junior">Data Analyst Jr.</option>
-                            <option value="Arquitecto Cloud AWS">Arquitecto Cloud AWS</option>
-                            <option value="Fullstack PHP Developer">Fullstack PHP Developer</option>
-                        </select>
+                        <label class="text-white-50 x-small tracking-widest uppercase mb-2">Vacante Actual (Perfil Aplicado)</label>
+                        <div class="input-group">
+                            <input type="text" id="vacancyInput" name="vacancy_name" class="form-control bg-deep-black border-white-10 text-white" value="<?php echo htmlspecialchars($app['vacancy_name'] ?? ''); ?>" placeholder="Sin postular a vacante">
+                            <button type="submit" id="saveVacancyBtn" class="btn btn-outline-success d-none d-flex align-items-center" title="Guardar Cambios">
+                                <span class="material-symbols-outlined fs-6">check</span>
+                            </button>
+                        </div>
+                        <div class="text-white-50 mt-1" style="font-size: 11px;">Escribe el cargo para postular manualmente, o deja en blanco.</div>
                     </div>
 
                     <div class="mb-4">
@@ -179,3 +178,20 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const vacancyInput = document.getElementById('vacancyInput');
+    const saveVacancyBtn = document.getElementById('saveVacancyBtn');
+    if (vacancyInput && saveVacancyBtn) {
+        const originalValue = vacancyInput.value;
+        vacancyInput.addEventListener('input', () => {
+            if (vacancyInput.value !== originalValue) {
+                saveVacancyBtn.classList.remove('d-none');
+            } else {
+                saveVacancyBtn.classList.add('d-none');
+            }
+        });
+    }
+});
+</script>
