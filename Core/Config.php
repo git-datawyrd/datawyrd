@@ -20,10 +20,18 @@ class Config
             return;
 
         // 1. Leer y validar ENVIRONMENT (ya cargado por EnvLoader)
+        // Intentamos obtenerlo de varias fuentes por robustez en entornos XAMPP/Windows
         $env = getenv('ENVIRONMENT');
+        if (!$env && isset($_ENV['ENVIRONMENT'])) $env = $_ENV['ENVIRONMENT'];
+        if (!$env && isset($_SERVER['ENVIRONMENT'])) $env = $_SERVER['ENVIRONMENT'];
 
         if (!$env) {
-            die("FATAL ERROR: ENVIRONMENT no está definida. Verifica que el loader de .env se haya ejecutado.");
+            $errorMsg = "FATAL ERROR: ENVIRONMENT no está definida.\n";
+            $errorMsg .= "Diagnóstico: getenv()=" . (getenv('ENVIRONMENT') ? 'ok' : 'fail') . ", ";
+            $errorMsg .= "\$_ENV=" . (isset($_ENV['ENVIRONMENT']) ? 'ok' : 'fail') . ", ";
+            $errorMsg .= "\$_SERVER=" . (isset($_SERVER['ENVIRONMENT']) ? 'ok' : 'fail') . ".\n";
+            $errorMsg .= "Verifica que el loader de .env se haya ejecutado correctamente y que el archivo .env exista en la raíz.";
+            die($errorMsg);
         }
 
         if (!in_array($env, self::$validEnvironments)) {

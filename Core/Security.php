@@ -26,6 +26,7 @@ class Security
         $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://fonts.gstatic.com; ";
         $csp .= "font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; ";
         $csp .= "img-src 'self' data: https://cdn.jsdelivr.net; ";
+        $csp .= "connect-src 'self' https://cdn.jsdelivr.net; "; // Permite AJAX local y mapas de fuentes/librerías
         $csp .= "frame-ancestors 'self'; ";
         $csp .= "base-uri 'self'; ";
         $csp .= "form-action 'self';";

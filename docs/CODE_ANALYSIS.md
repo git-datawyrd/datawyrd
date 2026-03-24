@@ -1,5 +1,5 @@
-**Fecha de Análisis:** 04 de Marzo, 2026  
-**Versión del Sistema:** 2.6.0  
+**Fecha de Análisis:** 24 de Marzo, 2026  
+**Versión del Sistema:** 11.3.0  
 **Analista:** Antigravity AI  
 
 ---
@@ -558,6 +558,25 @@ if ($validator->fails()) {
 
 ---
 
+### 7. RRHH Validation Hardening (Evolución 11.3.0)
+
+**Archivos modificados:**
+- ✅ `App/Controllers/JobsController.php` — Lógica de detección de duplicados y envío de OTP.
+- ✅ `App/Models/Candidate.php` — Métodos de búsqueda por email y gestión de tokens.
+- ✅ `App/Models/JobApplication.php` — Relación robusta con candidatos.
+- ✅ `App/Controllers/Admin/JobsCMSController.php` — Visualización de historial de aplicaciones.
+- ✅ `database/migration_candidate_tokens.sql` — Nueva tabla para tokens efímeros.
+
+**Mejoras:**
+- **OTP-Based Update Flow**: Implementación de un flujo de validación mediante "One-Time Password" enviado por correo para candidatos recurrentes. Esto evita que un mismo usuario cree múltiples registros innecesarios, manteniendo la limpieza de la base de datos.
+- **Strict Validation Logic**: Uso de transacciones para garantizar que el token se asocie correctamente al candidato y se elimine tras su uso exitoso.
+- **Multi-Application Support**: Rediseño de la lógica de negocio para permitir que un candidato (identificado por su email único) pueda tener múltiples aplicaciones a diferentes vacantes sin duplicar su información personal.
+- **Integridad Referencial**: Configuración de claves foráneas con `CASCADE` en la tabla de tokens para asegurar que la limpieza de datos sea automática y segura.
+- **Feedback UI Reactivo**: Mejora en la experiencia del usuario público mediante alertas detectables que guían al candidato hacia el flujo de validación en lugar de mostrar errores genéricos de "email duplicado".
+
+---
+
+
 
 | Métrica | Valor | Estado |
 |---------|-------|--------|
@@ -625,5 +644,5 @@ if ($validator->fails()) {
 
 ---
 
-**Análisis actualizado el:** 15 de Marzo, 2026  
+**Análisis actualizado el:** 24 de Marzo, 2026  
 **Próxima revisión recomendada:** 15 de Junio, 2026

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-11.3.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.0+-purple.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
@@ -42,7 +42,7 @@
   - Paginación automática y sistema de comentarios inteligente.
 - ✅ **CMS Visual** para gestión de servicios, planes e imágenes.
 - ✅ **Formularios Inteligentes** con pre-poblado automático.
-- ✅ **Módulo de Talento (Jobs)**: Recepción segura de currículums y postulación pública.
+- ✅ **Módulo de Talento (Jobs)**: Recepción segura de currículums (OTP para recurrentes) y postulación pública blindada.
 
 ### 👥 Sistema Multi-Rol
 
@@ -50,7 +50,7 @@
 - Dashboard con analítica en tiempo real (Chart.js)
 - Gestión completa de usuarios (Admin/Staff/Clientes)
 - Control total del CMS (Servicios, Planes, Blog, RRHH)
-- Panel de Recursos Humanos: Listado de talento, descarga protegida de CVs y exportación CSV
+- Panel de Recursos Humanos: Gestión integral de talento, filtrado, descarga protegida de CVs y validación OTP para perfiles existentes.
 - Generación de presupuestos y facturas en PDF
 - Monitoreo de tickets y asignación de staff
 
@@ -539,6 +539,7 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 - [x] Infraestructura Multi-Tenant (Middleware & DB Isolation).
 
 ### 🔮 Próximos Pasos (Evolución 11.0 y Misión Enterprise)
+- [x] **OTP-Based Update Flow**: Validación segura de candidatos recurrentes en Módulo de Jobs.
 - [ ] **Módulo GAI (Generative AI Integration)**: Asistencia LLM para auto-resúmenes de tickets y extracción de action items.
 - [ ] **Data Wyrd Multi-Tenant & SaaS Core**: Habilitación nativa de inquilinos.
 - [ ] **Pipelines CI/CD & Test-Driven**: Extender cobertura PHPUnit al 80% y generar flujos de despliegue inmutables.

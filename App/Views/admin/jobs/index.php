@@ -54,7 +54,7 @@
                                 </td>
                                 <td class="py-3 border-bottom border-white-5">
                                     <div class="text-white small fw-bold mb-1">
-                                        <?php echo htmlspecialchars($jobApp['vacancy_name']); ?>
+                                        <?php echo !empty($jobApp['vacancy_name']) ? htmlspecialchars($jobApp['vacancy_name']) : '<span class="text-white-50">Candidato Web</span>'; ?>
                                     </div>
                                     <div class="text-white-50 x-small d-flex align-items-center gap-1">
                                         <span class="material-symbols-outlined" style="font-size: 14px;">place</span>
@@ -107,6 +107,9 @@
                                                 <span class="material-symbols-outlined" style="font-size: 18px;">link</span>
                                             </a>
                                         <?php endif; ?>
+                                        <button onclick="if(confirm('¿Seguro que deseas eliminar esta postulación?')) window.location.href='<?php echo url('admin/jobs/delete/' . $jobApp['id']); ?>'" class="btn btn-sm btn-outline-danger rounded-circle shadow-sm border-white-10 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Eliminar Postulación">
+                                            <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

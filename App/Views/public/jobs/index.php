@@ -68,7 +68,7 @@
                             <div class="form-text text-white-50 x-small mt-2">Formatos permitidos: PDF, DOCX. Tamaño máximo: 5MB.</div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 py-3 rounded-3 fw-bold tracking-widest uppercase shadow-gold d-flex align-items-center justify-content-center gap-2 transition-all hover-scale">
+                        <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 rounded-3 fw-bold tracking-widest uppercase shadow-gold d-flex align-items-center justify-content-center gap-2 transition-all hover-scale">
                             <span class="material-symbols-outlined">send</span> Enviar Postulación
                         </button>
                     </form>
@@ -77,6 +77,48 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Candidato Recurrente -->
+<div class="modal fade" id="recurringModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-morphism border-white-10">
+            <div class="modal-header border-white-10">
+                <h5 class="modal-title text-white fw-bold">¡Hola de nuevo!</h5>
+            </div>
+            <div class="modal-body text-white">
+                <p id="recurringMsg">Ya tenemos tus datos registrados en nuestro sistema. ¿Deseas actualizar tu currículum o algún dato personal?</p>
+            </div>
+            <div class="modal-footer border-white-10">
+                <button type="button" id="btnNoUpdate" class="btn btn-outline-light rounded-pill px-4">No por ahora</button>
+                <button type="button" id="btnYesUpdate" class="btn btn-primary shadow-gold rounded-pill px-4 fw-bold">Sí, actualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal OTP -->
+<div class="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-morphism border-white-10">
+            <div class="modal-header border-white-10">
+                <h5 class="modal-title text-white fw-bold">Verificación de Seguridad</h5>
+            </div>
+            <div class="modal-body text-white text-center">
+                <p>Te hemos enviado un código de 6 dígitos a tu email. Por favor, ingrésalo para desbloquear la edición de tus datos.</p>
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    <input type="text" maxlength="6" id="otpInput" class="form-control bg-deep-black border-white-10 text-white text-center fs-3 tracking-widest w-75 p-3 rounded-3" placeholder="000000">
+                </div>
+                <div id="otpError" class="text-danger small d-none">Código incorrecto o expirado.</div>
+                <button type="button" id="btnResendOtp" class="btn btn-link text-white-50 x-small text-decoration-none mt-2">No recibí el código (Reenviar)</button>
+            </div>
+            <div class="modal-footer border-white-10">
+                <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="btnVerifyOtp" class="btn btn-primary shadow-gold rounded-pill px-4 fw-bold">Validar Código</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
     .form-control-dark:focus {
         background-color: var(--midnight-blue);
@@ -92,4 +134,174 @@
     .hover-scale:hover {
         transform: scale(1.02);
     }
+    .glass-morphism {
+        background: rgba(10, 10, 30, 0.9) !important;
+        backdrop-filter: blur(20px);
+    }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const mainForm = document.querySelector('form');
+    const emailInput = document.querySelector('input[name="email"]');
+    const submitBtn = document.getElementById('submitBtn');
+    const csrfToken = mainForm.querySelector('input[name="_token"]')?.value;
+    
+    let candidateData = null;
+    let recurringModal = new bootstrap.Modal(document.getElementById('recurringModal'));
+    let otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+
+    // 1. Interceptar submit para verificar email
+    mainForm.addEventListener('submit', async (e) => {
+        // Si ya está verificado, dejamos que el form siga su curso
+        if (mainForm.dataset.verified === 'true') return;
+
+        e.preventDefault();
+        const email = emailInput.value;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verificando...';
+
+        try {
+            const formData = new FormData();
+            formData.append('email', email);
+            if (csrfToken) formData.append('_token', csrfToken);
+
+            const res = await fetch('jobs/checkEmail', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            });
+            const data = await res.json();
+
+            if (data.exists) {
+                candidateData = data;
+                document.getElementById('recurringMsg').innerHTML = `¡Hola <strong>${data.name}</strong>! Ya tenemos tus datos en nuestro sistema. ¿Deseas actualizar tu currículum o algún dato personal para esta postulación?`;
+                recurringModal.show();
+            } else {
+                // Candidato nuevo, procesar normal
+                mainForm.dataset.verified = 'true';
+                mainForm.submit();
+            }
+        } catch (err) {
+            console.error('CheckEmail Error:', err);
+            // No enviamos el form si el check falla, para evitar duplicados por errores técnicos
+            const errorMsg = 'Error al verificar correo. Por favor, revisa tu conexión o intenta más tarde.';
+            if (window.toast) {
+                window.toast(errorMsg, 'danger');
+            } else {
+                alert(errorMsg);
+            }
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined">send</span> Enviar Postulación';
+        }
+    });
+
+    // 2. Manejo No Actualizar -> Redirigir con mensaje
+    document.getElementById('btnNoUpdate').addEventListener('click', () => {
+        window.location.href = '<?php echo url('jobs/alreadyRegistered'); ?>';
+    });
+
+    // 3. Manejo Sí Actualizar -> Pedir OTP
+    document.getElementById('btnYesUpdate').addEventListener('click', async () => {
+        recurringModal.hide();
+        const ok = await requestOtp();
+        if (ok) otpModal.show();
+    });
+
+    async function requestOtp() {
+        const formData = new FormData();
+        formData.append('candidate_id', candidateData.candidateId);
+        if (csrfToken) formData.append('_token', csrfToken);
+
+        const res = await fetch('jobs/requestUpdateCode', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (!data.success) {
+            alert(data.message || 'Error al enviar código');
+            return false;
+        }
+        return true;
+    }
+
+    document.getElementById('btnResendOtp').addEventListener('click', requestOtp);
+
+    // 4. Validar OTP
+    document.getElementById('btnVerifyOtp').addEventListener('click', async () => {
+        const token = document.getElementById('otpInput').value;
+        const formData = new FormData();
+        formData.append('candidate_id', candidateData.candidateId);
+        formData.append('token', token);
+        if (csrfToken) formData.append('_token', csrfToken);
+
+        const res = await fetch('jobs/verifyUpdateCode', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            otpModal.hide();
+            await fetchCandidateData();
+            
+            // Éxito: Cambiamos el action del form y lo preparamos para actualizar
+            mainForm.action = 'jobs/updateCandidate';
+            
+            // Inyectamos el ID oculto si no existe
+            if (!document.querySelector('input[name="candidate_id"]')) {
+                const inputId = document.createElement('input');
+                inputId.type = 'hidden';
+                inputId.name = 'candidate_id';
+                inputId.value = candidateData.candidateId;
+                mainForm.appendChild(inputId);
+            }
+
+            // Mensaje visual de éxito
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success mt-3 fade-in';
+            alertDiv.innerHTML = '<span class="material-symbols-outlined align-middle me-2">check_circle</span> Código validado. Ahora puedes revisar y actualizar tus datos.';
+            mainForm.prepend(alertDiv);
+            
+            // Scroll al inicio del form
+            mainForm.scrollIntoView({ behavior: 'smooth' });
+
+            // Ya no bloqueamos el submit la siguiente vez
+            mainForm.dataset.verified = 'true';
+        } else {
+            document.getElementById('otpError').classList.remove('d-none');
+            document.getElementById('otpError').innerText = data.message;
+        }
+    });
+
+    async function fetchCandidateData() {
+        try {
+            const res = await fetch('jobs/getCandidateData?candidate_id=' + candidateData.candidateId);
+            const data = await res.json();
+            if (data.success && data.data) {
+                const c = data.data;
+                // Solo rellenamos si el usuario no ha escrito nada aún en esos campos
+                const fillIfEmpty = (name, val) => {
+                    const input = mainForm.querySelector(`[name="${name}"]`);
+                    if (input && !input.value) input.value = val || '';
+                };
+                
+                fillIfEmpty('first_name', c.first_name);
+                fillIfEmpty('last_name', c.last_name);
+                fillIfEmpty('phone', c.phone);
+                fillIfEmpty('linkedin_url', c.linkedin_url);
+                fillIfEmpty('country', c.country);
+                fillIfEmpty('city', c.city);
+                fillIfEmpty('address', c.address);
+
+                // El CV ya no es requerido si ya tenemos uno
+                mainForm.querySelector('input[name="cv"]').required = false;
+            }
+        } catch (err) {
+            console.error('Error fetching candidate data:', err);
+        }
+    }
+});
+</script>

@@ -1,6 +1,6 @@
-**Estado al:** 16 de Marzo, 2026 (Mobile UX Perfection & Navigation Hardening)  
-**Versión:** 11.2.1  
-**Estado:** ✅ **Evolución 11.2.1: Menú Reactivo, Alineación Mobile y Producto Exclusivo (Desplegado)**
+**Estado al:** 24 de Marzo, 2026 (RRHH Validation Hardening & OTP Flow)  
+**Versión:** 11.3.0  
+**Estado:** ✅ **Evolución 11.3.0: Validación de Candidatos OTP & Blindaje de RRHH (Desplegado)**
 
 ## 🎯 Visión del Proyecto
 Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto rendimiento. Con la implementación de la **Fase 4**, el sistema cuenta ahora con seguridad criptográfica impenetrable, observabilidad inmutable y rutinas analíticas de IA que evitan cuellos de botella mediante asincronía y CRON.
@@ -158,6 +158,12 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Automated Funnel (Pre-select Logic)**: Los botones de producto ahora inyectan parámetros de pre-selección en el formulario de contacto, eliminando fricción del cliente.
     - [x] **Agencia Digital & Productos**: Integración de la nueva categoría "Productos" en la navegación global (Header/Footer).
     - [x] **Módulo de Reclutamiento Integrado (HR/Jobs)**: Sistema seguro para recepción de currículums (validación MIME de 5MB), gestión administrativa de candidatos y envíos de emails automatizados con branding para potenciar captación de talento en Data Wyrd.
+- [x] **Evolución 11.3.0: RRHH Validation Hardening (NUEVO)**:
+    - [x] **OTP-Based Update Flow**: Implementación de un flujo de validación por correo (One-Time Password) para candidatos que ya existen en la base de datos, evitando duplicados y garantizando la integridad de la información del perfil.
+    - [x] **Strict Duplicate Prevention**: Lógica en `JobsController` que bloquea la creación de múltiples registros de candidatos con el mismo email, forzando la actualización segura mediante token dinámico.
+    - [x] **Admin Multi-Application Support**: El panel administrativo permite ahora añadir múltiples postulaciones a un mismo candidato sin restricciones, manteniendo el historial completo de su trayectoria en la plataforma.
+    - [x] **Transactional Integrity (MySQL)**: Incorporación de la tabla `candidate_tokens` con integridad referencial (`ON DELETE CASCADE`) para la gestión efímera de tokens de validación.
+    - [x] **Public UI Improvements**: Feedback visual inmediato en el formulario de empleos cuando se detecta un candidato recurrente, guiándolo hacia el proceso de actualización.
 
 ---
 

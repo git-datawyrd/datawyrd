@@ -62,6 +62,12 @@ class JobApplication extends Model
         return $stmt->execute(['vacancy_name' => $vacancy_name, 'id' => $id]);
     }
 
+    public function updateCvPath($id, $cvPath)
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET cv_path = :cv_path WHERE id = :id");
+        return $stmt->execute(['cv_path' => $cvPath, 'id' => $id]);
+    }
+
     public function findAll()
     {
         // Join with candidates to get candidate details
@@ -114,5 +120,25 @@ class JobApplication extends Model
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['candidate_id' => $candidateId]);
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Crear nueva postulación desde la vista Admin sobre un candidato existente
+     */
+    public function createByAdmin($candidateId, $vacancyName, $cvPath = null, $notes = null)
+    {
+        $sql = "INSERT INTO {$this->table} 
+                (candidate_id, vacancy_name, cv_path, presentation_letter, status, status_updated_at) 
+                VALUES (:candidate_id, :vacancy_name, :cv_path, :notes, 'new', CURRENT_TIMESTAMP)";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            'candidate_id' => $candidateId,
+            'vacancy_name' => $vacancyName ?: 'Candidatura Espontánea',
+            'cv_path'      => $cvPath,
+            'notes'        => $notes
+        ]);
+
+        return $this->db->lastInsertId();
     }
 }

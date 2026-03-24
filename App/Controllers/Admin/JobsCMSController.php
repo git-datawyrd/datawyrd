@@ -161,4 +161,61 @@ class JobsCMSController extends Controller
         readfile($filePath);
         exit;
     }
+
+    public function addApplication($candidateId)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/jobs');
+        }
+
+        $vacancyName = Validator::sanitizeString($_POST['vacancy_name'] ?? '');
+        $notes = Validator::sanitizeString($_POST['notes'] ?? '');
+        $cvPath = null;
+
+        // Optionally handle a new CV upload from admin
+        if (isset($_FILES['cv']) && $_FILES['cv']['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES['cv'];
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $fileName = bin2hex(random_bytes(10)) . '_' . time() . '.' . $ext;
+            $uploadDir = BASE_PATH . '/storage/cvs/';
+            if (move_uploaded_file($file['tmp_name'], $uploadDir . $fileName)) {
+                $cvPath = $fileName;
+            }
+        } else {
+            // Reuse latest CV if none provided
+            $model = new JobApplication();
+            $latest = $model->findByCandidateId($candidateId);
+            if (!empty($latest)) {
+                $cvPath = $latest[0]['cv_path'];
+            }
+        }
+
+        $model = new JobApplication();
+        $id = $model->createByAdmin($candidateId, $vacancyName, $cvPath, $notes);
+
+        if ($id) {
+            Session::flash('success', 'Nueva postulación agregada correctamente.');
+        } else {
+            Session::flash('error', 'Error al crear la postulación.');
+        }
+
+        $this->redirect('/admin/jobs/show/' . ($id ?: ''));
+    }
+
+    /**
+     * Elimina una postulación
+     */
+    public function delete($id)
+    {
+        $id = (int)$id;
+        $model = new JobApplication();
+        
+        if ($model->delete($id)) {
+            Session::flash('success', 'Postulación eliminada correctamente.');
+        } else {
+            Session::flash('error', 'No se pudo eliminar la postulación.');
+        }
+        
+        $this->redirect('/admin/jobs');
+    }
 }

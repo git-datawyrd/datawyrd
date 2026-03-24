@@ -5,14 +5,54 @@
                 <span class="material-symbols-outlined fs-5">arrow_back</span>
                 Volver al listado
             </a>
-            <h1 class="h3 fw-bold text-white mb-1"><span class="text-gradient">Postulación:</span> <?php echo htmlspecialchars($jobApp['vacancy_name']); ?></h1>
+            <h1 class="h3 fw-bold text-white mb-1"><span class="text-gradient">Postulación:</span> <?php echo !empty($jobApp['vacancy_name']) ? htmlspecialchars($jobApp['vacancy_name']) : 'Candidato Web'; ?></h1>
             <p class="text-white-50 small mb-0">Enviada el <?php echo date('d M Y, H:i', strtotime($jobApp['created_at'])); ?></p>
         </div>
         <div>
-            <a href="<?php echo url('admin/jobs/downloadCv/' . $jobApp['id']); ?>" class="btn btn-primary d-flex align-items-center gap-2 fw-bold uppercase tracking-widest rounded-3 px-4 py-2 shadow-gold transition-all hover-scale">
-                <span class="material-symbols-outlined fs-5">download</span>
-                Descargar CV
-            </a>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-light d-flex align-items-center gap-2 fw-bold uppercase tracking-widest rounded-3 px-4 py-2 hover-gold transition-all" data-bs-toggle="modal" data-bs-target="#addApplicationModal">
+                    <span class="material-symbols-outlined fs-5">add_circle</span>
+                    Agregar Postulación
+                </button>
+                <a href="<?php echo url('admin/jobs/downloadCv/' . $jobApp['id']); ?>" class="btn btn-primary d-flex align-items-center gap-2 fw-bold uppercase tracking-widest rounded-3 px-4 py-2 shadow-gold transition-all hover-scale">
+                    <span class="material-symbols-outlined fs-5">download</span>
+                    Descargar CV
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Agregar Postulación -->
+    <div class="modal fade" id="addApplicationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-morphism border-white-10">
+                <form action="<?php echo url('admin/jobs/addApplication/' . $jobApp['candidate_id']); ?>" method="POST" enctype="multipart/form-data">
+                    <?php echo csrf_field(); ?>
+                    <div class="modal-header border-white-10">
+                        <h5 class="modal-title text-white fw-bold">Nueva Postulación para <?php echo htmlspecialchars($jobApp['first_name']); ?></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-white">
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 x-small tracking-widest uppercase">Nombre de la Vacante / Cargo *</label>
+                            <input type="text" name="vacancy_name" class="form-control bg-deep-black border-white-10 text-white" required placeholder="Ej: Senior Data Engineer">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-white-50 x-small tracking-widest uppercase">Notas / Observaciones</label>
+                            <textarea name="notes" rows="3" class="form-control bg-deep-black border-white-10 text-white" placeholder="Razón de esta nueva postulación..."></textarea>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label text-white-50 x-small tracking-widest uppercase">Nuevo CV (Opcional)</label>
+                            <input type="file" name="cv" accept=".pdf,.doc,.docx" class="form-control bg-deep-black border-white-10 text-white">
+                            <div class="x-small text-white-50 mt-1">Si no se adjunta, se usará el CV más reciente del sistema.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-white-10">
+                        <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary shadow-gold rounded-pill px-4 fw-bold">Crear Postulación</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

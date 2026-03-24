@@ -1,7 +1,7 @@
 # 📚 Índice de Documentación - Data Wyrd OS
 
-**Versión:** 2.6.0  
-**Última actualización:** 04 de Marzo, 2026 (Executive UI Refinement)  
+**Versión:** 11.3.0  
+**Última actualización:** 24 de Marzo, 2026 (RRHH Validation Hardening)  
 
 ---
 
@@ -202,6 +202,7 @@ Para preguntas sobre la documentación:
 | 2.4.0 | 28/02/2026 | Workspace Financiero & Descarga Segura (v4) - Pagos parciales, balance en tiempo real, corrección upload/download |
 | 2.5.0 | 03/03/2026 | Fase 4: Inteligencia y SecOps - Inmutabilidad Zero Trust, Argon2id, RBAC Dinámico, Lead Scoring, Envío de Correo Asíncrono PHPMailer |
 | 2.6.0 | 04/03/2026 | Evolución 9.7: Premium Admin UI & Executive Design - Rediseño total del modo claro, jerarquía visual mejorada y paleta elegante. |
+| 11.3.0 | 24/03/2026 | Evolución 11.3.0: RRHH Validation Hardening - Flujo OTP para candidatos recurrentes, prevención de duplicados y soporte multiapp. |
 
 ---
 

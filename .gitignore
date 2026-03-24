@@ -11,7 +11,9 @@ storage/cache/*
 
 # Archivos subidos por usuarios
 public/storage/uploads/*
+storage/cvs/*
 !public/storage/uploads/.gitkeep
+!storage/cvs/.gitkeep
 
 # Dependencias (si se usan en el futuro)
 /vendor/
