@@ -130,6 +130,9 @@ try {
 
     ini_set('log_errors', 1);
     ini_set('error_log', BASE_PATH . '/storage/logs/php-error.log');
+    
+    // Debug log for troubleshooting RRHH in production
+    error_log("Request: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'] . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 3, BASE_PATH . '/storage/logs/debug.log');
 
     // 5. Inicialización de Componentes Core (Orden Crítico)
     Config::load();
