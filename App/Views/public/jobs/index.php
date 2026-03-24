@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('email', email);
             if (csrfToken) formData.append('_token', csrfToken);
 
-            const res = await fetch('jobs/checkEmail', {
+            const res = await fetch('<?php echo url('jobs/checkEmail'); ?>', {
                 method: 'POST',
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 body: formData
@@ -185,8 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             console.error('CheckEmail Error:', err);
-            // No enviamos el form si el check falla, para evitar duplicados por errores técnicos
-            const errorMsg = 'Error al verificar correo. Por favor, revisa tu conexión o intenta más tarde.';
+            const errorMsg = 'Error al verificar correo. Por favor, intenta más tarde.';
             if (window.toast) {
                 window.toast(errorMsg, 'danger');
             } else {
@@ -215,16 +214,22 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('candidate_id', candidateData.candidateId);
         if (csrfToken) formData.append('_token', csrfToken);
 
-        const res = await fetch('jobs/requestUpdateCode', {
-            method: 'POST',
-            body: formData
-        });
-        const data = await res.json();
-        if (!data.success) {
-            alert(data.message || 'Error al enviar código');
+        try {
+            const res = await fetch('<?php echo url('jobs/requestUpdateCode'); ?>', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (!data.success) {
+                alert(data.message || 'Error al enviar código');
+                return false;
+            }
+            return true;
+        } catch (err) {
+            console.error('Request OTP Error:', err);
+            alert('Error de comunicación para enviar el código.');
             return false;
         }
-        return true;
     }
 
     document.getElementById('btnResendOtp').addEventListener('click', requestOtp);
@@ -243,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (csrfToken) formData.append('_token', csrfToken);
 
         try {
-            const res = await fetch('jobs/verifyUpdateCode', {
+            const res = await fetch('<?php echo url('jobs/verifyUpdateCode'); ?>', {
                 method: 'POST',
                 body: formData
             });
