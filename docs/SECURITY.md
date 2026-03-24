@@ -1,7 +1,7 @@
 # 🔐 Guía de Seguridad y Mejores Prácticas - Data Wyrd OS
 
-**Versión:** 2.5.0  
-**Última actualización:** 03 de Marzo, 2026 (Fase 4 - Intelligence & SecOps)  
+**Versión:** 11.3.0  
+**Última actualización:** 24 de Marzo, 2026 (RRHH OTP Validation & Jobs Hardening)  
 
 ---
 
@@ -213,6 +213,28 @@ class AuthController extends Controller
         }
     }
 }
+```
+
+### 3.2 Validación OTP para Candidatos (NUEVO)
+
+✅ **USAR flujo de "One-Time Password" para candidatos recurrentes**
+
+En el Módulo de Jobs, se implementó un flujo de seguridad adicional para prevenir el secuestro de perfiles de candidatos y la duplicidad de registros:
+
+1. **Detección de Recurrencia**: Si un email ya existe en `candidates`, el sistema bloquea la creación y genera un `candidate_token` único de 6 dígitos.
+2. **Envío Seguro**: El OTP se envía solo al correo verificado del candidato.
+3. **Validación Efímera**: Los tokens tienen una vida corta y se eliminan tras su uso o expiración.
+4. **Integridad Referencial**: Los tokens dependen del ID del candidato con borrado en cascada.
+
+```php
+// Ejemplo de lógica en JobsController
+if ($candidate) {
+    $token = \Core\Security::generateOTP(6);
+    $this->candidateModel->storeToken($candidate['id'], $token);
+    $this->mailService->sendOTP($candidate['email'], $token);
+    // Redirigir a vista de verificación
+}
+```
 ```
 
 ### 3.2 Control de Acceso mediante Policies (Nivel Enterprise)
@@ -610,5 +632,5 @@ Si encuentras una vulnerabilidad de seguridad, por favor repórtala a:
 
 ---
 
-**Última actualización:** Febrero 2026  
-**Próxima revisión:** Mayo 2026
+**Última actualización:** 24 de Marzo, 2026  
+**Próxima revisión:** Junio 2026
