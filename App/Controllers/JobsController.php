@@ -120,8 +120,8 @@ class JobsController extends Controller
 
             echo json_encode(['success' => true]);
         }
-        catch (\Exception $e) {
-            error_log('Error en JobsController::requestUpdateCode: ' . $e->getMessage());
+        catch (\Throwable $e) {
+            error_log('Error en JobsController::requestUpdateCode: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
             echo json_encode(['success' => false, 'message' => 'Error al procesar la solicitud.']);
         }
         exit;
@@ -159,9 +159,9 @@ class JobsController extends Controller
             else {
                 echo json_encode(['success' => false, 'message' => 'Código incorrecto o expirado. Solicita uno nuevo.']);
             }
-        } catch (\Exception $e) {
-            error_log("Error en JobsController::verifyUpdateCode: " . $e->getMessage());
-            echo json_encode(['success' => false, 'message' => 'Error técnico al validar el código. Asegúrate de que las tablas de BD existan.']);
+        } catch (\Throwable $e) {
+            error_log("Error en JobsController::verifyUpdateCode: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+            echo json_encode(['success' => false, 'message' => 'Error técnico al validar el código.']);
         }
         exit;
     }
@@ -202,86 +202,94 @@ class JobsController extends Controller
             $this->redirect('/jobs');
         }
 
-        $candidateId = (int)($_POST['candidate_id'] ?? 0);
-        $verifiedId = Session::get('candidate_verified_id');
+        try {
+            $candidateId = (int)($_POST['candidate_id'] ?? 0);
+            $verifiedId = Session::get('candidate_verified_id');
 
-        // Verificar que la sesión coincide y es válida
-        if (!$verifiedId || (int)$verifiedId !== $candidateId) {
-            Session::flash('error', 'Sesión de actualización inválida o expirada. Por favor, intenta de nuevo.');
-            $this->redirect('/jobs');
-        }
+            // Verificar que la sesión coincide y es válida
+            if (!$verifiedId || (int)$verifiedId !== $candidateId) {
+                Session::flash('error', 'Sesión de actualización inválida o expirada. Por favor, intenta de nuevo.');
+                $this->redirect('/jobs');
+            }
 
-        $candidateModel = new Candidate();
-        
-        // Recopilamos todos los datos igual que en postulate()
-        $data = [
-            'candidate_id' => $candidateId,
-            'first_name' => Validator::sanitizeString($_POST['first_name'] ?? ''),
-            'last_name' => Validator::sanitizeString($_POST['last_name'] ?? ''),
-            'phone' => Validator::sanitizeString($_POST['phone'] ?? ''),
-            'linkedin_url' => Validator::sanitizeUrl($_POST['linkedin_url'] ?? ''),
-            'country' => Validator::sanitizeString($_POST['country'] ?? ''),
-            'city' => Validator::sanitizeString($_POST['city'] ?? ''),
-            'address' => Validator::sanitizeString($_POST['address'] ?? ''),
-            'vacancy_name' => Validator::sanitizeString($_POST['vacancy_name'] ?? '') ?: 'Candidato Web (Update)',
-            'presentation_letter' => Validator::sanitizeString($_POST['presentation_letter'] ?? ''),
-            'skills' => $_POST['skills'] ?? []
-        ];
-
-        // 1. Actualizar el perfil base del candidato
-        $candidateModel->updateFullProfile($candidateId, $data);
-
-        // 2. Gestionar el CV (si se subió uno nuevo, o reusar el último si no hay)
-        $fileName = null;
-        if (isset($_FILES['cv']) && $_FILES['cv']['error'] === UPLOAD_ERR_OK) {
-            $file = $_FILES['cv'];
-            $maxSize = 5 * 1024 * 1024;
-            $allowedTypes = [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            $candidateModel = new Candidate();
+            
+            // Recopilamos todos los datos igual que en postulate()
+            $data = [
+                'candidate_id' => $candidateId,
+                'first_name' => Validator::sanitizeString($_POST['first_name'] ?? ''),
+                'last_name' => Validator::sanitizeString($_POST['last_name'] ?? ''),
+                'phone' => Validator::sanitizeString($_POST['phone'] ?? ''),
+                'linkedin_url' => Validator::sanitizeUrl($_POST['linkedin_url'] ?? ''),
+                'country' => Validator::sanitizeString($_POST['country'] ?? ''),
+                'city' => Validator::sanitizeString($_POST['city'] ?? ''),
+                'address' => Validator::sanitizeString($_POST['address'] ?? ''),
+                'vacancy_name' => Validator::sanitizeString($_POST['vacancy_name'] ?? '') ?: 'Candidato Web (Update)',
+                'presentation_letter' => Validator::sanitizeString($_POST['presentation_letter'] ?? ''),
+                'skills' => $_POST['skills'] ?? []
             ];
 
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime = finfo_file($finfo, $file['tmp_name']);
-            finfo_close($finfo);
+            // 1. Actualizar el perfil base del candidato
+            $candidateModel->updateFullProfile($candidateId, $data);
 
-            if ($file['size'] <= $maxSize && in_array($mime, $allowedTypes)) {
-                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-                $fileName = bin2hex(random_bytes(10)) . '_' . time() . '.' . $ext;
-                $destPath = BASE_PATH . '/storage/cvs/' . $fileName;
+            // 2. Gestionar el CV (si se subió uno nuevo, o reusar el último si no hay)
+            $fileName = null;
+            if (isset($_FILES['cv']) && $_FILES['cv']['error'] === UPLOAD_ERR_OK) {
+                $file = $_FILES['cv'];
+                $maxSize = 5 * 1024 * 1024;
+                $allowedTypes = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                ];
 
-                if (!move_uploaded_file($file['tmp_name'], $destPath)) {
-                    $fileName = null;
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mime = finfo_file($finfo, $file['tmp_name']);
+                finfo_close($finfo);
+
+                if ($file['size'] <= $maxSize && in_array($mime, $allowedTypes)) {
+                    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                    $fileName = bin2hex(random_bytes(10)) . '_' . time() . '.' . $ext;
+                    $destPath = BASE_PATH . '/storage/cvs/' . $fileName;
+
+                    if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+                        $fileName = null;
+                    }
                 }
             }
-        }
 
-        // Si no subió CV nuevo, intentamos heredar el path del anterior para la nueva postulación
-        if (!$fileName) {
-            $appModel = new JobApplication();
-            $apps = $appModel->findByCandidateId($candidateId);
-            if (!empty($apps)) {
-                $fileName = $apps[0]['cv_path'];
+            // Si no subió CV nuevo, intentamos heredar el path del anterior para la nueva postulación
+            if (!$fileName) {
+                $appModel = new JobApplication();
+                $apps = $appModel->findByCandidateId($candidateId);
+                if (!empty($apps)) {
+                    $fileName = $apps[0]['cv_path'];
+                }
             }
+
+            // CV es NOT NULL en DB, si llegamos aquí sin path, usamos el del último registro o falla silenciosamente
+            $data['cv_path'] = $fileName ?: 'pending_cv.pdf'; 
+
+            // 3. Crear una NUEVA aplicación
+            $appModel = new JobApplication();
+            $applicationId = $appModel->create($data);
+
+            // Limpiar sesión de verificación
+            Session::remove('candidate_verified_id');
+
+            if ($applicationId) {
+                Session::flash('success', '¡Tus datos han sido actualizados y tu nueva postulación ha sido recibida!');
+            } else {
+                Session::flash('error', 'Tus datos básicos se actualizaron, pero hubo un error al registrar la nueva postulación.');
+            }
+
+            $this->redirect('/');
+
+        } catch (\Throwable $e) {
+            error_log("Error crítico en JobsController::updateCandidate: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
+            Session::flash('error', 'Ocurrió un error técnico al actualizar tus datos. Por favor, contacta con soporte.');
+            $this->redirect('/jobs');
         }
-
-        $data['cv_path'] = $fileName;
-
-        // 3. Crear una NUEVA aplicación
-        $appModel = new JobApplication();
-        $applicationId = $appModel->create($data);
-
-        // Limpiar sesión de verificación
-        Session::forget('candidate_verified_id');
-
-        if ($applicationId) {
-            Session::flash('success', '¡Tus datos han sido actualizados y tu nueva postulación ha sido recibida!');
-        } else {
-            Session::flash('error', 'Tus datos básicos se actualizaron, pero hubo un error al registrar la nueva postulación.');
-        }
-
-        $this->redirect('/');
     }
 
     /**
