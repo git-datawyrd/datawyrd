@@ -232,76 +232,60 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Validar OTP
     document.getElementById('btnVerifyOtp').addEventListener('click', async () => {
         const token = document.getElementById('otpInput').value;
+        const btn = document.getElementById('btnVerifyOtp');
+        
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Validando...';
+
         const formData = new FormData();
         formData.append('candidate_id', candidateData.candidateId);
         formData.append('token', token);
         if (csrfToken) formData.append('_token', csrfToken);
 
-        const res = await fetch('jobs/verifyUpdateCode', {
-            method: 'POST',
-            body: formData
-        });
-        const data = await res.json();
+        try {
+            const res = await fetch('jobs/verifyUpdateCode', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
 
-        if (data.success) {
-            otpModal.hide();
-            await fetchCandidateData();
-            
-            // Éxito: Cambiamos el action del form y lo preparamos para actualizar
-            mainForm.action = 'jobs/updateCandidate';
-            
-            // Inyectamos el ID oculto si no existe
-            if (!document.querySelector('input[name="candidate_id"]')) {
-                const inputId = document.createElement('input');
-                inputId.type = 'hidden';
-                inputId.name = 'candidate_id';
-                inputId.value = candidateData.candidateId;
-                mainForm.appendChild(inputId);
+            if (data.success) {
+                otpModal.hide();
+                
+                // Cambiamos el action del form para que use la ruta de actualización
+                mainForm.action = '<?php echo url('jobs/updateCandidate'); ?>';
+                
+                // Inyectamos el ID oculto del candidato
+                if (!document.querySelector('input[name="candidate_id"]')) {
+                    const inputId = document.createElement('input');
+                    inputId.type = 'hidden';
+                    inputId.name = 'candidate_id';
+                    inputId.value = candidateData.candidateId;
+                    mainForm.appendChild(inputId);
+                }
+
+                // Ya no bloqueamos el submit
+                mainForm.dataset.verified = 'true';
+                
+                // Mostrar mensaje de carga antes del submit final
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando Actualización...';
+                
+                // ENVIAR EL FORMULARIO AUTOMÁTICAMENTE
+                mainForm.submit();
+            } else {
+                document.getElementById('otpError').classList.remove('d-none');
+                document.getElementById('otpError').innerText = data.message;
             }
-
-            // Mensaje visual de éxito
-            const alertDiv = document.createElement('div');
-            alertDiv.className = 'alert alert-success mt-3 fade-in';
-            alertDiv.innerHTML = '<span class="material-symbols-outlined align-middle me-2">check_circle</span> Código validado. Ahora puedes revisar y actualizar tus datos.';
-            mainForm.prepend(alertDiv);
-            
-            // Scroll al inicio del form
-            mainForm.scrollIntoView({ behavior: 'smooth' });
-
-            // Ya no bloqueamos el submit la siguiente vez
-            mainForm.dataset.verified = 'true';
-        } else {
+        } catch (err) {
+            console.error('Verify OTP Error:', err);
             document.getElementById('otpError').classList.remove('d-none');
-            document.getElementById('otpError').innerText = data.message;
+            document.getElementById('otpError').innerText = 'Error de conexión con el servidor.';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'Validar Código';
         }
     });
 
-    async function fetchCandidateData() {
-        try {
-            const res = await fetch('jobs/getCandidateData?candidate_id=' + candidateData.candidateId);
-            const data = await res.json();
-            if (data.success && data.data) {
-                const c = data.data;
-                // Solo rellenamos si el usuario no ha escrito nada aún en esos campos
-                const fillIfEmpty = (name, val) => {
-                    const input = mainForm.querySelector(`[name="${name}"]`);
-                    if (input && !input.value) input.value = val || '';
-                };
-                
-                fillIfEmpty('first_name', c.first_name);
-                fillIfEmpty('last_name', c.last_name);
-                fillIfEmpty('phone', c.phone);
-                fillIfEmpty('linkedin_url', c.linkedin_url);
-                fillIfEmpty('country', c.country);
-                fillIfEmpty('city', c.city);
-                fillIfEmpty('address', c.address);
-
-                // El CV ya no es requerido si ya tenemos uno
-                mainForm.querySelector('input[name="cv"]').required = false;
-            }
-        } catch (err) {
-            console.error('Error fetching candidate data:', err);
-        }
-    }
 });
 </script>
