@@ -17,7 +17,7 @@ return [
         'auth_brute_force_block' => getenv('AUTH_BRUTE_FORCE_BLOCK') ?: 1800,
         'auth_account_lock' => getenv('AUTH_ACCOUNT_LOCK') ?: 900,
         'hash_algo' => getenv('AUTH_HASH_ALGO') ?: 'argon2id',
-        'jwt_secret' => getenv('JWT_SECRET') ?: 'datawyrd-default-secret',
+        'jwt_secret' => getenv('JWT_SECRET'), // Quitado el default inseguro
         'jwt_ttl' => getenv('JWT_TTL') ?: 3600,
     ],
     'intelligence' => [

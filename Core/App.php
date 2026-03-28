@@ -14,6 +14,9 @@ class App
 
     public function __construct()
     {
+        // 0. Saneamiento de Entorno (FAIL FAST si las claves son inseguras)
+        EnvValidator::validate();
+
         $this->container = new Container();
         $this->container->instance(Container::class, $this->container);
 

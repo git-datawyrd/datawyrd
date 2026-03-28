@@ -315,9 +315,13 @@
             btnRewrite.disabled = true;
 
             try {
+                const csrfToken = document.querySelector('input[name="_token"]')?.value || '';
                 const response = await fetch('<?php echo url("AI/rewriteDraft"); ?>', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     body: JSON.stringify({ draft: draft })
                 });
                 const data = await response.json();

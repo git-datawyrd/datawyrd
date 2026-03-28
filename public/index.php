@@ -1,30 +1,14 @@
 <?php
-/**
- * Data Wyrd OS - Entry Point
- * Corrección Estructural Definitiva: Unificación de Configuración y Bootstrap
- */
-
-// 1. Cargar el loader de entorno manualmente
-require_once __DIR__ . '/../config/env.php';
-
-// 2. Definición de ruta base global
-define('BASE_PATH', dirname(__DIR__));
-
-// 3. Autoload Estructural (Composer)
-require_once BASE_PATH . '/vendor/autoload.php';
-
-// Fallback para clases no gestionadas por composer (opcional pero seguro)
-spl_autoload_register(function ($class) {
-    $file = BASE_PATH . '/' . str_replace('\\', '/', $class) . '.php';
-    if (file_exists($file)) {
-        require_once $file;
-    }
-});
+// 1. Carga de Bootstrap Unificado (Phase 11.5.0)
+require_once __DIR__ . '/../Core/bootstrap.php';
 
 use Core\Config;
-use Core\Session;
 use Core\App;
 use Core\Validator;
+use Core\EnvLoader;
+use Core\Session;
+
+
 
 /**
  * Helpers Globales (Actualizados para no depender de la función config())
@@ -113,9 +97,6 @@ function translateStatus($status)
 
 // 4. Try/Catch Global Real para Control de Errores Catastróficos
 try {
-    // Carga de Variables de Entorno (.env)
-    EnvLoader::load(BASE_PATH . '/.env');
-
     // Configuración Inicial de Errores (Antes de cargar Config)
     $env = getenv('ENVIRONMENT') ?: 'local';
 
@@ -134,12 +115,8 @@ try {
     // Debug log for troubleshooting RRHH in production
     error_log("Request: " . $_SERVER['REQUEST_METHOD'] . " " . $_SERVER['REQUEST_URI'] . " - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 3, BASE_PATH . '/storage/logs/debug.log');
 
-    // 5. Inicialización de Componentes Core (Orden Crítico)
-    Config::load();
-    Session::start();
+    // Módulos Core críticos ya inicializados por bootstrap.php
 
-    // Configuración de Timezone
-    date_default_timezone_set(Config::get('timezone', 'America/Argentina/Buenos_Aires'));
 
     // 6. Registro de Eventos y Listeners (Evolution 2.0)
     \Core\EventDispatcher::listen(\App\Events\LeadCreated::class, [\App\Listeners\NotificationListener::class, 'handleLeadCreated']);

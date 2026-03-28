@@ -57,12 +57,32 @@ class UserCMSController extends Controller
         $db = Database::getInstance()->getConnection();
         $id = $_POST['user_id'];
         $role = $_POST['role'];
+        $admin_id = Auth::user()['id'];
 
-        $sql = "UPDATE users SET role = ? WHERE id = ?";
-        $stmt = $db->prepare($sql);
-        $stmt->execute([$role, $id]);
+        $stmt = $db->prepare("SELECT role FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        $old_role = $stmt->fetchColumn();
 
-        Session::flash('success', 'Rol de usuario actualizado.');
+        if ($old_role !== $role) {
+            $sql = "UPDATE users SET role = ? WHERE id = ?";
+            $stmt = $db->prepare($sql);
+            $stmt->execute([$role, $id]);
+
+            $auditSql = "INSERT INTO rbac_audit_logs (admin_id, target_user_id, action, old_value, new_value, ip_address, user_agent) 
+                         VALUES (?, ?, 'role_change', ?, ?, ?, ?)";
+            $db->prepare($auditSql)->execute([
+                $admin_id, 
+                $id, 
+                $old_role, 
+                $role, 
+                $_SERVER['REMOTE_ADDR'] ?? null, 
+                $_SERVER['HTTP_USER_AGENT'] ?? null
+            ]);
+
+            \Core\SecurityLogger::log('role_updated', "Admin ID {$admin_id} changed User ID {$id} role from {$old_role} to {$role}.");
+        }
+
+        Session::flash('success', 'Rol de usuario actualizado y auditado.');
         $this->redirect('/admin/users');
     }
 

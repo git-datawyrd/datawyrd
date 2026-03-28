@@ -272,6 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ya no bloqueamos el submit
                 mainForm.dataset.verified = 'true';
                 
+                // Mostrar preloader corporativo para el envío final (Phase 11.5.0)
+                const globalPreloader = document.getElementById('preloader');
+                if (globalPreloader) {
+                    globalPreloader.style.display = 'flex';
+                    globalPreloader.classList.remove('fade-out');
+                }
+
                 // Mostrar mensaje de carga antes del submit final
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando Actualización...';
@@ -291,6 +298,18 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = 'Validar Código';
         }
     });
+
+    // Evento para el submit normal (Nuevos candidatos)
+    mainForm.addEventListener('submit', () => {
+        if (mainForm.dataset.verified === 'true') {
+            const globalPreloader = document.getElementById('preloader');
+            if (globalPreloader) {
+                globalPreloader.style.display = 'flex';
+                globalPreloader.classList.remove('fade-out');
+            }
+        }
+    });
+
 
 });
 </script>

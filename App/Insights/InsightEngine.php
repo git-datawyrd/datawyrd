@@ -60,14 +60,22 @@ class InsightEngine
         }
 
         // 3. High conversion probability leads
-        $highScoreLeads = $this->db->query("SELECT id, name FROM users WHERE role = 'client' AND id IN (SELECT client_id FROM tickets WHERE status != 'void') LIMIT 3")->fetchAll();
+        $highScoreLeads = $this->db->query("
+            SELECT u.id, u.name, 
+                   (SELECT id FROM tickets WHERE client_id = u.id AND status != 'void' ORDER BY created_at DESC LIMIT 1) as ticket_id 
+            FROM users u 
+            WHERE u.role = 'client' 
+            AND EXISTS (SELECT 1 FROM tickets WHERE client_id = u.id AND status != 'void')
+            LIMIT 3
+        ")->fetchAll();
+
         foreach ($highScoreLeads as $lead) {
             $insights[] = [
                 'type' => 'opportunity',
                 'level' => 'low',
                 'message' => 'Cliente ' . $lead['name'] . ' tiene alta probabilidad de conversión.',
                 'action_label' => 'Contactar',
-                'action_url' => '/admin/clients/view/' . $lead['id']
+                'action_url' => '/ticket/detail/' . $lead['ticket_id']
             ];
         }
 

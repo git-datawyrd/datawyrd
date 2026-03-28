@@ -1,6 +1,6 @@
-**Estado al:** 24 de Marzo, 2026 (RRHH Validation Hardening & OTP Flow)  
-**Versión:** 11.3.0  
-**Estado:** ✅ **Evolución 11.3.0: Validación de Candidatos OTP & Blindaje de RRHH (Desplegado)**
+**Estado al:** 28 de Marzo, 2026 (Structural Sanitization & Security Hardening)  
+**Versión:** 11.4.0  
+**Estado:** ✅ **Evolución 11.4.0: Saneamiento Estructural & Blindaje de Secretos (Desplegado)**
 
 ## 🎯 Visión del Proyecto
 Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto rendimiento. Con la implementación de la **Fase 4**, el sistema cuenta ahora con seguridad criptográfica impenetrable, observabilidad inmutable y rutinas analíticas de IA que evitan cuellos de botella mediante asincronía y CRON.
@@ -158,12 +158,19 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Automated Funnel (Pre-select Logic)**: Los botones de producto ahora inyectan parámetros de pre-selección en el formulario de contacto, eliminando fricción del cliente.
     - [x] **Agencia Digital & Productos**: Integración de la nueva categoría "Productos" en la navegación global (Header/Footer).
     - [x] **Módulo de Reclutamiento Integrado (HR/Jobs)**: Sistema seguro para recepción de currículums (validación MIME de 5MB), gestión administrativa de candidatos y envíos de emails automatizados con branding para potenciar captación de talento en Data Wyrd.
-- [x] **Evolución 11.3.0: RRHH Validation Hardening (NUEVO)**:
-    - [x] **OTP-Based Update Flow**: Implementación de un flujo de validación por correo (One-Time Password) para candidatos que ya existen en la base de datos, evitando duplicados y garantizando la integridad de la información del perfil.
-    - [x] **Strict Duplicate Prevention**: Lógica en `JobsController` que bloquea la creación de múltiples registros de candidatos con el mismo email, forzando la actualización segura mediante token dinámico.
-    - [x] **Admin Multi-Application Support**: El panel administrativo permite ahora añadir múltiples postulaciones a un mismo candidato sin restricciones, manteniendo el historial completo de su trayectoria en la plataforma.
-    - [x] **Transactional Integrity (MySQL)**: Incorporación de la tabla `candidate_tokens` con integridad referencial (`ON DELETE CASCADE`) para la gestión efímera de tokens de validación.
-    - [x] **Public UI Improvements**: Feedback visual inmediato en el formulario de empleos cuando se detecta un candidato recurrente, guiándolo hacia el proceso de actualización.
+- [x] **Public UI Improvements**: Feedback visual inmediato en el formulario de empleos cuando se detecta un candidato recurrente, guiándolo hacia el proceso de actualización.
+- [x] **Evolución 11.4.0: Saneamiento Estructural & Seguridad Hardening (NUEVO)**:
+    - [x] **EnvValidator (Fail-Fast)**: Bloqueo automático del sistema si se detectan secretos por defecto o placeholders en entornos críticos.
+    - [x] **Zero-Exposure Public**: Eliminación de scripts de diagnóstico y utilidades de la carpeta `public/`, reduciendo la superficie de ataque.
+    - [x] **Root Cleanup**: Migración de scripts operativos de la raíz a `/tools`, profesionalizando la estructura del repositorio.
+    - [x] **Service-Repository Architecture**: Implementación del patrón de capas en el Módulo de Tickets para desacoplar lógica de persistencia y negocio.
+    - [x] **Config Sanitization**: Unificación de variables `.env` y eliminación de duplicidades en la configuración de correo.
+    - [x] **Automated DI Resolution**: El sistema ahora resuelve servicios y repositorios de forma automática mediante reflexión en el Contenedor de Dependencias.
+- [x] **Evolución 11.5.0: GAI Integration & UI Polish (NUEVO)**:
+    - [x] **Llama 3.1 Migration**: Configuración del modelo Groq optimizado `llama-3.1-8b-instant` en localhost mitigando obsolescencia y habilitando el Copilot para resumen y reescritura de tono en tickets.
+    - [x] **Preloader Inteligente**: Rediseño minimalista (animación escalonada css) con lógica de frontera: solo se activa al cruzar entre el frontend público y la intranet administrativa, o en envíos pesados de RRHH, eliminando tiempos de espera inútiles dentro del panel.
+    - [x] **AI Insight Engine Resolution**: Las alarmas de conversión (Leads) en el dashboard principal redirigen proactivamente al último ticket operativo activo del cliente para gestión inmediata.
+    - [x] **Strict CSRF REST Security**: Integración dinámica del Header `X-CSRF-TOKEN` en las peticiones JS Async para evitar respuestas 403 Forbidden del Router Global en herramientas IA.
 
 ---
 

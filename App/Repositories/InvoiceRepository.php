@@ -119,4 +119,63 @@ class InvoiceRepository extends BaseRepository implements InvoiceRepositoryInter
         $stmt->execute([$invoiceId]);
         return $stmt->fetch() ?: null;
     }
+
+    public function getInvoices(int $clientId = null)
+    {
+        if ($clientId) {
+            $stmt = $this->db->prepare("SELECT i.*, b.budget_number 
+                                 FROM {$this->table} i 
+                                 LEFT JOIN budgets b ON i.budget_id = b.id 
+                                 WHERE i.client_id = ? 
+                                 ORDER BY i.created_at DESC");
+            $stmt->execute([$clientId]);
+        } else {
+            $stmt = $this->db->query("SELECT i.*, u.name as client_name, b.budget_number 
+                                FROM {$this->table} i 
+                                JOIN users u ON i.client_id = u.id 
+                                LEFT JOIN budgets b ON i.budget_id = b.id 
+                                ORDER BY i.created_at DESC");
+        }
+        return $stmt->fetchAll();
+    }
+
+    public function getInvoiceWithFullDetails(int $id)
+    {
+        $sql = "SELECT i.*, u.name as client_name, u.email as client_email, u.company as client_company, u.phone as client_phone, b.budget_number 
+                FROM {$this->table} i 
+                JOIN users u ON i.client_id = u.id 
+                LEFT JOIN budgets b ON i.budget_id = b.id 
+                WHERE i.id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public function getLatestReceipt(int $invoiceId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM payment_receipts WHERE invoice_id = ? ORDER BY created_at DESC LIMIT 1");
+        $stmt->execute([$invoiceId]);
+        return $stmt->fetch() ?: null;
+    }
+
+    public function createPaymentReceipt(array $data)
+    {
+        $sql = "INSERT INTO payment_receipts (invoice_id, uploaded_by, filename, filepath, amount, payment_date, status) 
+                VALUES (?, ?, ?, ?, ?, CURDATE(), 'pending')";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            $data['invoice_id'],
+            $data['uploaded_by'],
+            $data['filename'],
+            $data['filepath'],
+            $data['amount']
+        ]);
+    }
+
+    public function updateInvoiceStatus(int $id, string $status)
+    {
+        $stmt = $this->db->prepare("UPDATE {$this->table} SET status = ? WHERE id = ?");
+        return $stmt->execute([$status, $id]);
+    }
 }
+

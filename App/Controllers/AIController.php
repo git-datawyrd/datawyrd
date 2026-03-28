@@ -28,11 +28,11 @@ class AIController extends Controller
         }
 
         // Obtener historial del ticket
-        $stmt = $this->db->prepare("SELECT c.*, u.role FROM chats c JOIN users u ON c.user_id = u.id WHERE c.ticket_id = ? ORDER BY c.created_at ASC");
+        $stmt = $this->db->prepare("SELECT m.*, u.role FROM chat_messages m LEFT JOIN users u ON m.user_id = u.id WHERE m.ticket_id = ? ORDER BY m.created_at ASC");
         $stmt->execute([$ticketId]);
         $chats = $stmt->fetchAll();
 
-        if (count($chats) < 5) {
+        if (count($chats) < 1) {
             echo json_encode(['success' => false, 'error' => 'No hay suficientes mensajes para generar un resumen significativo.']);
             return;
         }

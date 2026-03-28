@@ -104,7 +104,8 @@
 - **firebase/php-jwt** - Protocolo de seguridad para API
 - **PHPUnit** - Suite de pruebas automatizadas
 - **PDO** - Capa de abstracción de base de datos
-- **Custom MVC Framework** - Arquitectura propia balanceada con eventos
+- **Custom MVC Framework** - Arquitectura propia balanceada con eventos.
+- **Service-Repository Pattern** - Desacoplamiento de lógica de negocio y persistencia para escalabilidad enterprise.
 
 ### Frontend
 - **HTML5 / CSS3** - Estructura y estilos
@@ -342,20 +343,12 @@ datawyrd/
 │   ├── App.php           # Router principal
 │   ├── Auth.php          # Autenticación
 │   ├── Config.php        # Gestor de configuración
+│   ├── EnvValidator.php  # Validaciones de seguridad de entorno
 │   ├── Controller.php    # Controlador base
-│   ├── Database.php      # Singleton de BD
-│   ├── Mail.php          # Sistema de emails
-│   ├── Model.php         # Modelo base
-│   ├── Session.php       # Gestión de sesiones
-│   ├── Validator.php     # Validación y sanitización
-│   └── View.php          # Renderizado de vistas
-├── database/             # Esquemas y migraciones
-├── public/               # Raíz pública
-│   ├── assets/
-│   ├── storage/          # Uploads públicos (symlink)
-│   ├── .htaccess
-│   └── index.php         # Entry point & Global Helpers
+...
 ├── storage/              # Almacenamiento privado
+├── tools/                # Scripts de mantenimiento y CLI (fuera de public)
+
 ```
 ```
 

@@ -27,7 +27,43 @@ $db = \Core\Database::getInstance()->getConnection();
 $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_active = 1 ORDER BY order_position ASC")->fetchAll();
 ?>
 
-<body>
+<body class="brand-bg">
+    <!-- Preloader corporativo -->
+    <div id="preloader">
+        <img src="<?php echo url('assets/images/DataWyrd_logo.png'); ?>" alt="Data Wyrd" class="preloader-logo">
+        <div class="preloader-dots">
+            <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const preloader = document.getElementById('preloader');
+            const referrer = document.referrer || '';
+            const isInternal = referrer.includes(window.location.hostname);
+            
+            // Definimos qué rutas consideramos "dentro del panel administrador" (excluyendo el request publico)
+            const adminPaths = ['/dashboard', '/admin', '/ticket', '/users'];
+            const fromAdmin = isInternal && adminPaths.some(p => referrer.includes(p)) && !referrer.includes('/ticket/request');
+            
+            // En el portal publico, solo carga el preloader si navegamos saliendo del panel de admin.
+            // Asi evitamos que aparezca al cargar la web directo o movernos por public.
+            const isEntry = fromAdmin;
+            
+            if (isEntry) {
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        preloader.classList.add('fade-out');
+                        setTimeout(() => preloader.style.display = 'none', 300);
+                    }, 900);
+                });
+            } else {
+                preloader.style.display = 'none';
+            }
+        })();
+    </script>
+
+
     <header class="fixed-top w-100 py-3 glass-morphism border-bottom border-white-10">
         <div class="container d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center gap-3">

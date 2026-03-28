@@ -28,6 +28,41 @@
 </head>
 
 <body class="bg-deep-black">
+    <!-- Preloader corporativo -->
+    <div id="preloader">
+        <img src="<?php echo url('assets/images/DataWyrd_logo.png'); ?>" alt="Data Wyrd" class="preloader-logo">
+        <div class="preloader-dots">
+            <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const preloader = document.getElementById('preloader');
+            const referrer = document.referrer || '';
+            const isInternal = referrer.includes(window.location.hostname);
+            
+            // Definimos qué rutas consideramos "dentro del panel administrador" (excluyendo el request publico)
+            const adminPaths = ['/dashboard', '/admin', '/ticket', '/users'];
+            const fromAdmin = isInternal && adminPaths.some(p => referrer.includes(p)) && !referrer.includes('/ticket/request');
+            
+            // En admin.php, carga el preloader cuando entras desde cualquier lado que NO sea admin (externo, publico local, o link directo)
+            const isEntry = !fromAdmin;
+            
+            if (isEntry) {
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        preloader.classList.add('fade-out');
+                        setTimeout(() => preloader.style.display = 'none', 300);
+                    }, 900);
+                });
+            } else {
+                preloader.style.display = 'none';
+            }
+        })();
+    </script>
+
+
     <div class="d-flex min-vh-100">
         <!-- Sidebar Overlay (mobile) -->
         <div id="sidebar-overlay" class="position-fixed w-100 h-100 bg-black bg-opacity-50 d-none"

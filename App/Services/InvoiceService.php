@@ -16,8 +16,7 @@ class InvoiceService
 {
     private $db;
     private $invoiceRepo;
-
-    public function __construct(\App\Repositories\InvoiceRepositoryInterface $invoiceRepo = null)
+    public function __construct(\App\Repositories\InvoiceRepository $invoiceRepo = null)
     {
         $this->db = Database::getInstance()->getConnection();
         $this->invoiceRepo = $invoiceRepo ?? new \App\Repositories\InvoiceRepository($this->db);
@@ -209,30 +208,146 @@ class InvoiceService
         }
     }
 
-    /**
-     * Registra un pago y actualiza el estado de la factura (Simplificado).
-     */
-    public function markAsPaid(int $invoiceId, array $currentUser): array
+    public function getInvoices(array $user)
     {
-        $invoice = $this->findInvoiceById($invoiceId);
-        if (!$invoice)
-            return ['success' => false, 'error' => 'Factura no encontrada'];
+        $clientId = \Core\Auth::isClient() ? $user['id'] : null;
+        return $this->invoiceRepo->getInvoices($clientId);
+    }
 
-        // 1. Autorización
-        if (!InvoicePolicy::canVerifyPayment($currentUser, $invoice)) {
-            AuditService::log('unauthorized_payment_verification_attempt', ['invoice_id' => $invoiceId], 'WARN');
-            return ['success' => false, 'error' => 'No autorizado'];
+    public function getInvoiceDetails(int $id)
+    {
+        $invoice = $this->invoiceRepo->getInvoiceWithFullDetails($id);
+        if (!$invoice) return null;
+
+        $receipt = $this->invoiceRepo->getLatestReceipt($id);
+
+        return [
+            'invoice' => $invoice,
+            'receipt' => $receipt
+        ];
+    }
+
+    public function handlePaymentReceipt(int $invoiceId, array $file, float $userAmount, int $userId)
+    {
+        $invoice = $this->invoiceRepo->findInvoiceById($invoiceId);
+        if (!$invoice) throw new Exception('Factura no encontrada.');
+
+        $errors = \Core\Validator::validateFile($file, 5 * 1024 * 1024, ['jpg', 'jpeg', 'png', 'pdf']);
+        if (!empty($errors)) throw new Exception(implode(' ', $errors));
+
+        $upload_dir = BASE_PATH . '/public/uploads/receipts/';
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
+
+        $filename = \Core\Validator::generateSecureFileName($file['name']);
+        $filepath = 'uploads/receipts/' . $filename;
+        
+        if (!move_uploaded_file($file['tmp_name'], $upload_dir . $filename)) {
+            throw new Exception('Error al mover el archivo al servidor.');
         }
 
-        // 2. Transición
-        $status = InvoiceStatus::fromString($invoice['status']);
-        $newStatus = InvoiceStatus::paid();
+        $pending = $invoice['total'] - $invoice['paid_amount'];
+        $amt = ($userAmount <= 0 || $userAmount > $pending) ? $pending : $userAmount;
 
-        if (!$status->canTransitionTo($newStatus)) {
-            return ['success' => false, 'error' => 'No se puede marcar como pagada desde el estado actual'];
+        $this->db->beginTransaction();
+        try {
+            $this->invoiceRepo->createPaymentReceipt([
+                'invoice_id' => $invoiceId,
+                'uploaded_by' => $userId,
+                'filename' => $filename,
+                'filepath' => $filepath,
+                'amount' => $amt
+            ]);
+
+            $this->invoiceRepo->updateInvoiceStatus($invoiceId, 'processing');
+            
+            \Core\SecurityLogger::log('payment_receipt_uploaded', [
+                'invoice_id' => $invoiceId,
+                'filename' => $filename
+            ]);
+
+            // Notify Staff/Admin (Phase 11.5.0 Refactor)
+            $staff = $this->db->query("SELECT id FROM users WHERE role IN ('admin', 'staff')")->fetchAll();
+            foreach ($staff as $s) {
+                Notification::send($s['id'], 'payment_upload', 'Comprobante de Pago', 
+                    "Un cliente ha subido un comprobante para la factura #$invoiceId", 
+                    '/invoice/show/' . $invoiceId);
+            }
+
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    public function createMpPreference(int $invoiceId, float $amount, array $user)
+    {
+        $invoice = $this->invoiceRepo->findInvoiceById($invoiceId);
+        if (!$invoice || $invoice['client_id'] != $user['id']) {
+            throw new Exception('Factura no válida.');
         }
 
-        return $this->confirmPayment($invoiceId, $currentUser['id']);
+        $pending = $invoice['total'] - $invoice['paid_amount'];
+        if ($amount <= 0 || $amount > $pending) throw new Exception('Monto de pago inválido.');
+
+        $mpToken = trim(\Core\Config::get('payment.mp_access_token'));
+        if (empty($mpToken)) throw new Exception('Pasarela de pago no configurada.');
+
+        $appUrl = rtrim(\Core\Config::get('app.url') ?? 'http://localhost/datawyrd', '/');
+        
+        // Multi-currency logic
+        $invoiceCurrency = $invoice['currency'] ?? 'USD';
+        $mpCurrency = \Core\Config::get('payment.mp_currency_id') ?: 'ARS';
+        $amountToPayMP = $amount;
+        $exchangeRate = 1;
+
+        if ($invoiceCurrency !== $mpCurrency) {
+            $exchangeRate = (float) \Core\Config::get('payment.exchange_rate') ?: 1;
+            $amountToPayMP = round($amount * $exchangeRate, 2);
+        }
+
+        $preferenceData = [
+            'items' => [[
+                'title' => 'Pago Factura #' . $invoice['invoice_number'],
+                'quantity' => 1,
+                'unit_price' => (float) $amountToPayMP,
+                'currency_id' => $mpCurrency
+            ]],
+            'external_reference' => (string) $invoiceId,
+            'back_urls' => [
+                'success' => $appUrl . '/invoice/show/' . $invoiceId,
+                'failure' => $appUrl . '/invoice/show/' . $invoiceId,
+                'pending' => $appUrl . '/invoice/show/' . $invoiceId,
+            ],
+            'auto_return' => 'approved',
+            'notification_url' => $appUrl . '/webhook/mercadopago',
+            'metadata' => [
+                'invoice_id' => $invoiceId,
+                'original_amount' => $amount,
+                'exchange_rate' => $exchangeRate
+            ]
+        ];
+
+        $ch = curl_init('https://api.mercadopago.com/checkout/preferences');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $mpToken,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($preferenceData));
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $result = json_decode($response, true);
+        if ($httpCode >= 200 && $httpCode < 300 && isset($result['init_point'])) {
+            return $result['init_point'];
+        }
+
+        throw new Exception('Error al conectar con MercadoPago.');
     }
 
     private function findInvoiceById(int $id): ?array
@@ -240,3 +355,4 @@ class InvoiceService
         return $this->invoiceRepo->findInvoiceById($id);
     }
 }
+

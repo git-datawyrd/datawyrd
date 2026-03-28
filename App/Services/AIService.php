@@ -5,13 +5,21 @@ class AIService
 {
     private $apiKey;
     private $model;
-    private $endpoint = 'https://api.openai.com/v1/chat/completions';
+    private $endpoint;
+    private $provider;
 
     public function __construct()
     {
-        // Obtain from $_ENV or define in config if container is used.
-        $this->apiKey = $_ENV['OPENAI_API_KEY'] ?? null;
-        $this->model = $_ENV['OPENAI_MODEL'] ?? 'gpt-4o-mini';
+        // Support for new AI_ prefix, fallback to OPENAI_ prefix for legacy compatibility
+        $this->apiKey = $_ENV['AI_API_KEY'] ?? $_ENV['OPENAI_API_KEY'] ?? null;
+        $this->model = $_ENV['AI_MODEL'] ?? $_ENV['OPENAI_MODEL'] ?? 'gpt-4o-mini';
+        $this->provider = strtolower($_ENV['AI_PROVIDER'] ?? 'openai');
+        
+        if ($this->provider === 'groq') {
+            $this->endpoint = 'https://api.groq.com/openai/v1/chat/completions';
+        } else {
+            $this->endpoint = 'https://api.openai.com/v1/chat/completions';
+        }
     }
 
     public function isEnabled(): bool
@@ -22,7 +30,7 @@ class AIService
     private function query(array $messages, float $temperature = 0.7)
     {
         if (!$this->isEnabled()) {
-            return ['error' => 'API Key no configurada'];
+            return ['error' => 'API Key de IA no configurada'];
         }
 
         $data = [
@@ -46,8 +54,8 @@ class AIService
         curl_close($ch);
 
         if ($httpCode >= 400 || !$response) {
-            error_log("OpenAI API Error: HTTP " . $httpCode . " Response: " . $response);
-            return ['error' => 'Error al contactar con la API de OpenAI. Código: ' . $httpCode];
+            error_log("AI API Error ({$this->provider}): HTTP " . $httpCode . " Response: " . $response);
+            return ['error' => "Error al contactar con la API ({$this->provider}). Código: " . $httpCode];
         }
 
         $result = json_decode($response, true);
@@ -55,6 +63,7 @@ class AIService
     }
 
     /**
+
      * E11-006: GAI-01 - Genera un sumario del caso basado en el historial del chat
      */
     public function generateTicketSummary(array $messages): ?string

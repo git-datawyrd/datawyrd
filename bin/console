@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Data Wyrd OS Unified Console
+ */
+require_once __DIR__ . '/../Core/bootstrap.php';
+
+use Core\Console\Kernel;
+
+$kernel = new Kernel();
+$status = $kernel->handle($argv);
+exit($status);

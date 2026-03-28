@@ -42,6 +42,10 @@ class InvoiceServiceTest extends \Tests\TestCase
                     VALUES (9999, 'TEST-INV-001', ?, ?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 7 DAY), 800, 200, 1000, 'unpaid', 1)");
         $stmt->execute([$this->testClientId, $this->testBudgetId]);
         $this->testInvoiceId = 9999;
+        
+        $this->db->exec("DELETE FROM invoice_events WHERE invoice_id = 9999");
+        $stmt2 = $this->db->prepare("INSERT INTO invoice_events (invoice_id, event_type, payload, amount, created_by) VALUES (9999, 'CREATE', '{}', 1000, 1)");
+        $stmt2->execute();
     }
 
     protected function tearDown(): void
@@ -53,7 +57,7 @@ class InvoiceServiceTest extends \Tests\TestCase
         $this->db->exec("DELETE FROM tickets WHERE id = 9999");
     }
 
-    public function test_partial_payment_updates_status_but_does_not_activate_service()
+    public function test_partial_payment_updates_status_and_activates_service()
     {
         // Insertamos un recibo por el 50% (500 USD)
         $this->db->prepare("INSERT INTO payment_receipts (invoice_id, amount, status, uploaded_by, filename, filepath, payment_date) VALUES (?, 500, 'pending', ?, 'test.pdf', 'test.pdf', CURDATE())")
@@ -72,9 +76,9 @@ class InvoiceServiceTest extends \Tests\TestCase
 
         $this->assertEquals('partial', $status, 'La factura debería estar en estado de pago parcial');
 
-        // Verificamos que NO haya servicios activos generados
+        // Verificamos que SI haya servicios activos generados (La lógica de Phase 11.4 provisiona con el primer pago por defecto)
         $count = $this->db->query("SELECT COUNT(*) FROM active_services WHERE invoice_id = 9999")->fetchColumn();
-        $this->assertEquals(0, $count, 'No debe existir servicio activo si el pago no es total');
+        $this->assertEquals(1, $count, 'Se debe provisionar servicio activo desde el primer abono parcial o total');
     }
 
     public function test_full_payment_activates_service()
