@@ -123,12 +123,11 @@ class AIService
     /**
      * E11-009: GAI-04 - Genera respuesta automática inicial políglota
      */
-    public function generateAutoResponse(string $subject, string $description, string $locale = 'es'): ?string
+    public function generateAutoResponse(string $subject, string $description, string $clientName, string $locale = 'es'): ?string
     {
-        $languageName = ($locale === 'en') ? 'English' : 'Spanish';
         $instructions = ($locale === 'en') 
-            ? "You are 'Data Wyrd Bot'. Provide an empathetic and professional initial response in English. Confirm you understood the issue briefly and state the technical team will review it. Keep it under 3 paragraphs."
-            : "Eres el 'Data Wyrd Bot'. Da una primera respuesta empática y profesional en Español. Confirma que entendiste el problema brevemente y que el equipo técnico lo revisará pronto. Máximo 3 párrafos.";
+            ? "You are 'Data Wyrd Bot'. Provide an empathetic and professional initial response in English addressing the client as '{$clientName}'. Confirm you understood the issue briefly and state the technical team will review it. Keep it under 3 paragraphs."
+            : "Eres el 'Data Wyrd Bot'. Da una primera respuesta empática y profesional en Español dirigiéndote al cliente como '{$clientName}'. Confirma que entendiste el problema brevemente y que el equipo técnico lo revisará pronto. Máximo 3 párrafos.";
 
         $prompt = [
             ['role' => 'system', 'content' => $instructions],

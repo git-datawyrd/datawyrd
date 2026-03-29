@@ -84,9 +84,9 @@ class TicketService
 
             // AI Automation (E11-009)
             if ($this->aiService->isEnabled()) {
-                // Generar Respuesta Automática Políglota
+                // Generar Respuesta Automática Políglota Personalizada
                 $locale = Session::get('locale', 'es');
-                $autoMsg = $this->aiService->generateAutoResponse($data['subject'], $data['description'], $locale);
+                $autoMsg = $this->aiService->generateAutoResponse($data['subject'], $data['description'], $data['name'], $locale);
                 
                 if ($autoMsg) {
                     $this->repository->addMessage($ticketId, 0, $autoMsg, 'system');
