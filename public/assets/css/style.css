@@ -1090,4 +1090,24 @@ body::before {
         transform: scale(0.95);
         filter: drop-shadow(0 0 5px rgba(48, 197, 255, 0.2));
     }
+}
+
+/* Preloader Responsive Adjustments */
+@media (max-width: 768px) {
+    .preloader-logo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .preloader-dots {
+        font-size: 1.5rem;
+        letter-spacing: 3px;
+        margin-top: 5px;
+    }
+    
+    .preloader-text {
+        font-size: 0.65rem;
+        margin-top: 10px;
+        letter-spacing: 0.15em;
+    }
 }
