@@ -16,7 +16,7 @@
         rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="stylesheet" href="<?php echo url('assets/css/style.css'); ?>">
+    <link rel="stylesheet" href="<?php echo url('assets/css/style.css?v=1.3'); ?>">
     <link rel="icon" type="image/x-icon" href="<?php echo url('assets/images/DataWyrd.ico'); ?>">
     <script>window.APP_URL = "<?php echo url(); ?>";</script>
 </head>
@@ -30,7 +30,7 @@ $navCategories = $db->query("SELECT name, slug FROM service_categories WHERE is_
 <body class="brand-bg">
     <!-- Preloader corporativo -->
     <div id="preloader">
-        <img src="<?php echo url('assets/images/DataWyrd_logo.png'); ?>" alt="Data Wyrd" class="preloader-logo">
+        <img src="<?php echo url('assets/images/DataWyrd.ico'); ?>" alt="Data Wyrd" class="preloader-logo">
         <div class="preloader-dots">
             <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
         </div>
