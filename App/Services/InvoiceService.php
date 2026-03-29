@@ -74,10 +74,12 @@ class InvoiceService
             // Actualizar estado del ticket a 'invoiced'
             $this->invoiceRepo->updateTicketStatus($budget['ticket_id'], 'invoiced');
 
-            AuditService::log('invoice_generated', [
+            \Core\SecurityLogger::log('INVOICE_GENERATED', [
                 'invoice_id' => $invoiceId,
-                'budget_id' => $budget_id
-            ], 'INFO');
+                'invoice_number' => $invoice_number,
+                'total' => $budget['total'],
+                'client_id' => $client_id
+            ], 'WARN');
 
             // Notificar al Cliente
             Notification::send($client_id, 'invoice_generated', 'Factura Generada', "Se ha generado automáticamente la factura $invoice_number para tu servicio.", "/invoice/show/" . $invoiceId);
@@ -190,9 +192,16 @@ class InvoiceService
             }
 
             if ($is_fully_paid) {
-                AuditService::log('invoice_paid', ['invoice_id' => $invoice_id], 'INFO');
+                \Core\SecurityLogger::log('INVOICE_PAID_FULL', [
+                    'invoice_id' => $invoice_id,
+                    'amount' => $amount_paid_now
+                ], 'WARN');
             } else {
-                AuditService::log('invoice_partial_payment', ['invoice_id' => $invoice_id, 'amount' => $amount_paid_now], 'INFO');
+                \Core\SecurityLogger::log('INVOICE_PARTIAL_PAYMENT', [
+                    'invoice_id' => $invoice_id,
+                    'amount' => $amount_paid_now,
+                    'verified_by' => $verified_by
+                ], 'WARN');
             }
 
             if ($ownsTransaction) {

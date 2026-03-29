@@ -1,8 +1,8 @@
 <div class="row g-4">
     <div class="col-12 d-flex align-items-center justify-content-between mb-2">
         <div>
-            <h2 class="text-white fw-black mb-1">Mis Facturas 🧾</h2>
-            <p class="text-white-50">Consulta y gestiona tus estados de cuenta e ingresos.</p>
+            <h2 class="text-white fw-black mb-1"><?php echo __('invoices.my_invoices'); ?> 🧾</h2>
+            <p class="text-white-50"><?php echo __('invoices.title'); ?></p>
         </div>
     </div>
 
@@ -10,18 +10,18 @@
     <div class="col-12">
         <div class="glass-morphism rounded-5 border-white-10 overflow-hidden shadow-2xl">
             <div class="p-4 border-bottom border-white-10 bg-white-5">
-                <h5 class="text-white h6 mb-0 fw-bold uppercase tracking-widest">Historial de Facturación</h5>
+                <h5 class="text-white h6 mb-0 fw-bold uppercase tracking-widest"><?php echo __('invoices.payment_history'); ?></h5>
             </div>
             <div class="table-responsive">
                 <table class="table table-dark table-hover mb-0 align-middle">
                     <thead class="bg-deep-black">
                         <tr class="x-small uppercase text-white-50 tracking-widest">
-                            <th class="p-4 border-0 text-start">Acciones</th>
-                            <th class="p-4 border-0">Nº Factura</th>
+                            <th class="p-4 border-0 text-start"><?php echo __('general.actions'); ?></th>
+                            <th class="p-4 border-0"><?php echo __('invoices.invoice_number'); ?></th>
                             <th class="p-4 border-0">Ref. Presupuesto</th>
-                            <th class="p-4 border-0">Fecha Emisión</th>
-                            <th class="p-4 border-0">Total</th>
-                            <th class="p-4 border-0">Estado</th>
+                            <th class="p-4 border-0"><?php echo __('invoices.issue_date'); ?></th>
+                            <th class="p-4 border-0"><?php echo __('invoices.total'); ?></th>
+                            <th class="p-4 border-0"><?php echo __('invoices.status'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,7 +30,7 @@
                                 <td class="p-4 text-start">
                                     <a href="<?php echo url('invoice/show/' . $inv['id']); ?>"
                                         class="btn btn-outline-white btn-sm rounded-pill px-3 border-white-10 x-small uppercase fw-bold">
-                                        Ver Factura
+                                        <?php echo __('invoices.view_details'); ?>
                                     </a>
                                 </td>
                                 <td class="p-4 text-white small fw-bold">
@@ -62,7 +62,7 @@
                         <?php if (empty($invoices)): ?>
                             <tr>
                                 <td colspan="6" class="p-5 text-center text-white-50 italic">
-                                    No tienes facturas generadas todavía.
+                                    <?php echo __('invoices.no_invoices'); ?>
                                 </td>
                             </tr>
                         <?php endif; ?>

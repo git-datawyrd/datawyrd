@@ -1,16 +1,16 @@
 <div class="row g-4 mb-5">
     <div class="col-12">
-        <h2 class="text-white fw-black mb-1">Centro de Entregables 📂</h2>
-        <p class="text-white-50">Accede a todos los resultados de tus proyectos de ingeniería de datos.</p>
+        <h2 class="text-white fw-black mb-1"><?php echo __('projects.deliveries_title'); ?> 📂</h2>
+        <p class="text-white-50"><?php echo __('projects.deliveries_desc'); ?></p>
     </div>
 
     <?php if (empty($services)): ?>
         <div class="col-12">
             <div class="glass-morphism p-5 text-center rounded-5">
                 <span class="material-symbols-outlined display-1 text-white-10 mb-3">folder_open</span>
-                <h4 class="text-white fw-bold">No hay servicios activos aún</h4>
-                <p class="text-white-50">Tus entregables aparecerán aquí una vez que tus servicios sean activados.</p>
-                <a href="<?php echo url('dashboard'); ?>" class="btn btn-primary rounded-pill px-4 mt-2">Ir al Dashboard</a>
+                <h4 class="text-white fw-bold"><?php echo __('projects.no_active_services'); ?></h4>
+                <p class="text-white-50"><?php echo __('projects.no_active_services_desc'); ?></p>
+                <a href="<?php echo url('dashboard'); ?>" class="btn btn-primary rounded-pill px-4 mt-2"><?php echo __('auth.welcome_back', ['name' => 'Dashboard']); ?></a>
             </div>
         </div>
     <?php else: ?>
@@ -30,7 +30,7 @@
                         <div class="text-end">
                             <div class="d-flex align-items-center gap-3 mb-1">
                                 <div class="text-end">
-                                    <span class="text-white-50 x-small d-block">Progreso del Proyecto</span>
+                                    <span class="text-white-50 x-small d-block"><?php echo __('projects.progress'); ?></span>
                                     <span class="text-white small fw-bold"><?php echo $service['progress_percent']; ?>%</span>
                                 </div>
                                 <div class="progress bg-white-5" style="width: 100px; height: 8px;">
@@ -40,7 +40,7 @@
                                         aria-valuemax="100"></div>
                                 </div>
                             </div>
-                            <span class="text-white-50 x-small d-block mt-2">Activado el:
+                            <span class="text-white-50 x-small d-block mt-2"><?php echo __('projects.activated_at'); ?>
                                 <?php echo date('d M, Y', strtotime($service['start_date'])); ?></span>
                         </div>
                     </div>
@@ -59,17 +59,17 @@
                                     <span
                                         class="x-small uppercase tracking-widest text-white-50 fw-bold d-flex align-items-center gap-1">
                                         <span class="material-symbols-outlined fs-6">payments</span>
-                                        Estado de Pago
+                                        <?php echo __('projects.payment_status'); ?>
                                     </span>
                                     <a href="<?php echo url('invoice/show/' . $service['invoice_id_ref']); ?>"
                                         class="x-small text-primary text-decoration-none hover-gold transition-all">
-                                        Ver factura <span class="material-symbols-outlined fs-6 align-middle">arrow_forward</span>
+                                        <?php echo __('projects.view_invoice'); ?> <span class="material-symbols-outlined fs-6 align-middle">arrow_forward</span>
                                     </a>
                                 </div>
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span class="x-small text-white-50">Pagado: <span
+                                    <span class="x-small text-white-50"><?php echo __('projects.paid'); ?> <span
                                             class="text-success fw-bold">$<?php echo number_format($invoicePaid, 2); ?></span></span>
-                                    <span class="x-small text-white-50">Pendiente: <span
+                                    <span class="x-small text-white-50"><?php echo __('projects.pending'); ?> <span
                                             class="text-warning fw-bold">$<?php echo number_format($invoicePending, 2); ?></span></span>
                                 </div>
                                 <div class="progress bg-white-5 rounded-pill" style="height: 6px;">
@@ -78,9 +78,9 @@
                                         aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-2">
-                                    <span class="x-small text-white-50">Total:
+                                    <span class="x-small text-white-50"><?php echo __('projects.total'); ?>
                                         $<?php echo number_format($invoiceTotal, 2); ?></span>
-                                    <span class="x-small text-white-50"><?php echo $payPercent; ?>% abonado</span>
+                                    <span class="x-small text-white-50"><?php echo __('projects.paid_percent', ['percent' => $payPercent]); ?></span>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +89,7 @@
                             <div
                                 class="rounded-4 p-2 px-3 border border-success border-opacity-25 bg-success bg-opacity-10 d-flex align-items-center gap-2">
                                 <span class="material-symbols-outlined text-success fs-5">check_circle</span>
-                                <span class="x-small text-success fw-bold">Pago Completo —
+                                <span class="x-small text-success fw-bold"><?php echo __('projects.full_payment'); ?> —
                                     $<?php echo number_format($invoiceTotal, 2); ?></span>
                             </div>
                         </div>
@@ -140,15 +140,14 @@
                                             </p>
                                             <a href="<?php echo url('project/download/' . $file['id']); ?>"
                                                 class="btn btn-outline-light btn-sm w-100 rounded-pill border-white-10 fw-bold">
-                                                <span class="material-symbols-outlined fs-6 align-middle me-1">download</span> Descargar
+                                                <span class="material-symbols-outlined fs-6 align-middle me-1">download</span> <?php echo __('projects.download'); ?>
                                             </a>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="col-12 py-4 text-center">
-                                    <p class="text-white-50 italic x-small mb-0">El equipo técnico aún está procesando los
-                                        entregables finales para este servicio.</p>
+                                    <p class="text-white-50 italic x-small mb-0"><?php echo __('projects.processing_deliverables'); ?></p>
                                 </div>
                             <?php endif; ?>
                         </div>

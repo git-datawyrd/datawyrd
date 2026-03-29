@@ -48,57 +48,57 @@ class Validator
         switch ($rule) {
             case 'required':
                 if (empty($value) && $value !== '0') {
-                    $this->addError($field, "El campo $field es obligatorio.");
+                    $this->addError($field, __('validation.required', ['field' => $field]));
                 }
                 break;
 
             case 'email':
                 if ($value && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    $this->addError($field, "El campo $field debe ser un email válido.");
+                    $this->addError($field, __('validation.email', ['field' => $field]));
                 }
                 break;
 
             case 'min':
                 $min = $params[0] ?? 0;
                 if (strlen($value) < $min) {
-                    $this->addError($field, "El campo $field debe tener al menos $min caracteres.");
+                    $this->addError($field, __('validation.min', ['field' => $field, 'min' => $min]));
                 }
                 break;
 
             case 'max':
                 $max = $params[0] ?? 255;
                 if (strlen($value) > $max) {
-                    $this->addError($field, "El campo $field no puede exceder $max caracteres.");
+                    $this->addError($field, __('validation.max', ['field' => $field, 'max' => $max]));
                 }
                 break;
 
             case 'numeric':
                 if ($value && !is_numeric($value)) {
-                    $this->addError($field, "El campo $field debe ser numérico.");
+                    $this->addError($field, __('validation.numeric', ['field' => $field]));
                 }
                 break;
 
             case 'alpha':
                 if ($value && !ctype_alpha(str_replace(' ', '', $value))) {
-                    $this->addError($field, "El campo $field solo puede contener letras.");
+                    $this->addError($field, __('validation.alpha', ['field' => $field]));
                 }
                 break;
 
             case 'alphanumeric':
                 if ($value && !ctype_alnum(str_replace(' ', '', $value))) {
-                    $this->addError($field, "El campo $field solo puede contener letras y números.");
+                    $this->addError($field, __('validation.alphanumeric', ['field' => $field]));
                 }
                 break;
 
             case 'url':
                 if ($value && !filter_var($value, FILTER_VALIDATE_URL)) {
-                    $this->addError($field, "El campo $field debe ser una URL válida.");
+                    $this->addError($field, __('validation.url', ['field' => $field]));
                 }
                 break;
 
             case 'in':
                 if ($value && !in_array($value, $params)) {
-                    $this->addError($field, "El valor de $field no es válido.");
+                    $this->addError($field, __('validation.in', ['field' => $field]));
                 }
                 break;
         }
@@ -207,18 +207,18 @@ class Validator
         $errors = [];
 
         if (!isset($file['error']) || is_array($file['error'])) {
-            $errors[] = 'Parámetros de archivo inválidos.';
+            $errors[] = __('validation.file_invalid');
             return $errors;
         }
 
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            $errors[] = 'Error al subir el archivo.';
+            $errors[] = __('validation.file_upload_error');
             return $errors;
         }
 
         // 1. Validar tamaño
         if ($file['size'] > $maxSize) {
-            $errors[] = 'El archivo excede el tamaño máximo permitido.';
+            $errors[] = __('validation.file_size');
         }
 
         // 2. Validar Tipo MIME Real (No solo extensión)
@@ -242,12 +242,12 @@ class Validator
         if (!empty($allowedExtensions)) {
             $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
             if (!in_array($ext, $allowedExtensions)) {
-                $errors[] = "Extensión .$ext no permitida.";
+                $errors[] = __('validation.file_extension', ['ext' => $ext]);
             } else {
                 // Verificar que el MIME coincida con la extensión esperada
                 $expectedMimes = $mimeMap[$ext] ?? [];
                 if (!empty($expectedMimes) && !in_array($mimeType, $expectedMimes)) {
-                    $errors[] = "Contenido del archivo no coincide con su extensión (Falsificación de tipo).";
+                    $errors[] = __('validation.file_mime_mismatch');
                 }
             }
         }

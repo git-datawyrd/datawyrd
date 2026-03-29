@@ -97,28 +97,29 @@ class Mail
      */
     public static function sendWelcome($to, $name, $password)
     {
-        $appUrl = rtrim(Config::get('base_url'), '/');
-        $companyName = Config::get('business.company_name');
-        $subject = "¡Bienvenido a $companyName, $name!";
+        $appUrl = rtrim(Config::get('base_url', 'http://localhost/datawyrd'), '/');
+        $companyName = Config::get('business.company_name', 'Data Wyrd');
+        
+        $subject = __('emails.welcome_subject', ['company' => $companyName, 'name' => $name]);
         $body = "
             <div style='font-family: Arial; background: #0A0A0A; color: white; padding: 40px; max-width: 600px; margin: auto; border: 1px solid #333;'>
                 <h1 style='text-align: center; margin: 0; background: linear-gradient(to right, #D4AF37, #30C5FF); -webkit-background-clip: text; color: transparent;'>$companyName</h1>
-                <p>Hola <strong>$name</strong>,</p>
-                <p>Tu cuenta ha sido creada exitosamente para procesar tu solicitud de servicio.</p>
+                <p>" . __('emails.welcome_hello', ['name' => $name]) . "</p>
+                <p>" . __('emails.welcome_body') . "</p>
                 
                 <div style='background: #111; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #D4AF37;'>
-                    <p style='margin-top: 0;'><strong>Tus credenciales de acceso:</strong></p>
-                    <p>Usuario: <span style='color: #30C5FF;'>$to</span></p>
-                    <p>Contraseña Temporal: <span style='color: #D4AF37;'>$password</span></p>
+                    <p style='margin-top: 0;'><strong>" . __('emails.credentials') . "</strong></p>
+                    <p>" . __('emails.username') . ": <span style='color: #30C5FF;'>$to</span></p>
+                    <p>" . __('emails.temp_password') . ": <span style='color: #D4AF37;'>$password</span></p>
                 </div>
 
                 <div style='text-align: center; margin: 30px 0;'>
-                    <a href='{$appUrl}/profile/settings#change-password' style='background: #D4AF37; color: black; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>Cambiar Contraseña</a>
+                    <a href='{$appUrl}/profile/settings#change-password' style='background: #D4AF37; color: black; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>" . __('emails.change_password') . "</a>
                 </div>
 
-                <p style='color: #888; font-size: 13px;'>Nota: Por seguridad, te recomendamos cambiar tu contraseña una vez que inicies sesión.</p>
+                <p style='color: #888; font-size: 13px;'>" . __('emails.password_notice') . "</p>
                 <hr style='border: 0; border-top: 1px solid #333; margin: 30px 0;'>
-                <p style='text-align: center; color: #666;'>Equipo de Ingeniería - $companyName</p>
+                <p style='text-align: center; color: #666;'>" . __('emails.team_signature', ['company' => $companyName]) . "</p>
             </div>
         ";
         return self::send($to, $subject, $body);
@@ -129,14 +130,14 @@ class Mail
      */
     public static function sendTicketUpdate($to, $ticketNumber, $status)
     {
-        $appUrl = rtrim(Config::get('base_url'), '/');
-        $subject = "Actualización de Ticket: $ticketNumber";
+        $appUrl = rtrim(Config::get('base_url', 'http://localhost/datawyrd'), '/');
+        $subject = __('emails.update_subject', ['number' => $ticketNumber]);
         $body = "
             <div style='font-family: Arial; background: #0A0A0A; color: white; padding: 40px;'>
-                <h2 style='margin: 0 0 20px 0; background: linear-gradient(to right, #D4AF37, #30C5FF); -webkit-background-clip: text; color: transparent;'>Actualización de Estado</h2>
-                <p>Tu ticket <strong>$ticketNumber</strong> ha cambiado su estado a: <span style='color: #30C5FF;'>$status</span>.</p>
-                <p>Revisa los detalles en la plataforma.</p>
-                <a href='{$appUrl}/dashboard' style='background: #D4AF37; color: black; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Ver Ticket</a>
+                <h2 style='margin: 0 0 20px 0; background: linear-gradient(to right, #D4AF37, #30C5FF); -webkit-background-clip: text; color: transparent;'>" . __('emails.update_title') . "</h2>
+                <p>" . __('emails.update_body', ['number' => $ticketNumber, 'status' => $status]) . "</p>
+                <p>" . __('emails.check_platform') . "</p>
+                <a href='{$appUrl}/dashboard' style='background: #D4AF37; color: black; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;'>" . __('emails.view_ticket') . "</a>
             </div>
         ";
         return self::send($to, $subject, $body);
@@ -147,10 +148,10 @@ class Mail
      */
     public static function sendRequestConfirmation($to, $name, $ticketNumber, $subject_text)
     {
-        $appUrl = rtrim(Config::get('base_url'), '/');
-        $companyName = Config::get('business.company_name');
-        $slogan = Config::get('business.company_slogan');
-        $subject = "Confirmación de Solicitud: $ticketNumber";
+        $appUrl = rtrim(Config::get('base_url', 'http://localhost/datawyrd'), '/');
+        $companyName = Config::get('business.company_name', 'Data Wyrd');
+        $slogan = Config::get('business.company_slogan', 'Data Engineering Solutions');
+        $subject = __('emails.request_conf_subject', ['number' => $ticketNumber]);
         $body = "
             <div style='font-family: Arial, sans-serif; background: #0A0A0A; color: white; padding: 40px; max-width: 600px; margin: auto; border: 1px solid #333;'>
                 <div style='text-align: center; margin-bottom: 30px;'>
@@ -158,25 +159,25 @@ class Mail
                     <p style='color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;'>$slogan</p>
                 </div>
                 
-                <h2 style='color: #30C5FF; text-align: center;'>¡Solicitud Recibida!</h2>
-                <p>Hola <strong>$name</strong>,</p>
-                <p>Hemos recibido correctamente tu solicitud: <strong>\"$subject_text\"</strong>.</p>
+                <h2 style='color: #30C5FF; text-align: center;'>" . __('emails.request_received') . "</h2>
+                <p>" . __('emails.welcome_hello', ['name' => $name]) . "</p>
+                <p>" . __('emails.request_body', ['subject' => $subject_text]) . "</p>
                 
                 <div style='background: #111; padding: 25px; border-radius: 12px; border: 1px solid #333; margin: 30px 0;'>
-                    <h4 style='color: #D4AF37; margin-top: 0;'>¿Qué sigue ahora?</h4>
-                    <ol style='padding-left: 20px; color: #ccc; font-size: 14px; line-height: 1.6;'>
-                        <li style='margin-bottom: 10px;'><strong>Revisión Técnica:</strong> Un especialista analizará tu requerimiento.</li>
-                        <li style='margin-bottom: 10px;'><strong>Propuesta Comercial:</strong> Recibirás un presupuesto en tu dashboard.</li>
-                        <li style='margin-bottom: 10px;'><strong>Activación:</strong> Una vez aprobado, iniciaremos la ejecución iterativa.</li>
-                    </ol>
+                    <h4 style='color: #D4AF37; margin-top: 0;'>" . __('emails.what_next') . "</h4>
+                    <ul style='padding-left: 20px; color: #ccc; font-size: 14px; line-height: 1.6;'>
+                        <li style='margin-bottom: 10px;'>" . __('emails.step_review') . "</li>
+                        <li style='margin-bottom: 10px;'>" . __('emails.step_proposal') . "</li>
+                        <li style='margin-bottom: 10px;'>" . __('emails.step_activation') . "</li>
+                    </ul>
                 </div>
 
                 <div style='text-align: center; margin: 40px 0;'>
-                    <a href='{$appUrl}/dashboard' style='background: #D4AF37; color: black; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;'>Acceder a mi Dashboard</a>
+                    <a href='{$appUrl}/dashboard' style='background: #D4AF37; color: black; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;'>" . __('emails.go_dashboard') . "</a>
                 </div>
 
                 <p style='color: #666; font-size: 12px; text-align: center; border-top: 1px solid #222; padding-top: 30px;'>
-                    Este es un correo automático, por favor no respondas directamente. Si tienes dudas, contáctanos a través del chat de la plataforma.
+                    " . __('emails.footer_auto') . "
                 </p>
             </div>
         ";
@@ -188,10 +189,10 @@ class Mail
      */
     public static function sendBudgetAvailable($to, $name, $budgetNumber, $budgetId)
     {
-        $appUrl = rtrim(Config::get('base_url'), '/');
-        $companyName = Config::get('business.company_name');
-        $slogan = Config::get('business.company_slogan');
-        $subject = "Presupuesto Disponible: $budgetNumber";
+        $appUrl = rtrim(Config::get('base_url', 'http://localhost/datawyrd'), '/');
+        $companyName = Config::get('business.company_name', 'Data Wyrd');
+        $slogan = Config::get('business.company_slogan', 'Data Engineering Solutions');
+        $subject = __('emails.budget_subject', ['number' => $budgetNumber]);
         $body = "
             <div style='font-family: Arial, sans-serif; background: #0A0A0A; color: white; padding: 40px; max-width: 600px; margin: auto; border: 1px solid #333;'>
                 <div style='text-align: center; margin-bottom: 30px;'>
@@ -199,17 +200,17 @@ class Mail
                     <p style='color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;'>$slogan</p>
                 </div>
                 
-                <h2 style='color: #30C5FF; text-align: center;'>Propuesta Comercial Lista</h2>
-                <p>Hola <strong>$name</strong>,</p>
-                <p>Hemos generado el presupuesto <strong>$budgetNumber</strong> para tu solicitud.</p>
+                <h2 style='color: #30C5FF; text-align: center;'>" . __('emails.budget_title') . "</h2>
+                <p>" . __('emails.welcome_hello', ['name' => $name]) . "</p>
+                <p>" . __('emails.budget_body', ['number' => $budgetNumber]) . "</p>
                 
                 <div style='background: #111; padding: 25px; border-radius: 12px; border: 1px solid #333; margin: 30px 0; text-align: center;'>
-                    <p style='color: #ccc; font-size: 15px; margin-bottom: 20px;'>Puedes revisar los detalles de inversión, alcances técnicos y aprobar la propuesta directamente en nuestra plataforma.</p>
-                    <a href='{$appUrl}/budget/show/{$budgetId}' style='background: #D4AF37; color: black; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;'>Ver Propuesta Comercial</a>
+                    <p style='color: #ccc; font-size: 15px; margin-bottom: 20px;'>" . __('emails.budget_desc') . "</p>
+                    <a href='{$appUrl}/budget/show/{$budgetId}' style='background: #D4AF37; color: black; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;'>" . __('emails.view_proposal') . "</a>
                 </div>
 
                 <p style='color: #666; font-size: 12px; text-align: center; border-top: 1px solid #222; padding-top: 30px;'>
-                    Este es un correo automático. Si tienes alguna observación sobre el presupuesto, usa el panel de discusión en el detalle de la propuesta.
+                    " . __('emails.budget_footer') . "
                 </p>
             </div>
         ";
@@ -221,21 +222,20 @@ class Mail
      */
     public static function sendUrgentSupport($to, $clientName, $clientEmail, $ticketId)
     {
-        $appUrl = rtrim(Config::get('base_url'), '/');
-        $companyName = Config::get('business.company_name');
-        $subject = "[URGENTE] Soporte Prioritario: $clientName";
+        $appUrl = rtrim(Config::get('base_url', 'http://localhost/datawyrd'), '/');
+        $subject = __('emails.urgent_subject', ['name' => $clientName]);
         $body = "
             <div style='font-family: Arial, sans-serif; background: #0A0A0A; color: white; padding: 40px; max-width: 600px; margin: auto; border: 1px solid #D4AF37;'>
-                <h2 style='color: #FF5555; text-align: center;'>⚠️ ATENCIÓN INMEDIATA SOLICITADA</h2>
-                <p>El cliente <strong>$clientName</strong> ($clientEmail) ha solicitado soporte prioritario.</p>
+                <h2 style='color: #FF5555; text-align: center;'>" . __('emails.urgent_title') . "</h2>
+                <p>" . __('emails.urgent_body', ['name' => $clientName, 'email' => $clientEmail]) . "</p>
                 
                 <div style='background: #111; padding: 20px; border-radius: 8px; border: 1px solid #333; margin: 20px 0;'>
-                    <p><strong>Ticket Relacionado:</strong> #$ticketId</p>
-                    <p><strong>Estado:</strong> Urgente</p>
+                    <p><strong>" . __('emails.related_ticket') . "</strong> #$ticketId</p>
+                    <p><strong>" . __('emails.urgent_status') . "</strong></p>
                 </div>
 
                 <div style='text-align: center; margin: 30px 0;'>
-                    <a href='{$appUrl}/ticket/detail/$ticketId' style='background: #30C5FF; color: black; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>Atender Requerimiento</a>
+                    <a href='{$appUrl}/ticket/detail/$ticketId' style='background: #30C5FF; color: black; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>" . __('emails.attend_request') . "</a>
                 </div>
             </div>
         ";

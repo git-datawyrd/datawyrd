@@ -48,6 +48,11 @@ class SecurityLogger
                 self::logToImmutableStorage($logData);
             }
 
+            // 4. Blockchain Notarization - Distributed Trust (Sprint 2)
+            if (\Core\Config::get('security.blockchain_enabled', false)) {
+                self::logToBlockchain($logData);
+            }
+
         } catch (\Exception $e) {
             error_log("CRITICAL: Failed to log security event: " . $e->getMessage());
         }
@@ -125,5 +130,24 @@ class SecurityLogger
 
         // Uso de LOCK_EX previene corrupción si múltiples hilos escriben a la vez
         file_put_contents($logFile, $entry, FILE_APPEND | LOCK_EX);
+    }
+
+    /**
+     * Notarize the event in a blockchain node via BlockchainClient.
+     */
+    private static function logToBlockchain(array $data): void
+    {
+        try {
+            $client = Container::getInstance()->get(BlockchainClient::class);
+            
+            $hash = $data['signature_hash'] ?? hash('sha256', json_encode($data));
+            
+            $client->notarize($data['request_id'], $hash, [
+                'action' => $data['action'],
+                'user' => $data['user_email']
+            ]);
+        } catch (\Exception $e) {
+            error_log("Blockchain notarization failed: " . $e->getMessage());
+        }
     }
 }

@@ -124,4 +124,12 @@ class TicketRepository extends BaseRepository
         $stmt->execute([$tenantId]);
         return $stmt->fetch();
     }
+
+    public function addMessage(int $ticketId, int $userId, string $message, string $type = 'user')
+    {
+        $realUserId = ($userId === 0) ? null : $userId;
+        $sql = "INSERT INTO chat_messages (ticket_id, user_id, message, message_type, created_at) VALUES (?, ?, ?, ?, NOW())";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$ticketId, $realUserId, $message, $type]);
+    }
 }

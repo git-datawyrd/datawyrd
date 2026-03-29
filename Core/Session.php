@@ -31,9 +31,9 @@ class Session
         $_SESSION[$key] = $value;
     }
 
-    public static function get($key)
+    public static function get($key, $default = null)
     {
-        return $_SESSION[$key] ?? null;
+        return $_SESSION[$key] ?? $default;
     }
 
     public static function remove($key)

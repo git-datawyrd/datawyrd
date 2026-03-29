@@ -21,6 +21,9 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// 4. Cargar Helpers Globales
+require_once BASE_PATH . '/Core/helpers.php';
+
 use Core\Config;
 use Core\EnvLoader;
 
@@ -37,7 +40,16 @@ try {
     }
 
     // Configuración de Timezone
-    date_default_timezone_set(Config::get('timezone', 'America/Argentina/Buenos_Aires'));
+    date_default_timezone_set(Config::get('app.timezone', 'America/Argentina/Buenos_Aires'));
+
+    // 6. Motor de Internacionalización
+    if (PHP_SAPI !== 'cli' && isset($_GET['lang'])) {
+        $supported = ['es', 'en'];
+        if (in_array($_GET['lang'], $supported)) {
+            \Core\Session::set('locale', $_GET['lang']);
+        }
+    }
+    \Core\Lang::load();
 
 } catch (\Throwable $e) {
     error_log("Bootstrap Error: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());

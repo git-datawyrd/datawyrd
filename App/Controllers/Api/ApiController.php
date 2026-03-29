@@ -16,6 +16,31 @@ abstract class ApiController
     public function __construct(JWT $jwt)
     {
         $this->jwt = $jwt;
+        $this->validateTrustMesh();
+    }
+
+    /**
+     * Trust Mesh Validation (Malla de Confianza)
+     * Verifies the X-App-Fingerprint header against trusted application signatures.
+     */
+    protected function validateTrustMesh(): void
+    {
+        // En DataWyrd 11.6, forzamos validación de origen en la API
+        $headers = getallheaders();
+        $fingerprint = $headers['X-App-Fingerprint'] ?? $headers['x-app-fingerprint'] ?? null;
+
+        if (!$fingerprint && \Core\Config::get('api.enforce_trust_mesh', false)) {
+            SecurityLogger::log('TRUST_MESH_VIOLATION', 'Missing App Fingerprint', 'CRITICAL');
+            $this->error("API Trust Mesh violation: Identity not established", 403);
+        }
+
+        // Simulación de validación contra registro de aplicaciones autorizadas
+        // En producción: verificar hash HMAC de la app o App ID registrado
+        $trustedSignals = \Core\Config::get('api.trusted_fingerprints', ['DW-MOBILE-V1-ALPHA']);
+        if ($fingerprint && !in_array($fingerprint, $trustedSignals) && \Core\Config::get('api.enforce_trust_mesh', false)) {
+            SecurityLogger::log('TRUST_MESH_REJECTED', "Untrusted fingerprint: $fingerprint", 'CRITICAL');
+            $this->error("API Trust Mesh violation: Unauthorized application signature", 403);
+        }
     }
 
     /**

@@ -87,28 +87,28 @@
             </div>
 
             <nav class="flex-grow-1 p-3 mt-2 overflow-y-auto">
-                <p class="text-white-50 x-small fw-bold uppercase px-3 mb-2 tracking-widest">Menú Principal</p>
+                <p class="text-white-50 x-small fw-bold uppercase px-3 mb-2 tracking-widest"><?php echo __('nav.main_menu'); ?></p>
 
                 <a href="<?php echo url('dashboard'); ?>"
                     class="nav-link-custom mb-1 <?php echo ($_SERVER['REQUEST_URI'] == '/dashboard' || $_SERVER['REQUEST_URI'] == '/' || strpos($_SERVER['REQUEST_URI'], 'dashboard') !== false) ? 'active' : ''; ?>">
                     <span class="material-symbols-outlined">dashboard</span>
-                    Dashboard
+                    <?php echo __('nav.dashboard'); ?>
                 </a>
 
                 <?php if (\Core\Auth::isClient()): ?>
                     <a href="<?php echo url('ticket'); ?>"
                         class="nav-link-custom mb-1 <?php echo ($_SERVER['REQUEST_URI'] == url('ticket') || strpos($_SERVER['REQUEST_URI'], '/ticket') !== false) ? 'active' : ''; ?>">
                         <span class="material-symbols-outlined">confirmation_number</span>
-                        Mis Tickets
+                        <?php echo __('nav.tickets'); ?>
                     </a>
                     <a href="#" class="nav-link-custom mb-1">
                         <span class="material-symbols-outlined">inventory_2</span>
-                        Servicios Activos
+                        <?php echo __('nav.projects'); ?>
                     </a>
                     <a href="<?php echo url('invoice'); ?>"
                         class="nav-link-custom mb-1 <?php echo strpos($_SERVER['REQUEST_URI'], '/invoice') !== false ? 'active' : ''; ?>">
                         <span class="material-symbols-outlined">receipt_long</span>
-                        Mis Facturas
+                        <?php echo __('nav.invoices'); ?>
                     </a>
                 <?php endif; ?>
 
@@ -116,22 +116,22 @@
                     <a href="<?php echo url('ticket'); ?>"
                         class="nav-link-custom mb-1 <?php echo (strpos($_SERVER['REQUEST_URI'], '/ticket') !== false && strpos($_SERVER['REQUEST_URI'], '/ticket/request') === false) ? 'active' : ''; ?>">
                         <span class="material-symbols-outlined">support_agent</span>
-                        Gestión de Tickets
+                        <?php echo __('nav.tickets'); ?>
                     </a>
                     <a href="<?php echo url('project/workspace'); ?>"
                         class="nav-link-custom mb-1 <?php echo strpos($_SERVER['REQUEST_URI'], '/project/workspace') !== false ? 'active' : ''; ?>">
                         <span class="material-symbols-outlined">folder_shared</span>
-                        Workspace de Proyecto
+                        <?php echo __('nav.projects'); ?>
                     </a>
                     <a href="<?php echo url('invoice'); ?>"
                         class="nav-link-custom mb-1 <?php echo strpos($_SERVER['REQUEST_URI'], '/invoice') !== false ? 'active' : ''; ?>">
                         <span class="material-symbols-outlined">receipt_long</span>
-                        Ver Facturas
+                        <?php echo __('nav.invoices'); ?>
                     </a>
                 <?php endif; ?>
 
                 <?php if (\Core\Auth::isAdmin()): ?>
-                    <p class="text-white-50 x-small fw-bold uppercase px-3 mt-4 mb-2 tracking-widest">Administración</p>
+                    <p class="text-white-50 x-small fw-bold uppercase px-3 mt-4 mb-2 tracking-widest"><?php echo __('nav.admin_section'); ?></p>
                     <a href="<?php echo url('admin/services'); ?>"
                         class="nav-link-custom mb-1 <?php echo strpos($_SERVER['REQUEST_URI'], 'admin/services') !== false ? 'active' : ''; ?>">
                         <span class="material-symbols-outlined">settings_suggest</span>
@@ -188,11 +188,11 @@
                     </div>
                     <div class="d-flex flex-column gap-1">
                         <a href="<?php echo url('profile/settings'); ?>" class="text-white-50 hover-gold transition-all"
-                            title="Configuración">
+                            title="<?php echo __('nav.settings'); ?>">
                             <span class="material-symbols-outlined fs-5">settings</span>
                         </a>
                         <a href="<?php echo url('auth/logout'); ?>" class="text-white-50 hover-gold transition-all"
-                            title="Cerrar Sesión">
+                            title="<?php echo __('nav.logout'); ?>">
                             <span class="material-symbols-outlined fs-5">logout</span>
                         </a>
                     </div>
@@ -241,6 +241,16 @@
                                     <div class="p-4 text-center text-white-50 small placeholder-text">No hay
                                         notificaciones nuevas.</div>
                                 </div>
+                            </ul>
+                        </div>
+                        <div class="dropdown me-2">
+                            <button class="btn btn-outline-light btn-sm rounded-pill px-3 border-white-10 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="material-symbols-outlined fs-6">language</span>
+                                <span class="x-small fw-bold uppercase"><?php echo \Core\Session::get('locale', 'es'); ?></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark shadow-lg border-white-10 glass-morphism">
+                                <li><a class="dropdown-item x-small fw-bold" href="?lang=es">Español</a></li>
+                                <li><a class="dropdown-item x-small fw-bold" href="?lang=en">English</a></li>
                             </ul>
                         </div>
                         <div class="bg-white-10 d-none d-md-block" style="width: 1px; height: 24px;"></div>

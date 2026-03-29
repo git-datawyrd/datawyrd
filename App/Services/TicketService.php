@@ -82,8 +82,17 @@ class TicketService
                 'email' => $data['email']
             ]);
 
-            // AI Action Items
+            // AI Automation (E11-009)
             if ($this->aiService->isEnabled()) {
+                // Generar Respuesta Automática Políglota
+                $locale = Session::get('locale', 'es');
+                $autoMsg = $this->aiService->generateAutoResponse($data['subject'], $data['description'], $locale);
+                
+                if ($autoMsg) {
+                    $this->repository->addMessage($ticketId, 0, $autoMsg, 'system');
+                }
+
+                // AI Action Items
                 $this->processAIActionItems($ticketId, $data['description']);
             }
 

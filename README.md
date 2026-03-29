@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-11.3.0-blue.svg)
+![Version](https://img.shields.io/badge/version-11.5.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.0+-purple.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
@@ -83,9 +83,12 @@
 
 ### 🔒 Seguridad Enterprise
 - ✅ **Criptografía Argon2id**: Hashing de contraseñas de última generación.
-- ✅ **Auditoría Forense Inmutable**: Logs con firma SHA256 para prevenir manipulaciones.
+- ✅ **Auditoría Forense Inmutable**: Logs con firma SHA256 encadenada (Hash Chaining) para prevenir manipulaciones.
+- ✅ **2FA (TOTP) Nativo**: Soporte para autenticación de dos factores mediante escáner visual en el perfil del usuario.
+- ✅ **Dashboard Persistence**: Configuración persistente de widgets de dashboard por cada usuario.
+- ✅ **Zero-Exposure Public**: Eliminación de scripts de diagnóstico (`info.php`) y utilidades en producción.
 - ✅ **IP & Account Rate Limiting**: Protección estricta contra ataques de fuerza bruta.
-- ✅ **Protección CSRF Global**: Filtro automático en el router para todas las peticiones POST.
+- ✅ **Protección CSRF Global**: Filtro automático en el router para todas las peticiones POST y soporte Async.
 - ✅ **Hardening de Sesiones**: Cookies seguras (HttpOnly, Secure, SameSite) y regeneración de ID.
 - ✅ **Validación MIME Estricta**: Verificación de contenido real en subida de archivos.
 - ✅ **Blindaje de Directorios**: Acceso prohibido vía `.htaccess` a `/App`, `/Core` y `/storage`.
@@ -448,7 +451,11 @@ El proyecto incorpora un entorno base para testing unitario automatizado utiliza
 
 ```bash
 # Ejecutar tests
+# Ejecutar tests unitarios
 php vendor/bin/phpunit tests/Unit/InvoiceServiceTest.php
+
+# Ejecutar tests de integración IA (Llama 3.1)
+php vendor/bin/phpunit tests/Integration/AIServiceTest.php
 
 # Instalar PHPUnit (si no está instalado)
 composer require --dev phpunit/phpunit
@@ -533,12 +540,13 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 
 ### 🔮 Próximos Pasos (Evolución 11.0 y Misión Enterprise)
 - [x] **OTP-Based Update Flow**: Validación segura de candidatos recurrentes en Módulo de Jobs.
-- [ ] **Módulo GAI (Generative AI Integration)**: Asistencia LLM para auto-resúmenes de tickets y extracción de action items.
+- [x] **Módulo GAI (Generative AI Integration)**: Asistencia LLM (Llama 3.1) para auto-resúmenes de tickets y extracción de action items.
+- [x] **GAI Integration Testing**: Cobertura de integración para estabilidad de modelos LLM.
 - [ ] **Data Wyrd Multi-Tenant & SaaS Core**: Habilitación nativa de inquilinos.
 - [ ] **Pipelines CI/CD & Test-Driven**: Extender cobertura PHPUnit al 80% y generar flujos de despliegue inmutables.
 - [ ] **CQRS & Event Sourcing (FinOps)**: Auditoría infalible de pagos transaccionales mediante historial de eventos puros.
 - [ ] **Dockerización Genérica**: Contenerización de la plataforma para escalabilidad horizontal en clústeres.
-- [ ] **Real-Time Absoluto**: Integración de WebSockets nativa.
+- [ ] **Real-Time Absoluto**: Integración de WebSockets nativa con servidor Reactor.
 - [ ] Aplicación Móvil Companion conectada vía API v1.
 - [ ] Expansión de motor de reglas para integraciones externas (Webhooks out).
 - [ ] Dashboard UI Builder para roles Staff y Cliente.

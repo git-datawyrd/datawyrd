@@ -1,29 +1,29 @@
 <div class="row g-4">
     <div class="col-12 d-flex align-items-center justify-content-between mb-2">
         <div>
-            <h2 class="text-white fw-black mb-1">Mis Solicitudes 🎫</h2>
-            <p class="text-white-50">Gestiona y consulta el estado de tus servicios contratados.</p>
+            <h2 class="text-white fw-black mb-1"><?php echo __('tickets.my_tickets'); ?> 🎫</h2>
+            <p class="text-white-50"><?php echo __('tickets.desc'); ?></p>
         </div>
         <a href="<?php echo url('ticket/request'); ?>"
-            class="btn btn-primary btn-sm px-4 fw-bold rounded-pill shadow-gold">Nueva Solicitud</a>
+            class="btn btn-primary btn-sm px-4 fw-bold rounded-pill shadow-gold"><?php echo __('tickets.new_ticket'); ?></a>
     </div>
 
     <!-- Tickets Table -->
     <div class="col-12">
         <div class="glass-morphism rounded-5 border-white-10 overflow-hidden shadow-2xl">
             <div class="p-4 border-bottom border-white-10 bg-white-5 d-flex align-items-center justify-content-between">
-                <h5 class="text-white h6 mb-0 fw-bold uppercase tracking-widest">Historial de Tickets</h5>
+                <h5 class="text-white h6 mb-0 fw-bold uppercase tracking-widest"><?php echo __('tickets.history'); ?></h5>
             </div>
             <div class="table-responsive">
                 <table class="table table-dark table-hover mb-0 align-middle">
                     <thead class="bg-deep-black">
                         <tr class="x-small uppercase text-white-50 tracking-widest">
-                            <th class="p-4 border-0 text-start">Acciones</th>
-                            <th class="p-4 border-0">Nº Ticket</th>
-                            <th class="p-4 border-0">Asunto</th>
-                            <th class="p-4 border-0">Plan</th>
-                            <th class="p-4 border-0">Estado</th>
-                            <th class="p-4 border-0">Fecha</th>
+                            <th class="p-4 border-0 text-start"><?php echo __('general.actions'); ?></th>
+                            <th class="p-4 border-0"><?php echo __('tickets.number'); ?></th>
+                            <th class="p-4 border-0"><?php echo __('tickets.subject'); ?></th>
+                            <th class="p-4 border-0"><?php echo __('tickets.plan'); ?></th>
+                            <th class="p-4 border-0"><?php echo __('tickets.status'); ?></th>
+                            <th class="p-4 border-0"><?php echo __('tickets.date'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,7 +32,7 @@
                                 <td class="p-4 text-start">
                                     <a href="<?php echo url('ticket/detail/' . $t['id']); ?>"
                                         class="btn btn-outline-white btn-sm rounded-pill px-3 border-white-10 x-small uppercase fw-bold">
-                                        Ver Detalles
+                                        <?php echo __('tickets.view_details'); ?>
                                     </a>
                                 </td>
                                 <td class="p-4">
@@ -69,7 +69,7 @@
                                     ?>
                                     <span
                                         class="badge <?php echo $cls; ?> x-small uppercase fw-bold tracking-tighter px-2 py-1">
-                                        <?php echo translateStatus($t['status']); ?>
+                                        <?php echo __('status.' . $t['status']); ?>
                                     </span>
                                 </td>
                                 <td class="p-4">
@@ -82,8 +82,8 @@
                         <?php if (empty($tickets)): ?>
                             <tr>
                                 <td colspan="6" class="p-5 text-center text-white-50 italic">
-                                    Aún no tienes tickets registrados. <a href="<?php echo url('ticket/request'); ?>"
-                                        class="text-primary decoration-none">¡Crea el primero aquí!</a>
+                                    <?php echo __('tickets.no_tickets'); ?> <a href="<?php echo url('ticket/request'); ?>"
+                                        class="text-primary decoration-none"><?php echo __('tickets.create_first'); ?></a>
                                 </td>
                             </tr>
                         <?php endif; ?>
@@ -92,8 +92,8 @@
             </div>
             <div class="p-4 bg-white-5 border-top border-white-10 text-center">
                 <span class="text-white-50 x-small uppercase tracking-widest">
-                    Total:
-                    <?php echo count($tickets); ?> tickets
+                    <?php echo __('tickets.total'); ?>:
+                    <?php echo __('tickets.tickets_count', ['count' => count($tickets)]); ?>
                 </span>
             </div>
         </div>

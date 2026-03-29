@@ -23,14 +23,14 @@
                 $detailCls = $statusClassDetailClient[$ticket['status']] ?? 'bg-primary bg-opacity-10 text-primary';
                 ?>
                 <span class="badge <?php echo $detailCls; ?> px-3 py-2 uppercase x-small fw-black">
-                    <?php echo translateStatus($ticket['status']); ?>
+                    <?php echo __('status.' . $ticket['status']); ?>
                 </span>
             </div>
 
             <h3 class="text-white h5 fw-bold mb-1">
                 <?php echo $ticket['subject']; ?>
             </h3>
-            <p class="text-white-50 x-small uppercase tracking-widest mb-4">Solicitado el
+            <p class="text-white-50 x-small uppercase tracking-widest mb-4"><?php echo __('tickets.requested_on'); ?>
                 <?php echo date('d/m/Y H:i', strtotime($ticket['created_at'])); ?>
             </p>
 
@@ -38,7 +38,7 @@
 
             <div class="space-y-4">
                 <div class="mb-3">
-                    <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-1">Cliente</label>
+                    <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-1"><?php echo __('tickets.client'); ?></label>
                     <div class="d-flex align-items-center gap-3">
                         <div class="rounded-circle bg-steel d-flex align-items-center justify-content-center text-accent fw-bold x-small"
                             style="width: 32px; height: 32px;">
@@ -56,8 +56,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-1">Servicio
-                        Solicitado</label>
+                    <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-1"><?php echo __('tickets.requested_service'); ?></label>
                     <p class="text-white small mb-1">
                         <?php echo $ticket['service_name']; ?>
                     </p>
@@ -68,7 +67,7 @@
 
                 <div class="mb-3">
                     <label
-                        class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-1">Descripción</label>
+                        class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-1"><?php echo __('tickets.description'); ?></label>
                     <div class="bg-white-5 p-3 rounded-4">
                         <p class="text-white-50 small mb-0">
                             <?php echo nl2br($ticket['description']); ?>
@@ -80,24 +79,23 @@
             <?php if (!\Core\Auth::isClient()): ?>
                 <hr class="border-white-10 my-4">
                 <div class="mb-4">
-                    <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-2">Presupuesto</label>
+                    <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-2"><?php echo __('tickets.budget'); ?></label>
                     <?php if ($budget): ?>
                         <a href="/datawyrd/budget/show/<?php echo $budget['id']; ?>"
                             class="btn btn-outline-primary btn-sm w-100 fw-bold py-2 mb-2">
-                            Ver Presupuesto (<?php echo strtoupper($budget['status']); ?>)
+                             <?php echo __('tickets.view_budget'); ?> (<?php echo strtoupper($budget['status']); ?>)
                         </a>
                     <?php else: ?>
                         <a href="/datawyrd/budget/create/<?php echo $ticket['id']; ?>"
                             class="btn btn-primary btn-sm w-100 fw-bold py-2 mb-2 shadow-gold">
-                            Generar Presupuesto
+                            <?php echo __('tickets.generate_budget'); ?>
                         </a>
                     <?php endif; ?>
                 </div>
 
                 <form action="/datawyrd/ticket/updateStatus" method="POST">
                     <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
-                    <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-2">Gestionar
-                        Estado</label>
+                    <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-2"><?php echo __('tickets.manage_status'); ?></label>
                     <div class="d-flex gap-2">
                         <select name="status" class="form-select form-select-sm bg-steel border-white-10 text-white">
                             <option value="open" <?php echo $ticket['status'] == 'open' ? 'selected' : ''; ?>>Abierto</option>
@@ -118,12 +116,11 @@
                 <?php if ($budget): ?>
                     <hr class="border-white-10 my-4">
                     <div class="mb-4">
-                        <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-2">Propuesta
-                            Comercial</label>
-                        <p class="text-white-50 x-small mb-3">Has recibido una propuesta para este requerimiento.</p>
+                        <label class="text-white-50 x-small uppercase fw-bold tracking-widest d-block mb-2"><?php echo __('tickets.commercial_proposal'); ?></label>
+                        <p class="text-white-50 x-small mb-3"><?php echo __('tickets.proposal_desc'); ?></p>
                         <a href="<?php echo url('budget/show/' . $budget['id']); ?>"
                             class="btn btn-primary btn-sm w-100 fw-bold py-2 shadow-gold">
-                            <span class="material-symbols-outlined fs-6 align-middle me-1">visibility</span> Revisar Propuesta
+                            <span class="material-symbols-outlined fs-6 align-middle me-1">visibility</span> <?php echo __('tickets.review_proposal'); ?>
                         </a>
                     </div>
                 <?php endif; ?>
@@ -139,16 +136,16 @@
                 class="p-3 border-bottom border-white-10 bg-white-5 d-flex align-items-center justify-content-between px-4">
                 <div class="d-flex align-items-center gap-3">
                     <span class="material-symbols-outlined text-primary">forum</span>
-                    <h4 class="text-white h6 mb-0 fw-bold">Comunicación Directa</h4>
+                    <h4 class="text-white h6 mb-0 fw-bold"><?php echo __('tickets.direct_communication'); ?></h4>
                 </div>
-                <span class="x-small text-white-50 uppercase tracking-widest fw-bold">Tiempo Real</span>
+                <span class="x-small text-white-50 uppercase tracking-widest fw-bold"><?php echo __('tickets.real_time'); ?></span>
             </div>
 
             <div class="flex-grow-1 overflow-auto p-4 d-flex flex-column gap-3" id="chat-container">
                 <?php if (empty($messages)): ?>
                     <div class="mt-auto mb-auto text-center py-5">
                         <span class="material-symbols-outlined display-1 text-white-10 mb-3">chat_bubble</span>
-                        <p class="text-white-50">Inicia la conversación para este requerimiento.</p>
+                        <p class="text-white-50"><?php echo __('tickets.start_conversation'); ?></p>
                     </div>
                 <?php else: ?>
                     <?php foreach ($messages as $msg): ?>
@@ -197,7 +194,7 @@
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
                     <input type="text" name="message" class="form-control bg-steel border-white-10 text-white p-3"
-                        placeholder="Escribe un mensaje..." required autocomplete="off">
+                        placeholder="<?php echo __('tickets.type_message'); ?>" required autocomplete="off">
                     <button type="submit" class="btn btn-primary px-4 d-flex align-items-center justify-content-center">
                         <span class="material-symbols-outlined">send</span>
                     </button>

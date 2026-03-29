@@ -73,7 +73,8 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **IP & Account Rate Limiting**: Limitador estricto (`Auth_Max_Attempts`) programable por `.env` en endpoints críticos.
     - [x] **Anti Brute-Force**: Bloqueo automático progresivo (`Auth_Account_Lock`) para defender accesos.
     - [x] **Auditoría Forense Avanzada**: Implementación de la tabla `login_logs` interceptando exitos, fallos y perfiles de conexión (IP/User Agent).
-    - [x] Acondicionamiento de BD para futura configuración del escáner visual 2FA (TOTP) en Perfil.
+    - [x] **2FA (TOTP) Deployment**: Implementación total del escáner visual 2FA (TOTP) en Perfil del usuario para seguridad de acceso reforzada.
+- [x] **Dashboard Persistence**: Persistencia de configuración de Widgets de Dashboard por usuario, permitiendo vistas personalizadas y productivas.
 - [x] **Enterprise Readiness & FinOps Automation (Fase 11)**:
     - [x] **Zero-Delay Queues (Asincronía):** Emails procesados asíncronamente vía base de datos usando `worker.php` para fluidez total del cliente.
     - [x] **CI/CD Unit Testing:** Capa fundacional de pruebas con PHPUnit simulando motores de pago (`InvoiceServiceTest`).
@@ -117,7 +118,7 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 - [x] **Permisos Granulares y RBAC Dinámico**: Tablas `permissions` interconectables configurado vía variable `RBAC_MODE=granular`.
 - [x] **Lead Scoring Dinámico**: Lógica predictiva en `LeadService` que puntúa prospectos entre 0 a 100 de manera autónoma (`LEAD_SCORING_ENABLED`).
 - [x] **Analíticas Predictivas de Operación**: Notificación proactiva de posibles retrasos en Tickets ejecutándose en `scripts/cron_predictive.php`.
-- [x] **Auditorías Inmutables (Zero Trust)**: Los rastros de auditoría están ahora encriptados en cadena SHA256 (columna `signature_hash`) haciendo imposible la manipulación de base de datos sin detección.
+- [x] **Auditorías Inmutables (Zero Trust)**: Los rastros de auditoría están ahora encriptados en cadena SHA256 (columna `signature_hash`) vinculando cada registro con el anterior (hash chaining), haciendo imposible la manipulación de base de datos sin detección.
 - [x] **Asincronía en Correos**: Sustituido motor base por `PHPMailer`, asegurando consistencia en la entrega usando colas a través del archivo `worker.php`.
 - [x] **Refinamiento de Permisos RBAC**: Corregido bug de acceso en `LogController` asegurando que el permiso `view_logs` esté correctamente mapeado para administradores en modo granular.
 
@@ -171,6 +172,8 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Preloader Inteligente**: Rediseño minimalista (animación escalonada css) con lógica de frontera: solo se activa al cruzar entre el frontend público y la intranet administrativa, o en envíos pesados de RRHH, eliminando tiempos de espera inútiles dentro del panel.
     - [x] **AI Insight Engine Resolution**: Las alarmas de conversión (Leads) en el dashboard principal redirigen proactivamente al último ticket operativo activo del cliente para gestión inmediata.
     - [x] **Strict CSRF REST Security**: Integración dinámica del Header `X-CSRF-TOKEN` en las peticiones JS Async para evitar respuestas 403 Forbidden del Router Global en herramientas IA.
+- [x] **AI Integration Testing**: Implementación de suite de pruebas de integración (`tests/Integration/AIServiceTest.php`) garantizando estabilidad operativa y resiliencia ante rotación de proveedores LLM (Llama 3.1 / Groq / OpenAI).
+- [x] **Final Public Sanitization**: Eliminación definitiva de scripts residuales (`info.php`), garantizando una superficie de ataque mínima en entornos de producción.
 
 ---
 

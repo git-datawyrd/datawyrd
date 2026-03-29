@@ -1,10 +1,10 @@
 <div class="row g-4 mb-4 align-items-center">
     <!-- Welcome Header -->
     <div class="col-lg-5">
-        <h2 class="text-white fw-black mb-1">Bienvenido de nuevo,
-            <?php echo explode(' ', \Core\Auth::user()['name'])[0]; ?> 👋
+        <h2 class="text-white fw-black mb-1">
+            <?php echo __('dashboard.welcome', ['name' => explode(' ', \Core\Auth::user()['name'])[0]]); ?>
         </h2>
-        <p class="text-white-50 mb-0">Resumen de tus servicios y solicitudes activas.</p>
+        <p class="text-white-50 mb-0"><?php echo __('dashboard.summary_desc'); ?></p>
     </div>
 
     <!-- Roadmap / Próximos pasos -->
@@ -25,8 +25,7 @@
             $step_propuesta_active = $latest_ticket_status == 'budget_sent';
             ?>
             <div class="d-flex align-items-center gap-3 w-100">
-                <span class="text-white-50 uppercase tracking-widest x-small fw-bold flex-shrink-0">Próximos
-                    Pasos:</span>
+                <span class="text-white-50 uppercase tracking-widest x-small fw-bold flex-shrink-0"><?php echo __('dashboard.next_steps'); ?></span>
 
                 <div class="d-flex align-items-center flex-grow-1">
                     <!-- Registro -->
@@ -37,7 +36,7 @@
                             <span
                                 class="material-symbols-outlined x-small"><?php echo $step_registro_done && !$step_registro_active ? 'check' : 'edit_document'; ?></span>
                         </div>
-                        <span class="text-white x-small fw-bold">Registro</span>
+                        <span class="text-white x-small fw-bold"><?php echo __('dashboard.step_registration'); ?></span>
                     </div>
 
                     <div class="flex-grow-1 bg-white-10" style="height: 2px; margin: 0 5px; margin-top: -15px;">
@@ -53,7 +52,7 @@
                             <span
                                 class="material-symbols-outlined x-small"><?php echo $step_analisis_done && !$step_analisis_active ? 'check' : 'assignment'; ?></span>
                         </div>
-                        <span class="text-white x-small fw-bold">Análisis</span>
+                        <span class="text-white x-small fw-bold"><?php echo __('dashboard.step_analysis'); ?></span>
                     </div>
 
                     <div class="flex-grow-1 bg-white-10" style="height: 2px; margin: 0 5px; margin-top: -15px;">
@@ -69,7 +68,7 @@
                             <span
                                 class="material-symbols-outlined x-small"><?php echo $step_propuesta_done && !$step_propuesta_active ? 'check' : 'payments'; ?></span>
                         </div>
-                        <span class="text-white x-small fw-bold">Propuesta</span>
+                        <span class="text-white x-small fw-bold"><?php echo __('dashboard.step_proposal'); ?></span>
                     </div>
                 </div>
             </div>
@@ -97,10 +96,10 @@
             <div class="position-absolute top-0 end-0 p-3 opacity-10">
                 <span class="material-symbols-outlined display-4 text-white">bolt</span>
             </div>
-            <p class="text-white-50 x-small fw-bold uppercase tracking-widest mb-1">Servicios Activos</p>
+            <p class="text-white-50 x-small fw-bold uppercase tracking-widest mb-1"><?php echo __('dashboard.stats_active_services'); ?></p>
             <div class="d-flex align-items-center justify-content-between">
                 <h3 class="text-white fw-black mb-0 display-6 kpi-value"><?php echo count($services); ?></h3>
-                <span class="text-primary small fw-bold">En curso</span>
+                <span class="text-primary small fw-bold"><?php echo __('dashboard.status_in_course'); ?></span>
             </div>
         </div>
     </div>
@@ -109,10 +108,10 @@
             <div class="position-absolute top-0 end-0 p-3 opacity-10">
                 <span class="material-symbols-outlined display-4 text-white">confirmation_number</span>
             </div>
-            <p class="text-white-50 x-small fw-bold uppercase tracking-widest mb-1">Solicitudes</p>
+            <p class="text-white-50 x-small fw-bold uppercase tracking-widest mb-1"><?php echo __('dashboard.stats_requests'); ?></p>
             <div class="d-flex align-items-center justify-content-between">
                 <h3 class="text-white fw-black mb-0 display-6 kpi-value"><?php echo count($tickets); ?></h3>
-                <span class="text-accent small fw-bold">Pendientes</span>
+                <span class="text-accent small fw-bold"><?php echo __('dashboard.status_pending'); ?></span>
             </div>
         </div>
     </div>
@@ -121,11 +120,11 @@
             <div class="position-absolute top-0 end-0 p-3 opacity-10">
                 <span class="material-symbols-outlined display-4 text-white">credit_score</span>
             </div>
-            <p class="text-white-50 x-small fw-bold uppercase tracking-widest mb-1">Comprobantes por Pagar</p>
+            <p class="text-white-50 x-small fw-bold uppercase tracking-widest mb-1"><?php echo __('dashboard.stats_pending_payment'); ?></p>
             <div class="d-flex align-items-center justify-content-between">
                 <h3 class="text-white fw-black mb-0 display-6 kpi-value"><?php echo $unpaid_count; ?></h3>
                 <span
-                    class="<?php echo $unpaid_count == 0 ? 'text-success' : 'text-danger'; ?> small fw-bold"><?php echo $unpaid_count == 0 ? 'Al día' : 'Pendientes'; ?></span>
+                    class="<?php echo $unpaid_count == 0 ? 'text-success' : 'text-danger'; ?> small fw-bold"><?php echo $unpaid_count == 0 ? __('dashboard.status_up_to_date') : __('dashboard.status_pending'); ?></span>
             </div>
         </div>
     </div>
@@ -137,12 +136,12 @@
         <!-- Recent Tickets -->
         <div class="glass-morphism rounded-5 border-white-10 overflow-hidden mb-4">
             <div class="p-4 border-bottom border-white-10 d-flex align-items-center justify-content-between">
-                <h2 class="text-white h5 fw-black mb-0">Últimas Solicitudes</h2>
+                <h2 class="text-white h5 fw-black mb-0"><?php echo __('dashboard.recent_requests'); ?></h2>
                 <div class="d-flex gap-2">
                     <a href="<?php echo url('ticket'); ?>" class="btn btn-outline-light btn-sm px-3 fw-bold small"
-                        style="min-width: 90px;">Ver Todo</a>
+                        style="min-width: 90px;"><?php echo __('dashboard.view_all'); ?></a>
                     <a href="<?php echo url('ticket/request'); ?>" class="btn btn-primary btn-sm px-3 fw-bold small"
-                        style="min-width: 120px;">Nuevo Requerimiento</a>
+                        style="min-width: 120px;"><?php echo __('dashboard.new_requirement'); ?></a>
                 </div>
             </div>
             <div class="p-4">
@@ -184,7 +183,7 @@
                                     </span>
                                     <span
                                         class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 uppercase x-small tracking-widest fw-black">
-                                        <?php echo translateStatus($ticket['status']); ?>
+                                        <?php echo __('status.' . $ticket['status']); ?>
                                     </span>
                                 </div>
                             </a>
@@ -197,17 +196,16 @@
         <!-- Active Services -->
         <div class="glass-morphism rounded-5 border-white-10 overflow-hidden mb-4">
             <div class="p-4 border-bottom border-white-10 d-flex align-items-center justify-content-between">
-                <h2 class="text-white h5 fw-black mb-0">Mis Servicios</h2>
+                <h2 class="text-white h5 fw-black mb-0"><?php echo __('dashboard.active_services'); ?></h2>
                 <a href="<?php echo url('project/workspace'); ?>"
-                    class="btn btn-outline-primary btn-sm px-3 fw-bold small">Ver Todos</a>
+                    class="btn btn-outline-primary btn-sm px-3 fw-bold small"><?php echo __('dashboard.view_all'); ?></a>
             </div>
             <div class="p-0">
                 <?php if (empty($services)): ?>
                     <div class="p-5 text-center">
                         <span class="material-symbols-outlined display-3 text-white-10 mb-3">layers_clear</span>
-                        <p class="text-white-50">No tienes servicios activos en este momento.</p>
-                        <a href="<?php echo url('ticket/request'); ?>" class="btn btn-primary btn-sm px-4 mt-2">Contratar
-                            Ahora</a>
+                        <p class="text-white-50"><?php echo __('dashboard.no_active_services'); ?></p>
+                        <a href="<?php echo url('ticket/request'); ?>" class="btn btn-primary btn-sm px-4 mt-2"><?php echo __('dashboard.contract_now'); ?></a>
                     </div>
                 <?php else: ?>
                     <div class="table-responsive">
@@ -279,11 +277,10 @@
                         d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.4 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.1-3.2-5.5-.3-8.4 2.4-11.2 2.5-2.5 5.5-6.4 8.3-9.7 2.8-3.2 3.7-5.5 5.6-9.2 1.9-3.7 1-6.9-.5-9.7-1.4-2.8-12.4-29.8-17-41.1-4.5-10.9-9.1-9.4-12.4-9.6-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.7 23.5 9.2 31.6 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.7z" />
                 </svg>
             </div>
-            <h5 class="text-white fw-bold mb-3">Soporte Prioritario</h5>
-            <p class="text-white-50 small mb-4 px-3">¿Necesitas ayuda inmediata con tu requerimiento? Nuestro equipo
-                está listo.</p>
+            <h5 class="text-white fw-bold mb-3"><?php echo __('dashboard.support_title'); ?></h5>
+            <p class="text-white-50 small mb-4 px-3"><?php echo __('dashboard.support_desc'); ?></p>
             <a href="<?php echo url('dashboard/urgentSupport'); ?>"
-                class="btn btn-primary px-4 py-2 fw-bold uppercase x-small shadow-gold">Chat en Vivo</a>
+                class="btn btn-primary px-4 py-2 fw-bold uppercase x-small shadow-gold"><?php echo __('dashboard.chat_live'); ?></a>
         </div>
     </div>
 </div>
