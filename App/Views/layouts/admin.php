@@ -128,6 +128,13 @@
                         <span class="material-symbols-outlined">receipt_long</span>
                         <?php echo __('nav.invoices'); ?>
                     </a>
+                    <?php if (\Core\Auth::can('manage_marketing')): ?>
+                    <a href="<?php echo url('admin/marketing'); ?>"
+                        class="nav-link-custom mb-1 <?php echo strpos($_SERVER['REQUEST_URI'], '/admin/marketing') !== false ? 'active' : ''; ?>">
+                        <span class="material-symbols-outlined">campaign</span>
+                        Email Marketing
+                    </a>
+                    <?php endif; ?>
                 <?php endif; ?>
 
                 <?php if (\Core\Auth::isAdmin()): ?>

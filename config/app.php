@@ -64,5 +64,63 @@ return [
         'account_name' => getenv('BANK_ACCOUNT_NAME') ?: 'Data Wyrd Services LLC',
         'account_number' => getenv('BANK_ACCOUNT_NUMBER') ?: '1234-5678-9012',
         'cbu_alias' => getenv('BANK_CBU_ALIAS') ?: 'datawyrd.usd',
-    ]
+    ],
+
+    // =========================================================================
+    // MÓDULO DE EMAIL MARKETING & ENGAGEMENT
+    // =========================================================================
+    'marketing' => [
+        // --- Provider principal de envío masivo ---
+        // Opciones: 'smtp' | 'zepto' | 'sendgrid' | 'mailgun'
+        'provider' => getenv('MARKETING_PROVIDER') ?: 'smtp',
+
+        // --- Credenciales ZeptoMail (Zoho) ---
+        'zepto' => [
+            'api_key'       => getenv('ZEPTO_API_KEY') ?: '',
+            'api_url'       => getenv('ZEPTO_API_URL') ?: 'https://api.zeptomail.com/v1.1/email',
+            'from_address'  => getenv('ZEPTO_FROM_ADDRESS') ?: getenv('MAIL_FROM_ADDRESS') ?: '',
+            'from_name'     => getenv('ZEPTO_FROM_NAME') ?: getenv('MAIL_FROM_NAME') ?: 'Data Wyrd',
+            'bounce_address'=> getenv('ZEPTO_BOUNCE_ADDRESS') ?: '',
+        ],
+
+        // --- Límites de envío (Rate Limiting & Throttle) ---
+        'rate' => [
+            'batch_size'        => (int)(getenv('MARKETING_BATCH_SIZE') ?: 50),      // Emails por lote de worker
+            'delay_between_ms'  => (int)(getenv('MARKETING_DELAY_MS') ?: 200),        // ms entre cada envío
+            'max_per_hour'      => (int)(getenv('MARKETING_MAX_PER_HOUR') ?: 500),    // Límite horario global
+            'max_per_day'       => (int)(getenv('MARKETING_MAX_PER_DAY') ?: 5000),   // Límite diario global
+        ],
+
+        // --- Tracking de aperturas y clics ---
+        'tracking' => [
+            'pixel_enabled'     => getenv('MARKETING_PIXEL_ENABLED') !== 'false',    // Pixel de apertura
+            'click_enabled'     => getenv('MARKETING_CLICK_ENABLED') !== 'false',    // Tracking de clics
+            'base_url'          => getenv('MARKETING_TRACKING_URL') ?: getenv('APP_URL') ?: '',
+            'pixel_path'        => '/track/open',
+            'click_path'        => '/track/click',
+            'unsubscribe_path'  => '/track/unsubscribe',
+        ],
+
+        // --- Cumplimiento GDPR / CAN-SPAM / RFC 8058 ---
+        'compliance' => [
+            'unsubscribe_enabled'       => getenv('MARKETING_UNSUB_ENABLED') !== 'false',
+            'list_unsubscribe_header'   => getenv('MARKETING_LIST_UNSUB_HEADER') !== 'false', // RFC 8058
+            'double_opt_in'             => getenv('MARKETING_DOUBLE_OPT_IN') === 'true',
+            'gdpr_consent_required'     => getenv('MARKETING_GDPR_CONSENT') === 'true',
+            'suppress_bounced'          => getenv('MARKETING_SUPPRESS_BOUNCED') !== 'false', // Bloquea hard bounces
+            'suppress_complained'       => getenv('MARKETING_SUPPRESS_COMPLAINED') !== 'false',
+        ],
+
+        // --- Reintentos de envío fallido ---
+        'retry' => [
+            'max_attempts'  => (int)(getenv('MARKETING_MAX_RETRIES') ?: 3),
+            'delay_seconds' => (int)(getenv('MARKETING_RETRY_DELAY') ?: 300), // 5 min entre reintentos
+        ],
+
+        // --- Dominio de tracking para email reputation ---
+        'reputation' => [
+            'dkim_domain'   => getenv('MARKETING_DKIM_DOMAIN') ?: '',
+            'custom_domain' => getenv('MARKETING_CUSTOM_DOMAIN') ?: '',
+        ],
+    ],
 ];

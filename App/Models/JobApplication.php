@@ -74,7 +74,7 @@ class JobApplication extends Model
         $sql = "SELECT ja.*, c.first_name, c.last_name, c.email, c.phone, c.linkedin_url, c.country, c.city, c.address 
                 FROM {$this->table} ja 
                 JOIN candidates c ON ja.candidate_id = c.id 
-                ORDER BY ja.created_at DESC";
+                ORDER BY ja.created_at DESC, ja.id DESC";
                 
         $stmt = $this->db->query($sql);
         $results = $stmt->fetchAll();
@@ -104,7 +104,7 @@ class JobApplication extends Model
 
     public function findByCandidateId($candidateId)
     {
-        $sql = "SELECT * FROM {$this->table} WHERE candidate_id = :candidate_id ORDER BY created_at DESC";
+        $sql = "SELECT * FROM {$this->table} WHERE candidate_id = :candidate_id ORDER BY created_at DESC, id DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['candidate_id' => $candidateId]);
         return $stmt->fetchAll();
@@ -116,7 +116,7 @@ class JobApplication extends Model
         $sql = "SELECT id, vacancy_name, status, created_at, status_updated_at 
                 FROM {$this->table} 
                 WHERE candidate_id = :candidate_id 
-                ORDER BY created_at DESC";
+                ORDER BY created_at DESC, id DESC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['candidate_id' => $candidateId]);
         return $stmt->fetchAll();

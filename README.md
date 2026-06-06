@@ -2,12 +2,13 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-11.5.0-blue.svg)
+![Version](https://img.shields.io/badge/version-11.9.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.0+-purple.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 ![Status](https://img.shields.io/badge/status-SaaS--Ready%20Certified-brightgreen.svg)
 ![Security](https://img.shields.io/badge/security-Enterprise--Hardened-success.svg)
+![Marketing](https://img.shields.io/badge/email--marketing-Engine%20v1-gold.svg)
 
 **Plataforma Enterprise Certificada para Gestión de Servicios de Ingeniería de Datos**
 
@@ -53,6 +54,7 @@
 - Panel de Recursos Humanos: Gestión integral de talento, filtrado, descarga protegida de CVs y validación OTP para perfiles existentes.
 - Generación de presupuestos y facturas en PDF
 - Monitoreo de tickets y asignación de staff
+- **📧 Email Marketing Engine**: Gestión de campañas, contactos y entregabilidad SPF/DKIM
 
 #### 👨‍💼 Panel de Staff
 - Vista de tickets asignados con priorización
@@ -80,6 +82,7 @@
 - ✅ **Facturación Automática** con tracking de pagos y webhooks de MercadoPago.
 - ✅ **Workspace de Proyectos** para intercambio de archivos.
 - ✅ **Identidad Corporativa Estandarizada** (.env).
+- ✅ **Email Marketing Engine**: Envío masivo de campañas, tracking de aperturas/clics, gestión de contactos y validación de entregabilidad DNS (SPF/DKIM) en tiempo real.
 
 ### 🔒 Seguridad Enterprise
 - ✅ **Criptografía Argon2id**: Hashing de contraseñas de última generación.
@@ -542,14 +545,16 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 - [x] **OTP-Based Update Flow**: Validación segura de candidatos recurrentes en Módulo de Jobs.
 - [x] **Módulo GAI (Generative AI Integration)**: Asistencia LLM (Llama 3.1) para auto-resúmenes de tickets y extracción de action items.
 - [x] **GAI Integration Testing**: Cobertura de integración para estabilidad de modelos LLM.
+- [x] **i18n Total**: Soporte multi-idioma (ES/EN) con sistema de traducción dinámico.
+- [x] **Email Marketing Engine v1**: Gestión de campañas masivas, contactos, tracking SPF/DKIM y cumplimiento GDPR.
+- [ ] **DNS DKIM Completar**: Agregar registro `zmail._domainkey.datawyrd.com` en Hostinger DNS para activar firma DKIM de Zoho.
+- [ ] **Email Marketing - Plantillas Visuales**: Editor drag-and-drop de templates HTML para campañas.
+- [ ] **Email Marketing - Automatizaciones**: Flujos de nurturing basados en triggers (apertura, clic, tiempo).
 - [ ] **Data Wyrd Multi-Tenant & SaaS Core**: Habilitación nativa de inquilinos.
 - [ ] **Pipelines CI/CD & Test-Driven**: Extender cobertura PHPUnit al 80% y generar flujos de despliegue inmutables.
 - [ ] **CQRS & Event Sourcing (FinOps)**: Auditoría infalible de pagos transaccionales mediante historial de eventos puros.
 - [ ] **Dockerización Genérica**: Contenerización de la plataforma para escalabilidad horizontal en clústeres.
-- [ ] **Real-Time Absoluto**: Integración de WebSockets nativa con servidor Reactor.
 - [ ] Aplicación Móvil Companion conectada vía API v1.
-- [ ] Expansión de motor de reglas para integraciones externas (Webhooks out).
-- [ ] Dashboard UI Builder para roles Staff y Cliente.
 
 ---
 

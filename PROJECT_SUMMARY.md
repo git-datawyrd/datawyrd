@@ -1,6 +1,6 @@
-**Estado al:** 28 de Marzo, 2026 (Structural Sanitization & Security Hardening)  
-**Versión:** 11.4.0  
-**Estado:** ✅ **Evolución 11.4.0: Saneamiento Estructural & Blindaje de Secretos (Desplegado)**
+**Estado al:** 6 de Junio, 2026 (Email Marketing Engine & DNS Deliverability)  
+**Versión:** 11.9.0  
+**Estado:** ✅ **Evolución 11.9.0: Módulo de Email Marketing & Entregabilidad DNS (Desplegado)**
 
 ## 🎯 Visión del Proyecto
 Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto rendimiento. Con la implementación de la **Fase 4**, el sistema cuenta ahora con seguridad criptográfica impenetrable, observabilidad inmutable y rutinas analíticas de IA que evitan cuellos de botella mediante asincronía y CRON.
@@ -174,6 +174,22 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Strict CSRF REST Security**: Integración dinámica del Header `X-CSRF-TOKEN` en las peticiones JS Async para evitar respuestas 403 Forbidden del Router Global en herramientas IA.
 - [x] **AI Integration Testing**: Implementación de suite de pruebas de integración (`tests/Integration/AIServiceTest.php`) garantizando estabilidad operativa y resiliencia ante rotación de proveedores LLM (Llama 3.1 / Groq / OpenAI).
 - [x] **Final Public Sanitization**: Eliminación definitiva de scripts residuales (`info.php`), garantizando una superficie de ataque mínima en entornos de producción.
+- [x] **Evolución 11.8.0: Internacionalización & Security Trust Mesh (NUEVO)**:
+    - [x] **i18n Total**: Soporte multi-idioma (ES/EN) con archivos de traducción dinámicos en `resources/lang/`.
+    - [x] **Security Trust Mesh v2**: Endurecimiento de cabeceras HTTP (HSTS, CSP, X-Frame-Options) y revisión de permisos RBAC.
+    - [x] **AI Auto-Response 2.0**: Personalización de respuestas automáticas con nombre del cliente y contexto del ticket.
+    - [x] **Blockchain Notarization**: Registro inmutable de eventos críticos con firma SHA256 encadenada.
+- [x] **Evolución 11.9.0: Módulo de Email Marketing Engine (NUEVO)**:
+    - [x] **Gestor de Campañas**: Creación, edición y envío de campañas de email masivo con soporte multi-proveedor (SMTP / ZeptoMail / SendGrid / Mailgun).
+    - [x] **Gestión de Contactos**: Alta, importación y segmentación de suscriptores con soporte para listas y etiquetas.
+    - [x] **Motor de Entregabilidad (SPF/DKIM)**: Panel de validación DNS en tiempo real (`DnsValidator`) que consulta registros SPF y DKIM del dominio de envío para garantizar que los correos lleguen a la bandeja de entrada.
+    - [x] **Tracking de Aperturas y Clics**: Pixel de seguimiento invisible y redirección de URLs instrumentadas con parámetros UTM.
+    - [x] **Cumplimiento GDPR/CAN-SPAM**: Header `List-Unsubscribe` (RFC 8058), doble opt-in configurable, supresión automática de rebotes y quejas.
+    - [x] **Rate Limiting de Envíos**: Throttle configurable vía `.env` (`MARKETING_BATCH_SIZE`, `MARKETING_MAX_PER_HOUR`) para proteger la reputación del dominio.
+    - [x] **Worker de Envío Asíncrono**: `tools/worker_marketing.php` para procesamiento en background con reintentos automáticos (`MARKETING_MAX_RETRIES`).
+    - [x] **Atribución de Conversiones (ROI)**: Tabla `mktg_conversion_events` para vincular campañas con facturas pagadas, registros y upgrades.
+    - [x] **Esquema de Base de Datos**: 9 tablas nuevas (`mktg_contacts`, `mktg_lists`, `mktg_campaigns`, `mktg_send_log`, `mktg_open_events`, `mktg_click_events`, `mktg_unsubscribes`, `mktg_bounce_log`, `mktg_conversion_events`) con índices optimizados.
+    - [x] **Corrección de Tablas Faltantes**: Scripts de reparación para `user_dashboard_config`, `jwt_refresh_tokens` y `login_logs` aplicados al entorno local.
 
 ---
 
@@ -188,7 +204,9 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 ---
 
 ## 📅 Próximos Pasos Certificados (Data Wyrd Roadmap)
-1.  **Mobile Companion App**: Iniciar desarrollo de frontend móvil conectando al `ApiRouter` v1.
-2.  **Audit Log Blockchain**: Explorar integración con servicios de log inmutables externos para máxima auditoría.
-3.  **Global Multi-Language**: Implementación de archivos de traducción dinámicos.
-4.  **Generative Intelligence 2.0**: Automatización de respuestas para tickets recurrentes basada en base de conocimientos.
+1.  **Email Marketing - Plantillas Visuales**: Editor drag-and-drop de templates HTML para campañas.
+2.  **Email Marketing - Automatizaciones**: Flujos de nurturing basados en triggers (ej: apertura, clic, tiempo transcurrido).
+3.  **DNS DKIM Configurado**: Agregar registro DKIM de Zoho (`zmail._domainkey.datawyrd.com`) en Hostinger para completar la autenticación de correo.
+4.  **Mobile Companion App**: Iniciar desarrollo de frontend móvil conectando al `ApiRouter` v1.
+5.  **Audit Log Blockchain**: Explorar integración con servicios de log inmutables externos para máxima auditoría.
+6.  **Generative Intelligence 2.0**: Automatización de respuestas para tickets recurrentes basada en base de conocimientos.

@@ -69,8 +69,8 @@ class Auth
     {
         // Simple mapping for classic mode
         $map = [
-            self::ROLE_ADMIN => ['manage_all', 'view_reports', 'manage_users'],
-            self::ROLE_STAFF => ['manage_tickets', 'view_projects'],
+            self::ROLE_ADMIN => ['manage_all', 'view_reports', 'manage_users', 'manage_marketing'],
+            self::ROLE_STAFF => ['manage_tickets', 'view_projects', 'manage_marketing'],
             self::ROLE_CLIENT => ['view_own_tickets', 'view_own_invoices']
         ];
 
@@ -91,12 +91,14 @@ class Auth
                 'view_reports',
                 'manage_tickets',
                 'manage_users',
-                'view_logs'
+                'view_logs',
+                'manage_marketing'
             ],
             self::ROLE_STAFF => [
                 'manage_tickets',
                 'view_projects',
-                'manage_chat'
+                'manage_chat',
+                'manage_marketing'
             ],
             self::ROLE_CLIENT => [
                 'view_own_projects',

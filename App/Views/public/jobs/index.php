@@ -39,6 +39,22 @@
                             <input type="url" name="linkedin_url" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="https://linkedin.com/in/tu-perfil">
                         </div>
 
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small tracking-widest uppercase">País</label>
+                                <input type="text" name="country" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="Ej: Argentina">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-white-50 small tracking-widest uppercase">Ciudad</label>
+                                <input type="text" name="city" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="Ej: Buenos Aires">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-white-50 small tracking-widest uppercase">Dirección</label>
+                            <input type="text" name="address" class="form-control form-control-dark bg-deep-black border-white-10 text-white p-3 rounded-3" placeholder="Ej: Av. Siempreviva 742">
+                        </div>
+
                         <div class="mb-4">
                             <label class="form-label text-white-50 small tracking-widest uppercase mb-3">Habilidades Principales</label>
                             <div class="row g-3">

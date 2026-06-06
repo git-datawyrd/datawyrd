@@ -6,11 +6,11 @@
 - [x] Confirmar opciones (campos públicos vs admin) con el cliente.
 
 ## Tareas de Desarrollo (Execution)
-- [ ] Crear script SQL de migración y evolución `hr_evolution.sql`.
-- [ ] Crear Modelo `Candidate` y actualizar `JobApplication` (Queries JOIN).
-- [ ] Modificar formulario público en `App/Views/public/jobs/index.php` con selección de Pais/Ciudad.
-- [ ] Modificar `JobsController` para manejar inserción dual (Candidato -> Postulación).
-- [ ] Construir Backend - Vista Detalle (`view.php`) con separador Perfil/Postulación.
-- [ ] Habilitar endpoints de edición para Perfil y Postulación en `JobsCMSController`.
-- [ ] Ajustar Vista Listado (`index.php`) con las nuevas etiquetas de estado y formato.
-- [ ] Testear funcionalidad end-to-end.
+- [x] Crear script SQL de migración y evolución `hr_evolution.sql`.
+- [x] Crear Modelo `Candidate` y actualizar `JobApplication` (Queries JOIN).
+- [x] Modificar formulario público en `App/Views/public/jobs/index.php` con selección de Pais/Ciudad.
+- [x] Modificar `JobsController` para manejar inserción dual (Candidato -> Postulación).
+- [x] Construir Backend - Vista Detalle (`view.php`) con separador Perfil/Postulación.
+- [x] Habilitar endpoints de edición para Perfil y Postulación en `JobsCMSController`.
+- [x] Ajustar Vista Listado (`index.php`) con las nuevas etiquetas de estado y formato.
+- [x] Testear funcionalidad end-to-end.

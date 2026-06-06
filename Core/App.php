@@ -31,9 +31,12 @@ class App
         $stateChangingMethods = ['POST', 'PUT', 'DELETE', 'PATCH'];
         $isWebhook = isset($url[0]) && strtolower($url[0]) === 'webhook';
         $isApi = isset($url[0]) && strtolower($url[0]) === 'api';
+        // /track/* excluido de CSRF: recibe peticiones de email clients (pixel, unsubscribe RFC 8058)
+        $isTrack = isset($url[0]) && strtolower($url[0]) === 'track';
 
         // Rutas API no requieren CSRF (usan JWT)
-        if (in_array($_SERVER['REQUEST_METHOD'], $stateChangingMethods) && !$isWebhook && !$isApi) {
+        if (in_array($_SERVER['REQUEST_METHOD'], $stateChangingMethods) && !$isWebhook && !$isApi && !$isTrack) {
+
             $token = $_POST['_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             if (!Validator::verifyCsrfToken($token)) {
                 if (Config::get('debug', false)) {
@@ -68,26 +71,51 @@ class App
             exit;
         }
 
-        // Check if controller exists in subdirectory (e.g., Admin/LogController)
-        if (isset($url[0]) && isset($url[1])) {
-            // Try subdirectory first (e.g., admin/logs -> Admin/LogController)
-            $subDirPath = BASE_PATH . '/App/Controllers/' . ucfirst($url[0]) . '/' . ucfirst($url[1]) . 'Controller.php';
-            if (file_exists($subDirPath)) {
-                $this->controller = ucfirst($url[0]) . '\\' . ucfirst($url[1]) . 'Controller';
-                unset($url[0]);
-                unset($url[1]);
-            }
-        }
-
-        // If not found in subdirectory, check main Controllers directory
-        if ($this->controller === 'HomeController' && isset($url[0])) {
-            if (file_exists(BASE_PATH . '/App/Controllers/' . ucfirst($url[0]) . 'Controller.php')) {
-                $this->controller = ucfirst($url[0]) . 'Controller';
-                unset($url[0]);
+        // 4. Custom Routing for /track/* (Marketing Tracking)
+        if ($isTrack) {
+            $this->controller = 'MarketingTrackingController';
+            $action = $url[1] ?? '';
+            
+            if ($action === 'open') {
+                $this->method = 'pixelOpen';
+            } elseif ($action === 'click') {
+                $this->method = 'trackClick';
+            } elseif ($action === 'unsubscribe') {
+                $this->method = ($_SERVER['REQUEST_METHOD'] === 'POST') ? 'processUnsubscribe' : 'showUnsubscribe';
+            } elseif ($action === 'webhook' && ($url[2] ?? '') === 'zepto') {
+                $this->method = 'webhookZepto';
             } else {
-                // Controller not found - 404
                 $this->trigger404();
                 return;
+            }
+            
+            unset($url[0]);
+            unset($url[1]);
+            if ($action === 'webhook') {
+                unset($url[2]);
+            }
+        } else {
+            // Check if controller exists in subdirectory (e.g., Admin/LogController)
+            if (isset($url[0]) && isset($url[1])) {
+                // Try subdirectory first (e.g., admin/logs -> Admin/LogController)
+                $subDirPath = BASE_PATH . '/App/Controllers/' . ucfirst($url[0]) . '/' . ucfirst($url[1]) . 'Controller.php';
+                if (file_exists($subDirPath)) {
+                    $this->controller = ucfirst($url[0]) . '\\' . ucfirst($url[1]) . 'Controller';
+                    unset($url[0]);
+                    unset($url[1]);
+                }
+            }
+
+            // If not found in subdirectory, check main Controllers directory
+            if ($this->controller === 'HomeController' && isset($url[0])) {
+                if (file_exists(BASE_PATH . '/App/Controllers/' . ucfirst($url[0]) . 'Controller.php')) {
+                    $this->controller = ucfirst($url[0]) . 'Controller';
+                    unset($url[0]);
+                } else {
+                    // Controller not found - 404
+                    $this->trigger404();
+                    return;
+                }
             }
         }
 

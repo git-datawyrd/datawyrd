@@ -191,6 +191,34 @@ class InvoiceService
                 );
             }
 
+            // 🚀 Hook de Atribución de Conversión de Email Marketing
+            try {
+                if ($inv && isset($inv['client_id'])) {
+                    $userRepo = new \App\Repositories\UserRepository($this->db);
+                    $clientUser = $userRepo->find($inv['client_id']);
+                    if ($clientUser && !empty($clientUser['email'])) {
+                        $mktgRepo = new \App\Repositories\MarketingRepository($this->db);
+                        $attribution = $mktgRepo->findAttributionByEmail($clientUser['email']);
+                        if ($attribution) {
+                            $mktgRepo->recordConversion([
+                                'campaign_id'     => $attribution['campaign_id'],
+                                'contact_id'      => $attribution['contact_id'],
+                                'send_log_id'     => $attribution['send_log_id'],
+                                'conversion_type' => 'invoice_paid',
+                                'reference_id'    => $invoice_id,
+                                'revenue_amount'  => $inv['total']
+                            ]);
+                        }
+                    }
+                }
+            } catch (Exception $mktgEx) {
+                // Silently log warning to prevent blocking payment confirmation
+                \Core\SecurityLogger::log('MARKETING_ATTRIBUTION_FAILED', [
+                    'invoice_id' => $invoice_id,
+                    'error' => $mktgEx->getMessage()
+                ], 'WARN');
+            }
+
             if ($is_fully_paid) {
                 \Core\SecurityLogger::log('INVOICE_PAID_FULL', [
                     'invoice_id' => $invoice_id,
