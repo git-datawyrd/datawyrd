@@ -63,7 +63,7 @@ class BounceResolverTest extends \Tests\TestCase
         $result = $this->resolver->handle($this->testEmail, 'hard', 'Permanent failure', 'provider-msg-id-123');
 
         $this->assertTrue($result['resolved']);
-        $this->assertEquals('suppressed', $result['action']);
+        $this->assertEquals('suppressed_and_blacklisted', $result['action']);
 
         // Check contact status in DB
         $stmt = $this->db->prepare("SELECT status, suppression_reason FROM mktg_contacts WHERE id = 9999");
@@ -85,7 +85,7 @@ class BounceResolverTest extends \Tests\TestCase
         $result = $this->resolver->handle($this->testEmail, 'complaint', 'Spam report', 'provider-msg-id-123');
 
         $this->assertTrue($result['resolved']);
-        $this->assertEquals('suppressed', $result['action']);
+        $this->assertEquals('suppressed_and_blacklisted', $result['action']);
 
         // Check contact status in DB
         $stmt = $this->db->prepare("SELECT status FROM mktg_contacts WHERE id = 9999");

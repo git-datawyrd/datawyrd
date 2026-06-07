@@ -38,19 +38,8 @@ class SmtpMarketingProvider implements EmailProviderInterface
         }
 
         try {
-            $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
-
-            // Configuración SMTP
-            $mail->isSMTP();
-            $mail->Host       = $mailConfig['host'];
-            $mail->SMTPAuth   = true;
-            $mail->Username   = $mailConfig['user'];
-            $mail->Password   = $mailConfig['pass'];
-            $mail->SMTPSecure = strtolower($mailConfig['enc'] ?? '') === 'tls'
-                ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS
-                : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port       = $mailConfig['port'] ?: 587;
-            $mail->CharSet    = 'UTF-8';
+            // Use centralized mailer factory — throws RuntimeException if MAIL_HOST missing
+            $mail = \Core\Mail::createMailer();
 
             // Remitente (permite override por mensaje)
             $fromAddr = $message['from']      ?? ($mailConfig['from_address'] ?? '');
@@ -115,15 +104,9 @@ class SmtpMarketingProvider implements EmailProviderInterface
         }
 
         try {
-            $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
-            $mail->isSMTP();
-            $mail->Host       = $mailConfig['host'];
-            $mail->SMTPAuth   = true;
-            $mail->Username   = $mailConfig['user'];
-            $mail->Password   = $mailConfig['pass'];
-            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = $mailConfig['port'] ?: 587;
-            $mail->SMTPDebug  = 0;
+            // Use centralized mailer factory for connection test
+            $mail = \Core\Mail::createMailer();
+            $mail->SMTPDebug = 0;
 
             return $mail->smtpConnect();
         } catch (\Exception $e) {

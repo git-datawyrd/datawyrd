@@ -1,6 +1,6 @@
-**Estado al:** 7 de Junio, 2026 (Email Marketing UX Elite & Technical Audit)  
-**Versión:** 12.0.0  
-**Estado:** ✅ **Evolución 12.0.0: Módulo de Email Marketing UX Elite & Auditoría Integral (Desplegado)**
+**Estado al:** 7 de Junio, 2026 (SMTP Consolidation & Dynamic Throttling)
+**Versión:** 12.1.0
+**Estado:** ✅ **Evolución 12.1.0: Consolidación SMTP, Throttling Dinámico & Optimización de Queries (Desplegado)**
 
 ## 🎯 Visión del Proyecto
 Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto rendimiento. Con la implementación de la **Fase 4**, el sistema cuenta ahora con seguridad criptográfica impenetrable, observabilidad inmutable y rutinas analíticas de IA que evitan cuellos de botella mediante asincronía y CRON.
@@ -197,6 +197,12 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Acciones Avanzadas de Campañas**: Implementación de previsualización en vivo, edición rápida de campos (asunto, remitente, programación), duplicación limpia como borrador y eliminación lógica (soft delete).
     - [x] **Estabilización de Base de Datos**: Solución definitiva del error fatal `Duplicate entry '' for key 'uk_mktg_send_log_token'` en `hydrateSendLog` mediante purga selectiva de colas duplicadas, inserción con `INSERT IGNORE` y normalización de tokens con `NULLIF()`.
     - [x] **Auditoría Técnica Integral**: Realización de una auditoría profunda de la arquitectura de envíos transversales en el CRM, comparando `Core\Mail` y el motor de colas del módulo de marketing con un plan detallado de riesgos y hoja de ruta.
+- [x] **Evolución 12.1.0: Consolidación SMTP, Throttling Dinámico & Optimización de Queries (NUEVO)**:
+    - [x] **SMTP Centralizado (`Core\Mail::createMailer()`)**: Unificación de la configuración PHPMailer en un único factory method reutilizable. Refactorización de `SendEmailJob`, `SmtpMarketingProvider::send()` y `SmtpMarketingProvider::validateCredentials()` para eliminar ~40 líneas de código SMTP duplicado.
+    - [x] **Query Optimization (`hydrateSendLog`)**: Reemplazo de subquery `NOT IN (SELECT email FROM blacklist)` por `LEFT JOIN blacklist + IS NULL`, aprovechando el índice `idx_blacklist_email` para reducir tiempo de hidratación en listas grandes.
+    - [x] **Throttling Dinámico por Minuto**: Implementación de control de velocidad basado en `MARKETING_MAX_PER_MINUTE` (default: 250) con cálculo automático del delay por email: `floor(60 / limit × 1,000,000) µs`. El valor `delay_between_ms` actúa como piso mínimo de cortesía.
+    - [x] **Configuración Escalable**: Nueva variable de entorno `MARKETING_MAX_PER_MINUTE` en `config/app.php` para ajuste progresivo según la capacidad del proveedor SMTP sin necesidad de modificar código.
+    - [x] **Test Suite Actualizada**: Corrección de assertions desactualizadas en `BounceResolverTest` (`'suppressed'` → `'suppressed_and_blacklisted'`). Suite completa: **24/24 tests, 99 assertions OK**.
 
 ---
 
@@ -213,7 +219,8 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 ## 📅 Próximos Pasos Certificados (Data Wyrd Roadmap)
 1.  **Email Marketing - Plantillas Visuales**: Editor drag-and-drop de templates HTML para campañas.
 2.  **Email Marketing - Automatizaciones**: Flujos de nurturing basados en triggers (ej: apertura, clic, tiempo transcurrido).
-3.  **DNS DKIM Configurado**: Agregar registro DKIM de Zoho (`zmail._domainkey.datawyrd.com`) en Hostinger para completar la autenticación de correo.
-4.  **Mobile Companion App**: Iniciar desarrollo de frontend móvil conectando al `ApiRouter` v1.
-5.  **Audit Log Blockchain**: Explorar integración con servicios de log inmutables externos para máxima auditoría.
-6.  **Generative Intelligence 2.0**: Automatización de respuestas para tickets recurrentes basada en base de conocimientos.
+3.  **Email Marketing - Enforcement Horario/Diario**: Implementar control activo de `max_per_hour` y `max_per_day` en el worker scheduler.
+4.  **DNS DKIM Configurado**: Agregar registro DKIM de Zoho (`zmail._domainkey.datawyrd.com`) en Hostinger para completar la autenticación de correo.
+5.  **Mobile Companion App**: Iniciar desarrollo de frontend móvil conectando al `ApiRouter` v1.
+6.  **Audit Log Blockchain**: Explorar integración con servicios de log inmutables externos para máxima auditoría.
+7.  **Generative Intelligence 2.0**: Automatización de respuestas para tickets recurrentes basada en base de conocimientos.

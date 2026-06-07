@@ -4,6 +4,35 @@ namespace Core;
 class Mail
 {
     /**
+     * Creates and configures a PHPMailer instance using global settings.
+     *
+     * @param array $configOverride Custom SMTP credentials/settings
+     * @return \PHPMailer\PHPMailer\PHPMailer
+     * @throws \RuntimeException if MAIL_HOST is not configured
+     */
+    public static function createMailer(array $configOverride = [])
+    {
+        $mailConfig = array_merge(\Core\Config::get('mail') ?: [], $configOverride);
+        if (empty($mailConfig['host'])) {
+            throw new \RuntimeException("MAIL_HOST not configured.");
+        }
+
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host       = $mailConfig['host'];
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $mailConfig['user'] ?? $mailConfig['username'] ?? '';
+        $mail->Password   = $mailConfig['pass'] ?? $mailConfig['password'] ?? '';
+        $mail->SMTPSecure = strtolower($mailConfig['enc'] ?? '') === 'tls'
+            ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS
+            : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Port       = $mailConfig['port'] ?: 587;
+        $mail->CharSet    = 'UTF-8';
+
+        return $mail;
+    }
+
+    /**
      * Send an email by pushing it to the asynchronous Queue
      * 
      * @param string $to Recipient email
@@ -46,19 +75,8 @@ class Mail
             return false;
         }
 
-        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
         try {
-            $mail->isSMTP();
-            $mail->Host = $mailConfig['host'];
-            $mail->SMTPAuth = true;
-            $mail->Username = $mailConfig['user'];
-            $mail->Password = $mailConfig['pass'];
-            $mail->SMTPSecure = strtolower($mailConfig['enc']) === 'tls'
-                ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS
-                : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port = $mailConfig['port'] ?: 587;
-            $mail->CharSet = 'UTF-8';
-
+            $mail = self::createMailer();
             $mail->setFrom($mailConfig['from_address'], $mailConfig['from_name'] ?: 'Data Wyrd');
             $mail->addAddress($to);
 
@@ -74,7 +92,7 @@ class Mail
             \Core\SecurityLogger::log('email_failed', [
                 'to' => $to,
                 'subject' => $subject,
-                'error' => $mail->ErrorInfo
+                'error' => isset($mail) ? $mail->ErrorInfo : $e->getMessage()
             ], 'ERROR');
             return false;
         }

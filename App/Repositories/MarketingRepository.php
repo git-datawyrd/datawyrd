@@ -389,19 +389,18 @@ class MarketingRepository extends BaseRepository
             $filters = json_decode($campaign['segment_filters'], true);
         }
 
-        // 2. Construir la consulta dinámicamente
-        // NULLIF garantiza que nunca se inserten tokens vacíos
         $sql = "INSERT IGNORE INTO mktg_send_log (campaign_id, contact_id, email, status, tracking_token, unsubscribe_token, queued_at)
                 SELECT ?, c.id, c.email, 'queued',
                        NULLIF(MD5(UUID()), ''),
                        NULLIF(IF(c.unsubscribe_token IS NULL OR c.unsubscribe_token = '', MD5(UUID()), c.unsubscribe_token), ''),
                        NOW()
                 FROM mktg_contacts c
+                LEFT JOIN blacklist b ON b.email = c.email
                 WHERE c.list_id = ?
                   AND c.tenant_id = ?
                   AND c.status = 'subscribed'
                   AND c.deleted_at IS NULL
-                  AND c.email NOT IN (SELECT email FROM blacklist)";
+                  AND b.email IS NULL";
         $params = [$campaignId, $listId, $tenantId];
 
         if ($filters) {

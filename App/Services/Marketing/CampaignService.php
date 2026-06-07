@@ -180,15 +180,26 @@ class CampaignService
 
     /**
      * Procesa un lote de emails pendientes en el send_log.
-     * Respeta rate limiting, delay entre envíos y max reintentos.
+     * Respeta rate limiting dinámico basado en max_per_minute y delay entre envíos.
+     *
+     * El delay por email se calcula como: floor(60 / max_per_minute * 1_000_000) µs.
+     * Esto garantiza no superar el límite SMTP configurado. El valor puede incrementarse
+     * progresivamente en .env (MARKETING_MAX_PER_MINUTE) según lo permita el proveedor.
      *
      * @return array{processed: int, sent: int, failed: int}
      */
     public function processBatch(): array
     {
-        $batchSize = $this->rateCfg['batch_size']   ?? 50;
-        $delayMs   = $this->rateCfg['delay_between_ms'] ?? 200;
-        $maxRetries= $this->retryCfg['max_attempts'] ?? 3;
+        $batchSize     = $this->rateCfg['batch_size']      ?? 50;
+        $maxPerMinute  = $this->rateCfg['max_per_minute']  ?? 250;
+        $delayFloorMs  = $this->rateCfg['delay_between_ms'] ?? 200;
+        $maxRetries    = $this->retryCfg['max_attempts']   ?? 3;
+
+        // Calcular delay dinámico: microsegundos por email para no superar max_per_minute.
+        // Mínimo: el floor configurado en delay_between_ms para no saturar el servidor.
+        $dynamicDelayUs = (int) floor((60 / max(1, $maxPerMinute)) * 1_000_000);
+        $floorUs        = $delayFloorMs * 1000;
+        $delayUs        = max($floorUs, $dynamicDelayUs);
 
         $pending = $this->repo->getPendingBatch($batchSize);
         if (empty($pending)) {
@@ -199,8 +210,8 @@ class CampaignService
         $ids = array_column($pending, 'id');
         $this->repo->markSendLogProcessing($ids);
 
-        $sent   = 0;
-        $failed = 0;
+        $sent     = 0;
+        $failed   = 0;
         $provider = EmailProviderFactory::make();
 
         foreach ($pending as $log) {
@@ -251,10 +262,8 @@ class CampaignService
                 $failed++;
             }
 
-            // Delay entre envíos para respetar límites del proveedor
-            if ($delayMs > 0) {
-                usleep($delayMs * 1000);
-            }
+            // Throttle dinámico — espera calculada para no superar MARKETING_MAX_PER_MINUTE
+            usleep($delayUs);
         }
 
         return ['processed' => count($pending), 'sent' => $sent, 'failed' => $failed];

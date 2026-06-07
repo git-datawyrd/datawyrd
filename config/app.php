@@ -87,6 +87,7 @@ return [
         'rate' => [
             'batch_size'        => (int)(getenv('MARKETING_BATCH_SIZE') ?: 50),      // Emails por lote de worker
             'delay_between_ms'  => (int)(getenv('MARKETING_DELAY_MS') ?: 200),        // ms entre cada envío
+            'max_per_minute'    => (int)(getenv('MARKETING_MAX_PER_MINUTE') ?: 250),  // Límite por minuto (ej: 250 por defecto, editable según proveedor SMTP)
             'max_per_hour'      => (int)(getenv('MARKETING_MAX_PER_HOUR') ?: 500),    // Límite horario global
             'max_per_day'       => (int)(getenv('MARKETING_MAX_PER_DAY') ?: 5000),   // Límite diario global
         ],
