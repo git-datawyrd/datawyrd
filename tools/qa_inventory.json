@@ -1,0 +1,1082 @@
+[
+    {
+        "module": "AIController",
+        "endpoint": "generateSummary",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "AIController",
+        "endpoint": "rewriteDraft",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AIController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\BlogCMSController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\BlogCMSController",
+        "endpoint": "create",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\BlogCMSController",
+        "endpoint": "store",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\BlogCMSController",
+        "endpoint": "edit",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\BlogCMSController",
+        "endpoint": "update",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\BlogCMSController",
+        "endpoint": "delete",
+        "required_params": 1,
+        "risks": "HIGH"
+    },
+    {
+        "module": "Admin\\BlogCMSController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "show",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "updateApplication",
+        "required_params": 1,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "updateProfile",
+        "required_params": 1,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "export",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "downloadCv",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "addApplication",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\JobsCMSController",
+        "endpoint": "delete",
+        "required_params": 1,
+        "risks": "HIGH"
+    },
+    {
+        "module": "Admin\\LogController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\LogController",
+        "endpoint": "exportCsv",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\LogController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "campaigns",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "createCampaign",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "storeCampaign",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "showCampaign",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "launchCampaign",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "pauseCampaign",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "deleteCampaign",
+        "required_params": 1,
+        "risks": "HIGH"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "duplicateCampaign",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "updateCampaign",
+        "required_params": 1,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\MarketingCampaignController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingController",
+        "endpoint": "analytics",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingController",
+        "endpoint": "settings",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingController",
+        "endpoint": "exportInteractions",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingListController",
+        "endpoint": "lists",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingListController",
+        "endpoint": "showList",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingListController",
+        "endpoint": "storeList",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingListController",
+        "endpoint": "importContacts",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingListController",
+        "endpoint": "storeContact",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingListController",
+        "endpoint": "downloadCsvTemplate",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingListController",
+        "endpoint": "deleteList",
+        "required_params": 1,
+        "risks": "HIGH"
+    },
+    {
+        "module": "Admin\\MarketingListController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingTemplateController",
+        "endpoint": "templates",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingTemplateController",
+        "endpoint": "createTemplate",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingTemplateController",
+        "endpoint": "storeTemplate",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingTemplateController",
+        "endpoint": "editTemplate",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingTemplateController",
+        "endpoint": "updateTemplate",
+        "required_params": 1,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\MarketingTemplateController",
+        "endpoint": "improveText",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingTemplateController",
+        "endpoint": "generateAiEmail",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\MarketingTemplateController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\PostsController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\PostsController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\PostsController",
+        "endpoint": "upload",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "editService",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "updateService",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "updatePlan",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "storePlan",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "deletePlan",
+        "required_params": 1,
+        "risks": "HIGH"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "reorderPlan",
+        "required_params": 2,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "storeCategory",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "updateCategory",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "storeService",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "deleteService",
+        "required_params": 1,
+        "risks": "HIGH"
+    },
+    {
+        "module": "Admin\\ServiceCMSController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\UserCMSController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\UserCMSController",
+        "endpoint": "updateStatus",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\UserCMSController",
+        "endpoint": "updateRole",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\UserCMSController",
+        "endpoint": "edit",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\UserCMSController",
+        "endpoint": "update",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "Admin\\UserCMSController",
+        "endpoint": "delete",
+        "required_params": 1,
+        "risks": "HIGH"
+    },
+    {
+        "module": "Admin\\UserCMSController",
+        "endpoint": "destroy",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Admin\\UserCMSController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AdminController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AdminController",
+        "endpoint": "user",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AdminController",
+        "endpoint": "services",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AdminController",
+        "endpoint": "blog",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AdminController",
+        "endpoint": "users",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AdminController",
+        "endpoint": "log",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AdminController",
+        "endpoint": "jobs",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AdminController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\AnalyticsController",
+        "endpoint": "conversions",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\AnalyticsController",
+        "endpoint": "financial",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\AuthController",
+        "endpoint": "login",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\AuthController",
+        "endpoint": "refresh",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\AutomationController",
+        "endpoint": "rules",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\AutomationController",
+        "endpoint": "logs",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\ProjectsController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\TicketsController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\TicketsController",
+        "endpoint": "store",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\UsersController",
+        "endpoint": "me",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "Api\\UsersController",
+        "endpoint": "update",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "AuthController",
+        "endpoint": "login",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AuthController",
+        "endpoint": "doLogin",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AuthController",
+        "endpoint": "twoFactor",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AuthController",
+        "endpoint": "verify2FA",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AuthController",
+        "endpoint": "logout",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "AuthController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "BlogController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "BlogController",
+        "endpoint": "post",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "BlogController",
+        "endpoint": "comment",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "BlogController",
+        "endpoint": "category",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "BlogController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "BudgetController",
+        "endpoint": "create",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "BudgetController",
+        "endpoint": "store",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "BudgetController",
+        "endpoint": "show",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "BudgetController",
+        "endpoint": "decision",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "BudgetController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ChatController",
+        "endpoint": "send",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ChatController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "DashboardController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "DashboardController",
+        "endpoint": "saveOrder",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "DashboardController",
+        "endpoint": "updateConfig",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "DashboardController",
+        "endpoint": "urgentSupport",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "DashboardController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ErrorController",
+        "endpoint": "notFound",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ErrorController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "HomeController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "HomeController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "InvoiceController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "InvoiceController",
+        "endpoint": "createFromBudget",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "InvoiceController",
+        "endpoint": "show",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "InvoiceController",
+        "endpoint": "pay",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "InvoiceController",
+        "endpoint": "confirm",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "InvoiceController",
+        "endpoint": "payMp",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "InvoiceController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "alreadyRegistered",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "checkEmail",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "requestUpdateCode",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "verifyUpdateCode",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "getCandidateData",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "updateCandidate",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "postulate",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "JobsController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "MarketingTrackingController",
+        "endpoint": "pixelOpen",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "MarketingTrackingController",
+        "endpoint": "trackClick",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "MarketingTrackingController",
+        "endpoint": "showUnsubscribe",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "MarketingTrackingController",
+        "endpoint": "processUnsubscribe",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "MarketingTrackingController",
+        "endpoint": "webhookZepto",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "MarketingTrackingController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "NotificationController",
+        "endpoint": "getRecent",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "NotificationController",
+        "endpoint": "markRead",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "NotificationController",
+        "endpoint": "read",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "NotificationController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProfileController",
+        "endpoint": "settings",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProfileController",
+        "endpoint": "enable2FAStep1",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProfileController",
+        "endpoint": "confirm2FA",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProfileController",
+        "endpoint": "disable2FA",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProfileController",
+        "endpoint": "updatePassword",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "ProfileController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProjectController",
+        "endpoint": "workspace",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProjectController",
+        "endpoint": "manage",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProjectController",
+        "endpoint": "upload",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProjectController",
+        "endpoint": "download",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "ProjectController",
+        "endpoint": "delete",
+        "required_params": 1,
+        "risks": "HIGH"
+    },
+    {
+        "module": "ProjectController",
+        "endpoint": "updateScope",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "ProjectController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "QuoteController",
+        "endpoint": "received",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "QuoteController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "ServiceController",
+        "endpoint": "category",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "ServiceController",
+        "endpoint": "detail",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "ServiceController",
+        "endpoint": "getByCategory",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "ServiceController",
+        "endpoint": "getPlans",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "ServiceController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "SessionController",
+        "endpoint": "heartbeat",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "SystemController",
+        "endpoint": "health",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "SystemController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "TicketController",
+        "endpoint": "index",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "TicketController",
+        "endpoint": "request",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "TicketController",
+        "endpoint": "submit",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "TicketController",
+        "endpoint": "detail",
+        "required_params": 1,
+        "risks": "LOW"
+    },
+    {
+        "module": "TicketController",
+        "endpoint": "updateStatus",
+        "required_params": 0,
+        "risks": "MEDIUM"
+    },
+    {
+        "module": "TicketController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "WebhookController",
+        "endpoint": "mercadopago",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "WebhookController",
+        "endpoint": "test",
+        "required_params": 0,
+        "risks": "LOW"
+    },
+    {
+        "module": "WebhookController",
+        "endpoint": "getMiddlewares",
+        "required_params": 0,
+        "risks": "LOW"
+    }
+]
