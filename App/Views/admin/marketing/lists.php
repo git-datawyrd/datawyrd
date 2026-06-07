@@ -28,8 +28,11 @@
                                 <span class="badge bg-primary rounded-pill"><?php echo $list['contacts_count'] ?? 0; ?></span>
                             </td>
                             <td class="border-bottom border-white-10 bg-transparent p-3 text-end">
-                                <a href="<?php echo url("admin/marketing/lists/{$list['id']}"); ?>" class="btn btn-outline-light btn-sm rounded-circle p-1" title="Gestionar Contactos">
-                                    <span class="material-symbols-outlined fs-6 d-block">group</span>
+                                <a href="<?php echo url("admin/marketing/showList/{$list['id']}"); ?>" class="btn btn-outline-light btn-sm rounded-circle p-1 d-inline-flex align-items-center justify-content-center me-1" title="Gestionar Contactos" style="width:30px; height:30px;">
+                                    <span class="material-symbols-outlined fs-6">group</span>
+                                </a>
+                                <a href="<?php echo url("admin/marketing/deleteList/{$list['id']}"); ?>" class="btn btn-outline-danger btn-sm rounded-circle p-1 d-inline-flex align-items-center justify-content-center" title="Eliminar Lista" style="width:30px; height:30px;" onclick="return confirm('¿Estás seguro de que deseas eliminar esta lista y todos sus contactos? Esta acción no se puede deshacer.');">
+                                    <span class="material-symbols-outlined fs-6">delete</span>
                                 </a>
                             </td>
                         </tr>
@@ -48,7 +51,7 @@
 <!-- Modal -->
 <div class="modal fade" id="createListModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <form action="<?php echo url('admin/marketing/lists/store'); ?>" method="POST" class="modal-content bg-midnight border-white-10 glass-morphism">
+    <form action="<?php echo url('admin/marketing/storeList'); ?>" method="POST" class="modal-content bg-midnight border-white-10 glass-morphism">
       <?php echo csrf_field(); ?>
       <div class="modal-header border-white-10">
         <h5 class="modal-title text-white">Nueva Lista</h5>

@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 text-white fw-bold mb-0">Plantillas de Email</h1>
-    <a href="<?php echo url('admin/marketing/templates/create'); ?>" class="btn btn-primary d-flex align-items-center gap-2">
+    <a href="<?php echo url('admin/marketing/createTemplate'); ?>" class="btn btn-primary d-flex align-items-center gap-2">
         <span class="material-symbols-outlined">add</span> Nueva Plantilla
     </a>
 </div>
@@ -27,9 +27,9 @@
                                 <span class="badge bg-secondary"><?php echo htmlspecialchars($tpl['category'] ?? 'General'); ?></span>
                             </td>
                             <td class="border-bottom border-white-10 bg-transparent p-3 text-end">
-                                <button class="btn btn-outline-light btn-sm rounded-circle p-1" title="Ver" disabled>
-                                    <span class="material-symbols-outlined fs-6 d-block">visibility</span>
-                                </button>
+                                <a href="<?php echo url("admin/marketing/editTemplate/{$tpl['id']}"); ?>" class="btn btn-outline-light btn-sm rounded-circle p-1" title="Editar">
+                                    <span class="material-symbols-outlined fs-6 d-block">edit</span>
+                                </a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

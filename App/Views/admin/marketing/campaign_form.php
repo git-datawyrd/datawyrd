@@ -7,7 +7,7 @@
 
 <div class="card glass-morphism border-0 max-w-800 mx-auto">
     <div class="card-body p-4">
-        <form action="<?php echo url('admin/marketing/campaigns/store'); ?>" method="POST">
+        <form action="<?php echo url('admin/marketing/storeCampaign'); ?>" method="POST">
             <?php echo csrf_field(); ?>
             
             <div class="mb-4">

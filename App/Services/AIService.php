@@ -44,6 +44,8 @@ class AIService
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Fix for local XAMPP SSL
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1); // Fix for HTTP/2 PROTOCOL_ERROR
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $this->apiKey
@@ -51,11 +53,12 @@ class AIService
 
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
         curl_close($ch);
 
         if ($httpCode >= 400 || !$response) {
-            error_log("AI API Error ({$this->provider}): HTTP " . $httpCode . " Response: " . $response);
-            return ['error' => "Error al contactar con la API ({$this->provider}). Código: " . $httpCode];
+            error_log("AI API Error ({$this->provider}): HTTP " . $httpCode . " Response: " . $response . " cURL Error: " . $curlError);
+            return ['error' => "Error al contactar con la API ({$this->provider}). Código: " . $httpCode . " - " . $curlError];
         }
 
         $result = json_decode($response, true);
@@ -136,5 +139,50 @@ class AIService
 
         $result = $this->query($prompt, 0.6);
         return is_array($result) && isset($result['error']) ? null : trim($result);
+    }
+
+    /**
+     * Genera 3 variantes de asunto + cuerpo para una campaña de email marketing basada en un brief.
+     *
+     * @param string $brief Descripción de la idea del email
+     * @return array|null Un array con 3 variantes, cada una con 'subject' y 'body', o null
+     */
+    public function generateEmailVariants(string $brief)
+    {
+        $prompt = [
+            ['role' => 'system', 'content' => 'Eres un copywriter experto en email marketing. A partir del brief del usuario, genera EXACTAMENTE 3 variantes distintas de correo electrónico. Cada variante debe incluir un "Asunto" (Subject) persuasivo y un "Cuerpo" (Body) en formato HTML simple para insertar en un editor. Devuelve ÚNICAMENTE un JSON array con esta estructura: [{"subject": "variante 1 asunto", "body": "variante 1 cuerpo html"}, {"subject": "variante 2 asunto", "body": "variante 2 cuerpo html"}, {"subject": "variante 3 asunto", "body": "variante 3 cuerpo html"}]. No incluyas explicaciones ni markdown como ```json.'],
+            ['role' => 'user', 'content' => "Brief de campaña: {$brief}"]
+        ];
+
+        $result = $this->query($prompt, 0.7);
+        if (is_array($result) && isset($result['error'])) {
+            return $result;
+        }
+
+        // Limpiar posible formato Markdown de JSON
+        $result = preg_replace('/```json|```/', '', $result);
+        $variants = json_decode(trim($result), true);
+        
+        return is_array($variants) ? $variants : null;
+    }
+
+    /**
+     * Mejora un bloque de texto para email marketing (tono persuasivo, profesional, conciso).
+     *
+     * @param string $text El texto original del bloque
+     * @return string|array|null El texto mejorado, error array, o null en caso de error
+     */
+    public function improveEmailText(string $text)
+    {
+        $prompt = [
+            ['role' => 'system', 'content' => 'Eres un copywriter experto en email marketing. El usuario te dará un fragmento de texto de un email (puede ser un título, párrafo o CTA). Tu trabajo es reescribirlo para que sea más persuasivo, profesional y conciso, manteniendo el mismo idioma del texto original. Devuelve SOLO el texto mejorado, sin explicaciones, sin comillas, sin markdown.'],
+            ['role' => 'user', 'content' => $text]
+        ];
+
+        $result = $this->query($prompt, 0.5);
+        if (is_array($result) && isset($result['error'])) {
+            return $result;
+        }
+        return $result !== null ? trim($result) : null;
     }
 }

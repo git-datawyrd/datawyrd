@@ -1,7 +1,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="h3 text-white fw-bold mb-0">Dashboard de Email Marketing</h1>
     <div>
-        <a href="<?php echo url('admin/marketing/campaigns/create'); ?>" class="btn btn-primary d-flex align-items-center gap-2">
+        <a href="<?php echo url('admin/marketing/createCampaign'); ?>" class="btn btn-primary d-flex align-items-center gap-2">
             <span class="material-symbols-outlined">add</span> Nueva Campaña
         </a>
     </div>
@@ -97,11 +97,12 @@
                                         <?php echo $camp['scheduled_at'] ? date('d M, Y H:i', strtotime($camp['scheduled_at'])) : '-'; ?>
                                     </td>
                                     <td class="border-bottom border-white-10 bg-transparent text-end">
-                                        <a href="<?php echo url("admin/marketing/campaigns/{$camp['id']}"); ?>" class="btn btn-outline-light btn-sm rounded-circle p-1">
+                                        <a href="<?php echo url("admin/marketing/showCampaign/{$camp['id']}"); ?>" class="btn btn-outline-light btn-sm rounded-circle p-1">
                                             <span class="material-symbols-outlined fs-6 d-block">visibility</span>
                                         </a>
                                     </td>
                                 </tr>
+
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>

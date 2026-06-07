@@ -1,6 +1,6 @@
-**Estado al:** 6 de Junio, 2026 (Email Marketing Engine & DNS Deliverability)  
-**Versión:** 11.9.0  
-**Estado:** ✅ **Evolución 11.9.0: Módulo de Email Marketing & Entregabilidad DNS (Desplegado)**
+**Estado al:** 7 de Junio, 2026 (Email Marketing UX Elite & Technical Audit)  
+**Versión:** 12.0.0  
+**Estado:** ✅ **Evolución 12.0.0: Módulo de Email Marketing UX Elite & Auditoría Integral (Desplegado)**
 
 ## 🎯 Visión del Proyecto
 Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto rendimiento. Con la implementación de la **Fase 4**, el sistema cuenta ahora con seguridad criptográfica impenetrable, observabilidad inmutable y rutinas analíticas de IA que evitan cuellos de botella mediante asincronía y CRON.
@@ -190,6 +190,13 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Atribución de Conversiones (ROI)**: Tabla `mktg_conversion_events` para vincular campañas con facturas pagadas, registros y upgrades.
     - [x] **Esquema de Base de Datos**: 9 tablas nuevas (`mktg_contacts`, `mktg_lists`, `mktg_campaigns`, `mktg_send_log`, `mktg_open_events`, `mktg_click_events`, `mktg_unsubscribes`, `mktg_bounce_log`, `mktg_conversion_events`) con índices optimizados.
     - [x] **Corrección de Tablas Faltantes**: Scripts de reparación para `user_dashboard_config`, `jwt_refresh_tokens` y `login_logs` aplicados al entorno local.
+- [x] **Evolución 12.0.0: Módulo de Email Marketing UX Elite & Auditoría Integral (NUEVO)**:
+    - [x] **Asistencia por Inteligencia Artificial**: Integración de copilot de IA (Groq `llama-3.1-8b-instant`) en los editores de texto de las plantillas de email para mejorar la redacción. Mitigación del error de conexión mediante inyección del token CSRF dinámico en los headers de las peticiones JS Async.
+    - [x] **Herramienta de Rebranding**: Opción de rebranding de palabras clave en el editor de plantillas HTML, homologado con el módulo de Redes Sociales.
+    - [x] **Armonía Visual de Botones**: Estilizado de todos los botones de acción del constructor de plantillas con los colores institucionales (#D4AF37 dorado y #30C5FF azul digital) para consistencia con la identidad visual corporativa.
+    - [x] **Acciones Avanzadas de Campañas**: Implementación de previsualización en vivo, edición rápida de campos (asunto, remitente, programación), duplicación limpia como borrador y eliminación lógica (soft delete).
+    - [x] **Estabilización de Base de Datos**: Solución definitiva del error fatal `Duplicate entry '' for key 'uk_mktg_send_log_token'` en `hydrateSendLog` mediante purga selectiva de colas duplicadas, inserción con `INSERT IGNORE` y normalización de tokens con `NULLIF()`.
+    - [x] **Auditoría Técnica Integral**: Realización de una auditoría profunda de la arquitectura de envíos transversales en el CRM, comparando `Core\Mail` y el motor de colas del módulo de marketing con un plan detallado de riesgos y hoja de ruta.
 
 ---
 

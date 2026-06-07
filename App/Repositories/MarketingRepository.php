@@ -119,22 +119,29 @@ class MarketingRepository extends BaseRepository
         $token = $data['unsubscribe_token'] ?? bin2hex(random_bytes(16));
         $stmt = $this->db->prepare(
             "INSERT INTO mktg_contacts
-             (tenant_id, list_id, email, first_name, last_name, custom_fields,
-              status, consent_given, consent_ip, consent_at, source, crm_contact_id, unsubscribe_token)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+             (tenant_id, list_id, email, first_name, last_name,
+              phone, company, country, industry, tags,
+              custom_fields, status, consent_given, consent_ip,
+              consent_at, source, crm_contact_id, unsubscribe_token)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
         $stmt->execute([
             $tenantId,
             $data['list_id'],
-            $data['email'],
+            strtolower(trim($data['email'])),
             $data['first_name'] ?? null,
             $data['last_name']  ?? null,
+            $data['phone']      ?? null,
+            $data['company']    ?? null,
+            $data['country']    ?? null,
+            $data['industry']   ?? null,
+            $data['tags']       ?? null,
             isset($data['custom_fields']) ? json_encode($data['custom_fields']) : null,
-            $data['status']       ?? 'subscribed',
-            $data['consent_given']?? 0,
-            $data['consent_ip']   ?? null,
-            $data['consent_at']   ?? null,
-            $data['source']       ?? null,
+            $data['status']        ?? 'subscribed',
+            $data['consent_given'] ?? 0,
+            $data['consent_ip']    ?? null,
+            $data['consent_at']    ?? null,
+            $data['source']        ?? null,
             $data['crm_contact_id'] ?? null,
             $token,
         ]);
@@ -252,8 +259,13 @@ class MarketingRepository extends BaseRepository
     {
         $tenantId = Config::get('current_tenant_id', 1);
         $stmt = $this->db->prepare(
-            "SELECT * FROM mktg_campaigns
-             WHERE id = ? AND tenant_id = ? AND deleted_at IS NULL"
+            "SELECT c.*, 
+                    t.name as template_name, t.html_body as html_body,
+                    l.name as list_name
+             FROM mktg_campaigns c
+             LEFT JOIN mktg_templates t ON t.id = c.template_id AND t.tenant_id = c.tenant_id
+             LEFT JOIN mktg_lists l ON l.id = c.list_id AND l.tenant_id = c.tenant_id
+             WHERE c.id = ? AND c.tenant_id = ? AND c.deleted_at IS NULL"
         );
         $stmt->execute([$campaignId, $tenantId]);
         return $stmt->fetch() ?: null;
@@ -321,9 +333,11 @@ class MarketingRepository extends BaseRepository
     public function getPendingBatch(int $batchSize): array
     {
         $stmt = $this->db->prepare(
-            "SELECT sl.*, c.tenant_id
+            "SELECT sl.*, c.tenant_id,
+                    co.first_name, co.last_name, co.company, co.phone, co.tags
              FROM mktg_send_log sl
              JOIN mktg_campaigns c ON c.id = sl.campaign_id
+             LEFT JOIN mktg_contacts co ON co.id = sl.contact_id
              WHERE sl.status = 'queued'
              ORDER BY sl.queued_at ASC
              LIMIT ? FOR UPDATE"
@@ -357,23 +371,69 @@ class MarketingRepository extends BaseRepository
     /**
      * Hydration: popula el send_log con todos los contactos de una campaña.
      * Se llama al momento de lanzar la campaña (status → sending).
-     * Respeta supresión y desuscripción de contactos.
+     * Respeta supresión y desuscripción de contactos, filtros de segmentación y blacklist.
+     * Si la campaña tiene registros previos 'queued', los elimina antes de re-hidratar.
      */
     public function hydrateSendLog(int $campaignId, int $listId, int $tenantId): int
     {
-        $stmt = $this->db->prepare(
-            "INSERT INTO mktg_send_log (campaign_id, contact_id, email, status, queued_at)
-             SELECT ?, c.id, c.email, 'queued', NOW()
-             FROM mktg_contacts c
-             WHERE c.list_id = ?
-               AND c.tenant_id = ?
-               AND c.status = 'subscribed'
-               AND c.deleted_at IS NULL
-               AND c.id NOT IN (
-                   SELECT contact_id FROM mktg_send_log WHERE campaign_id = ?
-               )"
+        // Eliminar registros 'queued' anteriores para evitar duplicados al re-lanzar
+        $stmtClean = $this->db->prepare(
+            "DELETE FROM mktg_send_log WHERE campaign_id = ? AND status = 'queued'"
         );
-        $stmt->execute([$campaignId, $listId, $tenantId, $campaignId]);
+        $stmtClean->execute([$campaignId]);
+
+        // 1. Obtener campaña y sus filtros de segmentación
+        $campaign = $this->findCampaign($campaignId);
+        $filters = null;
+        if (!empty($campaign['segment_filters'])) {
+            $filters = json_decode($campaign['segment_filters'], true);
+        }
+
+        // 2. Construir la consulta dinámicamente
+        // NULLIF garantiza que nunca se inserten tokens vacíos
+        $sql = "INSERT IGNORE INTO mktg_send_log (campaign_id, contact_id, email, status, tracking_token, unsubscribe_token, queued_at)
+                SELECT ?, c.id, c.email, 'queued',
+                       NULLIF(MD5(UUID()), ''),
+                       NULLIF(IF(c.unsubscribe_token IS NULL OR c.unsubscribe_token = '', MD5(UUID()), c.unsubscribe_token), ''),
+                       NOW()
+                FROM mktg_contacts c
+                WHERE c.list_id = ?
+                  AND c.tenant_id = ?
+                  AND c.status = 'subscribed'
+                  AND c.deleted_at IS NULL
+                  AND c.email NOT IN (SELECT email FROM blacklist)";
+        $params = [$campaignId, $listId, $tenantId];
+
+        if ($filters) {
+            if (!empty($filters['country'])) {
+                $sql .= " AND c.country = ?";
+                $params[] = $filters['country'];
+            }
+            if (!empty($filters['industry'])) {
+                $sql .= " AND c.industry = ?";
+                $params[] = $filters['industry'];
+            }
+            if (!empty($filters['tags'])) {
+                $sql .= " AND c.tags LIKE ?";
+                $params[] = '%' . $filters['tags'] . '%';
+            }
+            if (!empty($filters['behavior']) && !empty($filters['behavior']['type'])) {
+                $b = $filters['behavior'];
+                if ($b['type'] === 'opened' && !empty($b['campaign_id'])) {
+                    $sql .= " AND EXISTS (SELECT 1 FROM mktg_events e WHERE e.contact_id = c.id AND e.campaign_id = ? AND e.event_type = 'open')";
+                    $params[] = (int)$b['campaign_id'];
+                } elseif ($b['type'] === 'clicked' && !empty($b['campaign_id'])) {
+                    $sql .= " AND EXISTS (SELECT 1 FROM mktg_events e WHERE e.contact_id = c.id AND e.campaign_id = ? AND e.event_type = 'click')";
+                    $params[] = (int)$b['campaign_id'];
+                } elseif ($b['type'] === 'inactive' && !empty($b['days'])) {
+                    $sql .= " AND NOT EXISTS (SELECT 1 FROM mktg_events e WHERE e.contact_id = c.id AND e.occurred_at >= DATE_SUB(NOW(), INTERVAL ? DAY) AND e.event_type IN ('open', 'click'))";
+                    $params[] = (int)$b['days'];
+                }
+            }
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
         return (int) $stmt->rowCount();
     }
 

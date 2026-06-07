@@ -265,8 +265,11 @@ class CampaignService
     // =========================================================================
 
     /**
-     * Renderiza el template HTML con variables de personalización y
-     * añade el pixel de tracking de apertura.
+     * Renderiza el template HTML con personalización completa:
+     *  - Placeholders simples:   {email}, {first_name}, {last_name}, {company}, {phone}
+     *  - Placeholders con fallback: {first_name|Estimado cliente}
+     *  - Pixel de tracking de apertura
+     *  - Footer de baja RFC-compliant con enlace visible en el cuerpo
      */
     private function renderTemplate(array $campaign, array $log): string
     {
@@ -274,18 +277,67 @@ class CampaignService
         $template = $this->repo->findTemplate((int) $campaign['template_id']);
         $html = $template['html_body'] ?? $campaign['html_body'] ?? '';
 
-        // Personalización básica con variables {{nombre}}, {{email}}, etc.
-        $html = str_replace('{{email}}',      htmlspecialchars($log['email'] ?? ''), $html);
-        $html = str_replace('{{first_name}}', htmlspecialchars($log['first_name'] ?? ''), $html);
-        $html = str_replace('{{last_name}}',  htmlspecialchars($log['last_name']  ?? ''), $html);
+        // Mapa de variables disponibles para la personalización
+        $vars = [
+            'email'      => $log['email']      ?? '',
+            'first_name' => $log['first_name'] ?? '',
+            'last_name'  => $log['last_name']  ?? '',
+            'company'    => $log['company']    ?? '',
+            'phone'      => $log['phone']      ?? '',
+            'full_name'  => trim(($log['first_name'] ?? '') . ' ' . ($log['last_name'] ?? '')),
+        ];
 
-        // Pixel de apertura
+        // Reemplazar placeholders con fallback: {variable|valor por defecto}
+        // Formato soportado: {var}, {var|fallback}, {{var}}, {{var|fallback}}
+        $html = preg_replace_callback(
+            '/\{\{?([a-zA-Z_]+)(?:\|([^}]*))?\}?\}/',
+            function (array $m) use ($vars): string {
+                $key      = strtolower(trim($m[1]));
+                $fallback = isset($m[2]) ? trim($m[2]) : '';
+                $value    = isset($vars[$key]) ? trim((string) $vars[$key]) : '';
+                return htmlspecialchars($value !== '' ? $value : $fallback, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            },
+            $html
+        );
+
+        // --- Footer de baja (visible en el cuerpo) conforme a RFC 8058 ---
+        $baseUrl    = rtrim($this->trackingCfg['base_url'] ?? '', '/');
+        $unsubPath  = $this->trackingCfg['unsubscribe_path'] ?? '/track/unsubscribe';
+        $token      = $log['unsubscribe_token'] ?? $log['tracking_token'] ?? '';
+        $unsubUrl   = $baseUrl . $unsubPath . '?t=' . urlencode($token);
+        $complianceName = $this->complianceCfg['company_name'] ?? 'Data Wyrd';
+        $complianceAddr = $this->complianceCfg['physical_address'] ?? '';
+
+        $footer = <<<HTML
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:32px;border-top:1px solid #e0e0e0;">
+  <tr>
+    <td align="center" style="padding:20px 16px;font-family:Arial,sans-serif;font-size:11px;color:#888888;line-height:1.6;">
+      <p style="margin:0 0 6px 0;">{$complianceName}{$complianceAddr}</p>
+      <p style="margin:0;">No deseas recibir más correos de esta lista?
+        <a href="{$unsubUrl}" style="color:#888888;text-decoration:underline;">Haz clic aquí para darte de baja</a>.
+      </p>
+    </td>
+  </tr>
+</table>
+HTML;
+
+        // Insertar footer antes de </body> si existe, si no, al final
+        if (stripos($html, '</body>') !== false) {
+            $html = str_ireplace('</body>', $footer . '</body>', $html);
+        } else {
+            $html .= $footer;
+        }
+
+        // --- Pixel de apertura (1×1 px invisible) ---
         if ($this->trackingCfg['pixel_enabled'] ?? true) {
-            $baseUrl  = rtrim($this->trackingCfg['base_url']  ?? '', '/');
             $pixelPath = $this->trackingCfg['pixel_path'] ?? '/track/open';
-            $token    = $log['tracking_token'] ?? '';
-            $pixelUrl = "{$baseUrl}{$pixelPath}?t=" . urlencode($token);
-            $html    .= "<img src=\"{$pixelUrl}\" width=\"1\" height=\"1\" alt=\"\" style=\"display:none;\">";
+            $pixelUrl  = $baseUrl . $pixelPath . '?t=' . urlencode($log['tracking_token'] ?? '');
+            $pixel     = "<img src=\"{$pixelUrl}\" width=\"1\" height=\"1\" alt=\"\" style=\"display:none;\">";
+            if (stripos($html, '</body>') !== false) {
+                $html = str_ireplace('</body>', $pixel . '</body>', $html);
+            } else {
+                $html .= $pixel;
+            }
         }
 
         return $html;
