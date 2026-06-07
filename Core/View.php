@@ -21,7 +21,7 @@ class View
         if (file_exists($viewFile)) {
             require $viewFile;
         } else {
-            die("View {$view} not found.");
+            throw new \Exception("View {$view} not found.");
         }
     }
 
@@ -35,7 +35,7 @@ class View
         $viewFile = BASE_PATH . "/App/Views/{$view}.php";
 
         if (!file_exists($viewFile)) {
-            die("View {$view} not found.");
+            throw new \Exception("View {$view} not found.");
         }
 
         // Capture view content
@@ -48,7 +48,7 @@ class View
         if (file_exists($layoutFile)) {
             require $layoutFile;
         } else {
-            die("Layout {$layout} not found.");
+            throw new \Exception("Layout {$layout} not found.");
         }
     }
 }

@@ -121,7 +121,7 @@ class BudgetController extends Controller
 
         } catch (\Exception $e) {
             $db->rollBack();
-            die("Error generating budget: " . $e->getMessage());
+            throw new \Exception("Error generating budget: " . $e->getMessage());
         }
     }
 
@@ -219,7 +219,7 @@ class BudgetController extends Controller
             $this->redirect('/budget/show/' . $budget_id);
         } catch (\Exception $e) {
             $db->rollBack();
-            die("Error processing decision: " . $e->getMessage());
+            throw new \Exception("Error processing decision: " . $e->getMessage());
         }
     }
 }

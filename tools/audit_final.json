@@ -1,0 +1,22 @@
+{
+    "integrations": [
+        "[MercadoPago] Configurado con credenciales mock\/falsas.",
+        "[AI] Configurado usando proveedor: groq.",
+        "[SMTP] Email deshabilitado."
+    ],
+    "performance": [
+        "[\\App\\Controllers\\Admin\\ServiceCMSController.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Controllers\\Api\\ProjectsController.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Models\\Service.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Services\\DashboardService.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Views\\admin\\jobs\\view.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Views\\admin\\marketing\\template_form.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Views\\admin\\posts\\index.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Views\\admin\\services\\index.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Views\\admin\\users\\index.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Views\\public\\home.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Views\\public\\services\\detail.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[\\App\\Views\\staff\\budgets\\create.php] Posible N+1 Query: Bucle foreach ejecutando consultas a la BD.",
+        "[DB] Cantidad saludable de \u00edndices detectados (168)."
+    ]
+}

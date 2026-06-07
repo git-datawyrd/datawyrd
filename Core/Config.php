@@ -31,11 +31,11 @@ class Config
             $errorMsg .= "\$_ENV=" . (isset($_ENV['ENVIRONMENT']) ? 'ok' : 'fail') . ", ";
             $errorMsg .= "\$_SERVER=" . (isset($_SERVER['ENVIRONMENT']) ? 'ok' : 'fail') . ".\n";
             $errorMsg .= "Verifica que el loader de .env se haya ejecutado correctamente y que el archivo .env exista en la raíz.";
-            die($errorMsg);
+            throw new \Exception($errorMsg);
         }
 
         if (!in_array($env, self::$validEnvironments)) {
-            die("FATAL ERROR: Entorno '{$env}' no es válido. Opciones: " . implode(', ', self::$validEnvironments));
+            throw new \Exception("FATAL ERROR: Entorno '{$env}' no es válido. Opciones: " . implode(', ', self::$validEnvironments));
         }
 
         // 2. Cargar app.php (común)
@@ -45,7 +45,7 @@ class Config
         // 3. Cargar config/{ENVIRONMENT}.php (específico)
         $specificFile = BASE_PATH . "/config/{$env}.php";
         if (!file_exists($specificFile)) {
-            die("FATAL ERROR: Archivo de configuración para el entorno '{$env}' no existe.");
+            throw new \Exception("FATAL ERROR: Archivo de configuración para el entorno '{$env}' no existe.");
         }
         $specific = require $specificFile;
 

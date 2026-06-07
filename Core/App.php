@@ -43,11 +43,11 @@ class App
                     $sessionToken = Session::get('csrf_token');
                     $postToken = $_POST['_token'] ?? 'ausente';
                     $headerToken = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? 'ausente';
-                    die("Error: Token CSRF inválido o ausente. <br>Recibido en POST: [$postToken] <br>Recibido en Header: [$headerToken] <br>Esperado en Sesión: [$sessionToken]");
+                    throw new \Exception("Error: Token CSRF inválido o ausente. <br>Recibido en POST: [$postToken] <br>Recibido en Header: [$headerToken] <br>Esperado en Sesión: [$sessionToken]");
                 } else {
                     // En demo/prod, error silencioso (403 Forbidden)
                     header('HTTP/1.1 403 Forbidden');
-                    exit('Acceso denegado: Token de seguridad inválido.');
+                    throw new \Exception('Acceso denegado: Token de seguridad inválido.');
                 }
             }
         }
@@ -120,6 +120,24 @@ class App
         }
 
         $controllerPath = "\\App\\Controllers\\" . $this->controller;
+
+        // --- DEUDA TÉCNICA: MARKETING GOD CLASS SPLIT ROUTER ---
+        if ($controllerPath === "\\App\\Controllers\\Admin\\MarketingController") {
+            $method = $url[2] ?? '';
+            $campaignMethods = ['campaigns', 'createCampaign', 'storeCampaign', 'showCampaign', 'launchCampaign', 'pauseCampaign', 'deleteCampaign', 'duplicateCampaign', 'updateCampaign'];
+            $listMethods = ['lists', 'showList', 'storeList', 'importContacts', 'storeContact', 'downloadCsvTemplate', 'deleteList'];
+            $templateMethods = ['templates', 'createTemplate', 'storeTemplate', 'editTemplate', 'updateTemplate', 'improveText', 'generateAiEmail'];
+            
+            if (in_array($method, $campaignMethods)) {
+                $controllerPath = "\\App\\Controllers\\Admin\\MarketingCampaignController";
+            } elseif (in_array($method, $listMethods)) {
+                $controllerPath = "\\App\\Controllers\\Admin\\MarketingListController";
+            } elseif (in_array($method, $templateMethods)) {
+                $controllerPath = "\\App\\Controllers\\Admin\\MarketingTemplateController";
+            }
+        }
+        // -------------------------------------------------------
+
         $this->controller = $this->container->get($controllerPath);
 
         // Check if method exists

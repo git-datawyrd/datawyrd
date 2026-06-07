@@ -72,7 +72,7 @@ class RateLimiter
         if (!self::attempt($ip, $limit, $period)) {
             header('HTTP/1.1 429 Too Many Requests');
             header('Retry-After: ' . $period);
-            exit('Límite de peticiones excedido. Protección activada.');
+            throw new \Exception('Límite de peticiones excedido. Protección activada.');
         }
     }
 }

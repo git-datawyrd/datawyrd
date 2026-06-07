@@ -132,4 +132,25 @@ class TicketRepository extends BaseRepository
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$ticketId, $realUserId, $message, $type]);
     }
+
+    /**
+     * Get the first active plan ID for a given service
+     */
+    public function findPlanIdByServiceId(int $serviceId): ?int
+    {
+        $stmt = $this->db->prepare("SELECT id FROM service_plans WHERE service_id = ? AND is_active = 1 ORDER BY is_featured DESC, price ASC LIMIT 1");
+        $stmt->execute([$serviceId]);
+        $id = $stmt->fetchColumn();
+        return $id ? (int)$id : null;
+    }
+
+    /**
+     * Get the first available service plan globally
+     */
+    public function getFirstAvailablePlanId(): ?int
+    {
+        $stmt = $this->db->query("SELECT id FROM service_plans WHERE is_active = 1 ORDER BY id ASC LIMIT 1");
+        $id = $stmt->fetchColumn();
+        return $id ? (int)$id : null;
+    }
 }

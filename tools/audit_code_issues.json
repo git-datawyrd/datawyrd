@@ -1,0 +1,43 @@
+{
+    "todos_fixmes": [],
+    "var_dumps_die": [
+        "[\\App\\Controllers\\BudgetController.php:124] Debug function found.",
+        "[\\App\\Controllers\\BudgetController.php:222] Debug function found.",
+        "[\\Core\\App.php:46] Debug function found.",
+        "[\\Core\\App.php:50] Debug function found.",
+        "[\\Core\\Config.php:34] Debug function found.",
+        "[\\Core\\Config.php:38] Debug function found.",
+        "[\\Core\\Config.php:48] Debug function found.",
+        "[\\Core\\EnvValidator.php:65] Debug function found.",
+        "[\\Core\\EnvValidator.php:68] Debug function found.",
+        "[\\Core\\RateLimiter.php:75] Debug function found.",
+        "[\\Core\\View.php:24] Debug function found.",
+        "[\\Core\\View.php:38] Debug function found.",
+        "[\\Core\\View.php:51] Debug function found."
+    ],
+    "bloated_classes": [
+        "[\\App\\Controllers\\Admin\\MarketingController.php] 862 l\u00edneas (God Class).",
+        "[\\App\\Controllers\\JobsController.php] 426 l\u00edneas (God Class).",
+        "[\\App\\Repositories\\MarketingRepository.php] 554 l\u00edneas (God Class).",
+        "[\\App\\Views\\admin\\dashboard.php] 479 l\u00edneas (God Class).",
+        "[\\App\\Views\\admin\\marketing\\list_detail.php] 427 l\u00edneas (God Class).",
+        "[\\App\\Views\\admin\\marketing\\template_form.php] 930 l\u00edneas (God Class).",
+        "[\\App\\Views\\admin\\posts\\index.php] 728 l\u00edneas (God Class).",
+        "[\\App\\Views\\admin\\services\\index.php] 484 l\u00edneas (God Class).",
+        "[\\App\\Views\\layouts\\admin.php] 545 l\u00edneas (God Class).",
+        "[\\App\\Views\\layouts\\client.php] 408 l\u00edneas (God Class).",
+        "[\\App\\Views\\layouts\\public.php] 576 l\u00edneas (God Class).",
+        "[\\App\\Views\\public\\home.php] 1050 l\u00edneas (God Class)."
+    ],
+    "high_coupling": [],
+    "frontend_issues": [
+        "[\\App\\Views\\admin\\logs\\index.php] Contiene enlaces rotos o vac\u00edos (href='#').",
+        "[\\App\\Views\\admin\\marketing\\list_detail.php] Formulario sin atributo 'action' o manejador JS.",
+        "[\\App\\Views\\layouts\\admin.php] Contiene enlaces rotos o vac\u00edos (href='#').",
+        "[\\App\\Views\\layouts\\client.php] Contiene enlaces rotos o vac\u00edos (href='#').",
+        "[\\App\\Views\\layouts\\public.php] Contiene enlaces rotos o vac\u00edos (href='#').",
+        "[\\App\\Views\\layouts\\staff.php] Contiene enlaces rotos o vac\u00edos (href='#').",
+        "[\\App\\Views\\public\\blog\\post.php] Contiene enlaces rotos o vac\u00edos (href='#').",
+        "[\\App\\Views\\public\\login.php] Contiene enlaces rotos o vac\u00edos (href='#')."
+    ]
+}

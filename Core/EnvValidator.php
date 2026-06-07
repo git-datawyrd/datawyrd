@@ -62,9 +62,9 @@ class EnvValidator
         </div>";
         
         if (php_sapi_name() === 'cli') {
-            die("\nERROR DE SEGURIDAD: {$message}\n\n");
+            throw new \Exception("\nERROR DE SEGURIDAD: {$message}\n\n");
         }
         
-        die($html);
+        throw new \Exception($message);
     }
 }

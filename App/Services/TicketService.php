@@ -66,11 +66,21 @@ class TicketService
             Mail::sendWelcome($data['email'], $data['name'], $tempPass);
         }
 
+        $servicePlanId = $data['service_plan_id'] ?? null;
+        if (!$servicePlanId && isset($data['service_id'])) {
+            $servicePlanId = $this->repository->findPlanIdByServiceId((int)$data['service_id']);
+        }
+
+        // Final fallback to avoid database integrity violation if plan still not resolved
+        if (!$servicePlanId) {
+            $servicePlanId = $this->repository->getFirstAvailablePlanId() ?? 1;
+        }
+
         $ticketNumber = 'TKT-' . strtoupper(bin2hex(random_bytes(3)));
         $ticketId = $this->repository->create([
             'ticket_number' => $ticketNumber,
             'client_id' => $user['id'],
-            'service_plan_id' => $data['service_plan_id'],
+            'service_plan_id' => $servicePlanId,
             'subject' => $data['subject'],
             'description' => $data['description']
         ]);
