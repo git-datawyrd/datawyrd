@@ -6,6 +6,8 @@ use Core\Database;
 use Core\Auth;
 use Core\Session;
 use App\Services\MailService;
+use App\Services\Marketing\CampaignService;
+use App\Repositories\MarketingRepository;
 use PDO;
 
 class MarketingCampaignController extends Controller
