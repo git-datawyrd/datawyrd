@@ -4,6 +4,7 @@
 # Logs y caché
 storage/logs/*.log
 storage/logs/*.json
+storage/audit_vault/*.log
 storage/rates/*.json
 storage/cache/*
 !storage/cache/.gitkeep
