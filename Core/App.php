@@ -164,6 +164,23 @@ class App
         // Get params
         $this->params = $url ? array_values($url) : [];
 
+        // --- DEUDA TÉCNICA: PARCHE DE SEGURIDAD GLOBAL (DEFENSE-IN-DEPTH) ---
+        // Forzamos el AuthMiddleware si el usuario está accediendo al panel Admin.
+        // Esto previene vulnerabilidades IDOR si un desarrollador olvida agregar el middleware o Auth::can() en un futuro.
+        $isAdminController = strpos($controllerPath, '\\App\\Controllers\\Admin\\') === 0 || $controllerPath === '\\App\\Controllers\\AdminController';
+        if ($isAdminController) {
+            $authMiddleware = new \App\Middlewares\AuthMiddleware();
+            $authMiddleware->handle();
+            
+            // Si además intentan acceder transversalmente sin ser al menos STAFF o ADMIN:
+            if (\Core\Auth::isClient()) {
+                \Core\Session::flash('error', 'Acceso denegado: Se requieren permisos administrativos.');
+                header('Location: ' . url('dashboard'));
+                exit;
+            }
+        }
+        // ------------------------------------------------------------------
+
         // Run the controller method
         $this->processMiddlewares();
 
