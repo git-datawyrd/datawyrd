@@ -23,10 +23,15 @@ class Mail
         $mail->SMTPAuth   = true;
         $mail->Username   = $mailConfig['user'] ?? $mailConfig['username'] ?? '';
         $mail->Password   = $mailConfig['pass'] ?? $mailConfig['password'] ?? '';
-        $mail->SMTPSecure = strtolower($mailConfig['enc'] ?? '') === 'tls'
-            ? \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS
-            : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port       = $mailConfig['port'] ?: 587;
+        $port = $mailConfig['port'] ?: 587;
+        $enc = strtolower($mailConfig['enc'] ?? '');
+
+        if ($enc === 'tls' || $port == 587) {
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        } else {
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+        }
+        $mail->Port       = $port;
         $mail->CharSet    = 'UTF-8';
 
         return $mail;

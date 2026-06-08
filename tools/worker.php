@@ -4,9 +4,9 @@
  * Run via CLI: php worker.php
  */
 
-define('BASE_PATH', __DIR__);
-require_once __DIR__ . '/config/env.php';
-\EnvLoader::load(__DIR__ . '/.env');
+define('BASE_PATH', dirname(__DIR__));
+require_once BASE_PATH . '/config/env.php';
+\EnvLoader::load(BASE_PATH . '/.env');
 
 // 3. Autoload Estructural (Composer)
 require_once BASE_PATH . '/vendor/autoload.php';
@@ -76,6 +76,10 @@ while (true) {
             }
         } else {
             $db->commit();
+            if (in_array('--once', $argv ?? [])) {
+                echo "No pending jobs. Exiting because --once was used.\n";
+                break;
+            }
             // No jobs, sleep to prevent CPU spike
             sleep(2);
         }

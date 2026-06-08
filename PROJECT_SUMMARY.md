@@ -1,6 +1,6 @@
-**Estado al:** 7 de Junio, 2026 (SMTP Consolidation & Dynamic Throttling)
-**Versión:** 12.1.0
-**Estado:** ✅ **Evolución 12.1.0: Consolidación SMTP, Throttling Dinámico & Optimización de Queries (Desplegado)**
+**Estado al:** 8 de Junio, 2026 (Email Restoration & Marketing Fixes)
+**Versión:** 12.1.1
+**Estado:** 🟢 **Evolución 12.1.1: Corrección de Workers, Consolidación de Providers y Refactor de Email (Desplegado)**
 
 ## 🎯 Visión del Proyecto
 Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto rendimiento. Con la implementación de la **Fase 4**, el sistema cuenta ahora con seguridad criptográfica impenetrable, observabilidad inmutable y rutinas analíticas de IA que evitan cuellos de botella mediante asincronía y CRON.

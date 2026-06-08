@@ -38,12 +38,17 @@ class SmtpMarketingProvider implements EmailProviderInterface
         }
 
         try {
-            // Use centralized mailer factory — throws RuntimeException if MAIL_HOST missing
-            $mail = \Core\Mail::createMailer();
+            // Use centralized mailer factory with provider config override
+            $mail = \Core\Mail::createMailer($this->mailConfig);
 
             // Remitente (permite override por mensaje)
             $fromAddr = $message['from']      ?? ($mailConfig['from_address'] ?? '');
             $fromName = $message['from_name'] ?? ($mailConfig['from_name']    ?? 'Data Wyrd');
+            
+            if (empty($fromAddr)) {
+                throw new \Exception("Falta dirección de remitente para marketing.");
+            }
+            
             $mail->setFrom($fromAddr, $fromName);
 
             if (!empty($message['reply_to'])) {
@@ -105,7 +110,7 @@ class SmtpMarketingProvider implements EmailProviderInterface
 
         try {
             // Use centralized mailer factory for connection test
-            $mail = \Core\Mail::createMailer();
+            $mail = \Core\Mail::createMailer($this->mailConfig);
             $mail->SMTPDebug = 0;
 
             return $mail->smtpConnect();

@@ -36,6 +36,11 @@ class SendEmailJob
             // Recipients
             $fromName  = $mailConfig['from_name']    ?: \Core\Config::get('business.company_name', 'Data Wyrd');
             $fromEmail = $mailConfig['from_address']  ?? '';
+            
+            if (empty($fromEmail)) {
+                throw new \Exception("MAIL_FROM_ADDRESS is missing in configuration.");
+            }
+            
             $mail->setFrom($fromEmail, $fromName);
             $mail->addAddress($to);
 
@@ -51,12 +56,13 @@ class SendEmailJob
                 'subject' => $subject
             ], 'INFO');
         } catch (\Exception $e) {
+            $errorMsg = isset($mail) && !empty($mail->ErrorInfo) ? $mail->ErrorInfo : $e->getMessage();
             \Core\SecurityLogger::log('email_failed', [
                 'to' => $to,
                 'subject' => $subject,
-                'error' => $mail->ErrorInfo
+                'error' => $errorMsg
             ], 'ERROR');
-            throw new \Exception("Failed to send email via PHPMailer: " . $mail->ErrorInfo);
+            throw new \Exception("Failed to send email via PHPMailer: " . $errorMsg);
         }
     }
 }
