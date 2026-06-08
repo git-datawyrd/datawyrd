@@ -1,9 +1,5 @@
 <?php
-require_once __DIR__ . '/../config/env.php';
-\EnvLoader::load(__DIR__ . '/../.env');
-require_once __DIR__ . '/../vendor/autoload.php';
-
-\Core\Config::load();
+require_once __DIR__ . '/../Core/bootstrap.php';
 
 $campaignId = isset($_GET['campaign_id']) ? (int)$_GET['campaign_id'] : 0;
 if (!$campaignId) {
