@@ -32,7 +32,7 @@ class MarketingRepository extends BaseRepository
         $stmt = $this->db->prepare(
             "SELECT l.*, COUNT(c.id) as contact_count
              FROM mktg_lists l
-             LEFT JOIN mktg_contacts c ON c.list_id = l.id AND c.tenant_id = l.tenant_id
+             LEFT JOIN mktg_contacts c ON c.list_id = l.id AND c.tenant_id = l.tenant_id AND c.deleted_at IS NULL
              WHERE l.tenant_id = ? AND l.deleted_at IS NULL
              GROUP BY l.id
              ORDER BY l.created_at DESC"
@@ -45,7 +45,11 @@ class MarketingRepository extends BaseRepository
     {
         $tenantId = Config::get('current_tenant_id', 1);
         $stmt = $this->db->prepare(
-            "SELECT * FROM mktg_lists WHERE id = ? AND tenant_id = ? AND deleted_at IS NULL"
+            "SELECT l.*, COUNT(c.id) as contact_count 
+             FROM mktg_lists l
+             LEFT JOIN mktg_contacts c ON c.list_id = l.id AND c.tenant_id = l.tenant_id AND c.deleted_at IS NULL
+             WHERE l.id = ? AND l.tenant_id = ? AND l.deleted_at IS NULL
+             GROUP BY l.id"
         );
         $stmt->execute([$listId, $tenantId]);
         return $stmt->fetch() ?: null;
