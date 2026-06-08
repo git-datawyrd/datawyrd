@@ -395,12 +395,11 @@ class MarketingRepository extends BaseRepository
                        NULLIF(IF(c.unsubscribe_token IS NULL OR c.unsubscribe_token = '', MD5(UUID()), c.unsubscribe_token), ''),
                        NOW()
                 FROM mktg_contacts c
-                LEFT JOIN blacklist b ON b.email = c.email
                 WHERE c.list_id = ?
                   AND c.tenant_id = ?
                   AND c.status = 'subscribed'
                   AND c.deleted_at IS NULL
-                  AND b.email IS NULL";
+                  AND NOT EXISTS (SELECT 1 FROM blacklist b WHERE b.email = c.email)";
         $params = [$campaignId, $listId, $tenantId];
 
         if ($filters) {
