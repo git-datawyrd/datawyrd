@@ -25,7 +25,7 @@ class MarketingBatchJob
         $count = (int) $stmt->fetchColumn();
 
         if ($count > 0) {
-            Queue::dispatch(self::class, []);
+            Queue::push(self::class, []);
         }
     }
 }

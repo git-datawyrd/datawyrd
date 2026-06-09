@@ -173,7 +173,7 @@ class CampaignService
 
         // Disparar el primer lote al worker central unificado
         if ($queued > 0) {
-            \Core\Queue::dispatch(\App\Jobs\MarketingBatchJob::class, []);
+            \Core\Queue::push(\App\Jobs\MarketingBatchJob::class, []);
         }
 
         return ['success' => true, 'queued' => $queued, 'status' => $newStatus];
