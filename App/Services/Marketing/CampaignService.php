@@ -174,6 +174,19 @@ class CampaignService
         // Disparar el primer lote al worker central unificado
         if ($queued > 0) {
             \Core\Queue::push(\App\Jobs\MarketingBatchJob::class, []);
+            
+            // Si el envío por cola está desactivado, ejecutamos síncronamente el primer lote de inmediato
+            if (getenv('MAIL_QUEUE') === 'false') {
+                try {
+                    $job = new \App\Jobs\MarketingBatchJob();
+                    $job->handle([]);
+                } catch (\Exception $e) {
+                    \Core\SecurityLogger::log('marketing_sync_fallback_failed', [
+                        'campaign_id' => $campaignId,
+                        'error'       => $e->getMessage()
+                    ], 'ERROR');
+                }
+            }
         }
 
         return ['success' => true, 'queued' => $queued, 'status' => $newStatus];
