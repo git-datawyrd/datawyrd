@@ -84,6 +84,12 @@
                             <div class="form-text text-white-50 x-small mt-2">Formatos permitidos: PDF, DOCX. Tamaño máximo: 5MB.</div>
                         </div>
 
+                        <!-- Honeypot & Captcha -->
+                        <div class="mb-4">
+                            <?php echo honeypot_field(); ?>
+                            <?php echo captcha_field(); ?>
+                        </div>
+
                         <button type="submit" id="submitBtn" class="btn btn-primary w-100 py-3 rounded-3 fw-bold tracking-widest uppercase shadow-gold d-flex align-items-center justify-content-center gap-2 transition-all hover-scale">
                             <span class="material-symbols-outlined">send</span> Enviar Postulación
                         </button>

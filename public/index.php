@@ -43,6 +43,37 @@ function csrf_field()
 }
 
 /**
+ * Helper: Generates a Captcha input field (either math or Turnstile/reCAPTCHA widget).
+ *
+ * @return string HTML content.
+ */
+function captcha_field()
+{
+    return \Core\Captcha::render();
+}
+
+/**
+ * Helper: Generates a honeypot field to fool automated spambots.
+ *
+ * @return string HTML content.
+ */
+function honeypot_field()
+{
+    return \Core\Captcha::renderHoneypot();
+}
+
+/**
+ * Helper: Generates the necessary script tags for third-party Captcha providers.
+ *
+ * @return string HTML script tag or empty string.
+ */
+function captcha_script()
+{
+    return \Core\Captcha::renderScript();
+}
+
+
+/**
  * Helper: Retrieves the active services for the currently authenticated client.
  *
  * @return array List of active services or an empty array if not authenticated.

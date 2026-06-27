@@ -153,6 +153,12 @@
                                                 class="form-control bg-steel border-white-10 text-white p-3" rows="5"
                                                 required placeholder="Comparte tus pensamientos..."></textarea>
                                         </div>
+                                        <!-- Honeypot & Captcha -->
+                                        <div class="col-12 text-start">
+                                            <?php echo honeypot_field(); ?>
+                                            <?php echo captcha_field(); ?>
+                                        </div>
+
                                         <div class="col-12 text-end">
                                             <button type="submit"
                                                 class="btn btn-primary px-5 py-3 fw-bold uppercase tracking-widest mt-2 shadow-gold">

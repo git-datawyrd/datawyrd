@@ -115,7 +115,13 @@
                                         placeholder="Cuéntanos los detalles, objetivos y desafíos de tu solicitud..."
                                         required></textarea>
                                 </div>
-                                <div class="col-12 mt-4">
+                                <!-- Honeypot & Captcha -->
+                                <div class="col-12">
+                                    <?php echo honeypot_field(); ?>
+                                    <?php echo captcha_field(); ?>
+                                </div>
+
+                                <div class="col-12 mt-3">
                                     <button type="submit"
                                         class="btn btn-primary btn-lg w-100 py-3 fw-bold uppercase tracking-widest shadow-gold">
                                         Enviar Solicitud <span

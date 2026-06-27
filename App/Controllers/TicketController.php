@@ -67,6 +67,13 @@ class TicketController extends Controller
             $this->redirect('/');
         }
 
+        // Validate Captcha & Honeypot
+        if (!\Core\Captcha::verify($_POST)) {
+            \Core\Session::flash('error', 'Validación de seguridad fallida. Por favor, intente de nuevo.');
+            $this->redirect('/ticket/request');
+            return;
+        }
+
         // Rate Limiting
         $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
         if (!\Core\RateLimiter::attempt('ticket_submit_ip_' . $ip, 5, 3600)) {

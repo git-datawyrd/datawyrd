@@ -22,11 +22,12 @@ class Security
         // Allow scripts from current origin and common CDNs used in the project
         // Allow styles from current origin, Google Fonts, and Bootstrap CDNs
         $csp = "default-src 'self'; ";
-        $csp .= "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; ";
+        $csp .= "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://challenges.cloudflare.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; ";
         $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://fonts.gstatic.com; ";
         $csp .= "font-src 'self' data: https://fonts.gstatic.com https://fonts.googleapis.com; ";
         $csp .= "img-src 'self' data: https://cdn.jsdelivr.net; ";
-        $csp .= "connect-src 'self' https://cdn.jsdelivr.net; "; // Permite AJAX local y mapas de fuentes/librerías
+        $csp .= "connect-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; ";
+        $csp .= "frame-src 'self' https://challenges.cloudflare.com https://www.google.com/recaptcha/; ";
         $csp .= "frame-ancestors 'self'; ";
         $csp .= "base-uri 'self'; ";
         $csp .= "form-action 'self';";

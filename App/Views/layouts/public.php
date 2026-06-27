@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="<?php echo url('assets/css/style.css?v=1.3'); ?>">
     <link rel="icon" type="image/x-icon" href="<?php echo url('assets/images/DataWyrd.ico'); ?>">
     <script>window.APP_URL = "<?php echo url(); ?>";</script>
+    <?php echo captcha_script(); ?>
 </head>
 
 <?php

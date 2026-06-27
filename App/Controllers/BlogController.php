@@ -83,11 +83,6 @@ class BlogController extends Controller
 
         $db = Database::getInstance()->getConnection();
         $postId = (int) $_POST['post_id'];
-        $name = strip_tags(trim($_POST['name']));
-        $email = strip_tags(trim($_POST['email']));
-        $content = strip_tags(trim($_POST['content']));
-        $userId = \Core\Auth::user() ? \Core\Auth::user()['id'] : null;
-        $ip = $_SERVER['REMOTE_ADDR'];
 
         // Get post slug for redirect
         $stmt = $db->prepare("SELECT slug FROM blog_posts WHERE id = ?");
@@ -96,6 +91,27 @@ class BlogController extends Controller
 
         if (!$post)
             $this->redirect('/blog');
+
+        // Validate Captcha & Honeypot
+        if (!\Core\Captcha::verify($_POST)) {
+            \Core\Session::flash('error', 'Validación de seguridad fallida. Por favor, intente de nuevo.');
+            $this->redirect('/blog/post/' . $post['slug']);
+            return;
+        }
+
+        // Rate Limiting (Max 5 comments per hour per IP)
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!\Core\RateLimiter::attempt('blog_comment_ip_' . $ip, 5, 3600)) {
+            \Core\Session::flash('error', 'Límite de comentarios excedido. Inténtelo más tarde.');
+            $this->redirect('/blog/post/' . $post['slug']);
+            return;
+        }
+
+        $name = strip_tags(trim($_POST['name']));
+        $email = strip_tags(trim($_POST['email']));
+        $content = strip_tags(trim($_POST['content']));
+        $userId = \Core\Auth::user() ? \Core\Auth::user()['id'] : null;
+        $ip = $_SERVER['REMOTE_ADDR'];
 
         $sql = "INSERT INTO comments (post_id, user_id, author_name, author_email, content, status, ip_address) 
                 VALUES (?, ?, ?, ?, ?, 'approved', ?)";

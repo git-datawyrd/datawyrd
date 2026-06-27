@@ -135,4 +135,15 @@ return [
             'custom_domain' => getenv('MARKETING_CUSTOM_DOMAIN') ?: '',
         ],
     ],
+
+    // =========================================================================
+    // MITIGACIÓN DE BOTS & CAPTCHA
+    // =========================================================================
+    'captcha' => [
+        'provider'      => getenv('CAPTCHA_PROVIDER') ?: 'local',
+        'site_key'      => getenv('CAPTCHA_SITE_KEY') ?: '',
+        'secret_key'    => getenv('CAPTCHA_SECRET_KEY') ?: '',
+        'honeypot_name' => getenv('CAPTCHA_HONEYPOT_NAME') ?: 'website_extra',
+    ],
 ];
+

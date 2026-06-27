@@ -111,7 +111,13 @@
                                     required></textarea>
                             </div>
 
-                            <div class="col-12 mt-5">
+                            <!-- Honeypot & Captcha -->
+                            <div class="col-12">
+                                <?php echo honeypot_field(); ?>
+                                <?php echo captcha_field(); ?>
+                            </div>
+
+                            <div class="col-12 mt-4">
                                 <button type="submit"
                                     class="btn btn-primary btn-sm w-100 py-3 shadow-gold fw-bold uppercase">
                                     Enviar Solicitud <span class="material-symbols-outlined ms-2 fs-6">send</span>

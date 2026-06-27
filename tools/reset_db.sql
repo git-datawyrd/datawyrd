@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS datawyrd;
+CREATE DATABASE datawyrd;

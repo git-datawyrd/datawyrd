@@ -301,6 +301,21 @@ class JobsController extends Controller
             $this->redirect('/jobs');
         }
 
+        // Validate Captcha & Honeypot
+        if (!\Core\Captcha::verify($_POST)) {
+            Session::flash('error', 'Validación de seguridad fallida. Por favor, intente de nuevo.');
+            $this->redirect('/jobs');
+            return;
+        }
+
+        // Rate Limiting (Max 3 application submissions per hour per IP)
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        if (!\Core\RateLimiter::attempt('jobs_postulate_ip_' . $ip, 3, 3600)) {
+            Session::flash('error', 'Límite de postulaciones excedido. Inténtelo más tarde.');
+            $this->redirect('/jobs');
+            return;
+        }
+
         $validator = new Validator();
 
         $data = [
