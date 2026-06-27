@@ -80,6 +80,8 @@ class App
                 $this->method = 'pixelOpen';
             } elseif ($action === 'click') {
                 $this->method = 'trackClick';
+            } elseif ($action === 'optin') {
+                $this->method = 'confirmOptIn';
             } elseif ($action === 'unsubscribe') {
                 $this->method = ($_SERVER['REQUEST_METHOD'] === 'POST') ? 'processUnsubscribe' : 'showUnsubscribe';
             } elseif ($action === 'webhook' && ($url[2] ?? '') === 'zepto') {
@@ -124,7 +126,7 @@ class App
         // --- DEUDA TÉCNICA: MARKETING GOD CLASS SPLIT ROUTER ---
         if ($controllerPath === "\\App\\Controllers\\Admin\\MarketingController") {
             $method = $url[2] ?? '';
-            $campaignMethods = ['campaigns', 'createCampaign', 'storeCampaign', 'showCampaign', 'launchCampaign', 'pauseCampaign', 'deleteCampaign', 'duplicateCampaign', 'updateCampaign'];
+            $campaignMethods = ['campaigns', 'createCampaign', 'storeCampaign', 'showCampaign', 'launchCampaign', 'pauseCampaign', 'deleteCampaign', 'duplicateCampaign', 'updateCampaign', 'testSend', 'countMatchingContacts', 'getTemplateHtml'];
             $listMethods = ['lists', 'showList', 'storeList', 'importContacts', 'storeContact', 'downloadCsvTemplate', 'deleteList'];
             $templateMethods = ['templates', 'createTemplate', 'storeTemplate', 'editTemplate', 'updateTemplate', 'improveText', 'generateAiEmail'];
             

@@ -1,6 +1,6 @@
-**Estado al:** 8 de Junio, 2026 (Email Restoration & Marketing Fixes)
-**Versión:** 12.1.1
-**Estado:** 🟢 **Evolución 12.1.1: Corrección de Workers, Consolidación de Providers y Refactor de Email (Desplegado)**
+**Estado al:** 27 de Junio, 2026 (Marketing Automation, Double Opt-In & Executive UX/UI)
+**Versión:** 12.2.0
+**Estado:** 🟢 **Evolución 12.2.0: Email Marketing Avanzado, Asistente Executive UX/UI & Motor de Automatizaciones (NUEVO) (Desplegado)**
 
 ## 🎯 Visión del Proyecto
 Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto rendimiento. Con la implementación de la **Fase 4**, el sistema cuenta ahora con seguridad criptográfica impenetrable, observabilidad inmutable y rutinas analíticas de IA que evitan cuellos de botella mediante asincronía y CRON.
@@ -8,8 +8,6 @@ Data Wyrd OS ha culminado su transición hacia una plataforma enterprise de alto
 ---
 
 ## 🏗️ Arquitectura Avanzada (Fase 4)
-
-El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y resistente:
 
 1.  **Capa de Gestión de Dependencias:** Integración total de **Composer** para estándares PSR-4.
 2.  **Capa de Eventos (Async-Ready):** Desacoplamiento total mediante `Core\EventDispatcher`.
@@ -203,6 +201,13 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
     - [x] **Throttling Dinámico por Minuto**: Implementación de control de velocidad basado en `MARKETING_MAX_PER_MINUTE` (default: 250) con cálculo automático del delay por email: `floor(60 / limit × 1,000,000) µs`. El valor `delay_between_ms` actúa como piso mínimo de cortesía.
     - [x] **Configuración Escalable**: Nueva variable de entorno `MARKETING_MAX_PER_MINUTE` en `config/app.php` para ajuste progresivo según la capacidad del proveedor SMTP sin necesidad de modificar código.
     - [x] **Test Suite Actualizada**: Corrección de assertions desactualizadas en `BounceResolverTest` (`'suppressed'` → `'suppressed_and_blacklisted'`). Suite completa: **24/24 tests, 99 assertions OK**.
+- [x] **Evolución 12.2.0: Email Marketing Avanzado, Asistente Executive UX/UI & Motor de Automatizaciones (NUEVO)**:
+    - [x] **Motor de Automatizaciones (`AutomationService.php`)**: Ejecución asíncrona de flujos de nurturing en tiempo real basados en disparadores (`signup`, `campaign_open` y `campaign_click`) con soporte para envío de emails, asignación/remoción de etiquetas, y notificaciones de webhook (POST JSON).
+    - [x] **Double Opt-In y GDPR Compliance**: Flujo de confirmación pública de suscripción (`/track/optin?t={token}`) con validación de consentimiento explícito, log de IP (`consent_ip`) y fecha/hora (`consent_at`).
+    - [x] **API Pública de Suscripción**: Endpoint REST público seguro `POST /api/v1/marketing/subscribe` para captación y registro de leads desde landing pages y formularios externos.
+    - [x] **Asistente de Campañas Executive Mode (UX/UI)**: Rediseño del formulario en asistente interactivo de 3 pasos (Meta, Segmento, Diseño) con inputs premium, detector de entregabilidad DNS del remitente en tiempo real, generador de asuntos por IA, anillo de progreso circular SVG sincronizado con el conteo de destinatarios y previsualización multidispositivo con Spam Score predictivo.
+    - [x] **Panel de Control de Flujos**: Sección interactiva de administración (`automations.php` y `automation_detail.php`) para crear, pausar, ver la línea de tiempo e insertar acciones de automatización.
+    - [x] **Test Suite Certificada**: 15 tests unitarios en la suite de marketing ejecutándose y pasando al 100% de éxito.
 
 ---
 
@@ -218,9 +223,8 @@ El sistema ahora opera bajo un modelo de **Arquitectura de Capas** refinada y re
 
 ## 📅 Próximos Pasos Certificados (Data Wyrd Roadmap)
 1.  **Email Marketing - Plantillas Visuales**: Editor drag-and-drop de templates HTML para campañas.
-2.  **Email Marketing - Automatizaciones**: Flujos de nurturing basados en triggers (ej: apertura, clic, tiempo transcurrido).
-3.  **Email Marketing - Enforcement Horario/Diario**: Implementar control activo de `max_per_hour` y `max_per_day` en el worker scheduler.
-4.  **DNS DKIM Configurado**: Agregar registro DKIM de Zoho (`zmail._domainkey.datawyrd.com`) en Hostinger para completar la autenticación de correo.
-5.  **Mobile Companion App**: Iniciar desarrollo de frontend móvil conectando al `ApiRouter` v1.
-6.  **Audit Log Blockchain**: Explorar integración con servicios de log inmutables externos para máxima auditoría.
-7.  **Generative Intelligence 2.0**: Automatización de respuestas para tickets recurrentes basada en base de conocimientos.
+2.  **Email Marketing - Enforcement Horario/Diario**: Implementar control activo de `max_per_hour` y `max_per_day` en el worker scheduler.
+3.  **DNS DKIM Configurado**: Agregar registro DKIM de Zoho (`zmail._domainkey.datawyrd.com`) en Hostinger para completar la autenticación de correo.
+4.  **Mobile Companion App**: Iniciar desarrollo de frontend móvil conectando al `ApiRouter` v1.
+5.  **Audit Log Blockchain**: Explorar integración con servicios de log inmutables externos para máxima auditoría.
+6.  **Generative Intelligence 2.0**: Automatización de respuestas para tickets recurrentes basada en base de conocimientos.

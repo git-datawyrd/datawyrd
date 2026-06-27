@@ -23,11 +23,29 @@ class MarketingCampaignController extends Controller
 
     public function createCampaign(): void
     {
+        $db = Database::getInstance()->getConnection();
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+        
+        $countriesStmt = $db->prepare("SELECT DISTINCT country FROM mktg_contacts WHERE tenant_id = ? AND country IS NOT NULL AND country != '' AND deleted_at IS NULL ORDER BY country ASC");
+        $countriesStmt->execute([$tenantId]);
+        $countries = $countriesStmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+
+        $industriesStmt = $db->prepare("SELECT DISTINCT industry FROM mktg_contacts WHERE tenant_id = ? AND industry IS NOT NULL AND industry != '' AND deleted_at IS NULL ORDER BY industry ASC");
+        $industriesStmt->execute([$tenantId]);
+        $industries = $industriesStmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+
+        $campaignsStmt = $db->prepare("SELECT id, name FROM mktg_campaigns WHERE tenant_id = ? AND status = 'sent' AND deleted_at IS NULL ORDER BY name ASC");
+        $campaignsStmt->execute([$tenantId]);
+        $pastCampaigns = $campaignsStmt->fetchAll() ?: [];
+
         $this->viewLayout('admin/marketing/campaign_form', 'admin', [
-            'title'     => 'Nueva Campaña | Email Marketing',
-            'templates' => $this->repo->getAllTemplates(),
-            'lists'     => $this->repo->getAllLists(),
-            'campaign'  => null,
+            'title'         => 'Nueva Campaña | Email Marketing',
+            'templates'     => $this->repo->getAllTemplates(),
+            'lists'         => $this->repo->getAllLists(),
+            'campaign'      => null,
+            'countries'     => $countries,
+            'industries'    => $industries,
+            'pastCampaigns' => $pastCampaigns,
         ]);
     }
 
@@ -58,6 +76,15 @@ class MarketingCampaignController extends Controller
                 'days' => !empty($_POST['segment_behavior_days']) ? (int)$_POST['segment_behavior_days'] : null,
             ];
         }
+
+        // Add UTM tags
+        $utmEnabled = !empty($_POST['utm_enabled']);
+        $segmentFilters['utm'] = [
+            'enabled'  => $utmEnabled,
+            'source'   => trim($_POST['utm_source'] ?? 'email'),
+            'medium'   => trim($_POST['utm_medium'] ?? 'email'),
+            'campaign' => trim($_POST['utm_campaign'] ?? ''),
+        ];
 
         $data = [
             'name'            => trim($_POST['name']         ?? ''),
@@ -96,12 +123,30 @@ class MarketingCampaignController extends Controller
 
         $metrics = $this->campaignService->getCampaignMetrics($id);
 
+        $db = Database::getInstance()->getConnection();
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+        
+        $countriesStmt = $db->prepare("SELECT DISTINCT country FROM mktg_contacts WHERE tenant_id = ? AND country IS NOT NULL AND country != '' AND deleted_at IS NULL ORDER BY country ASC");
+        $countriesStmt->execute([$tenantId]);
+        $countries = $countriesStmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+
+        $industriesStmt = $db->prepare("SELECT DISTINCT industry FROM mktg_contacts WHERE tenant_id = ? AND industry IS NOT NULL AND industry != '' AND deleted_at IS NULL ORDER BY industry ASC");
+        $industriesStmt->execute([$tenantId]);
+        $industries = $industriesStmt->fetchAll(PDO::FETCH_COLUMN) ?: [];
+
+        $campaignsStmt = $db->prepare("SELECT id, name FROM mktg_campaigns WHERE tenant_id = ? AND status = 'sent' AND deleted_at IS NULL ORDER BY name ASC");
+        $campaignsStmt->execute([$tenantId]);
+        $pastCampaigns = $campaignsStmt->fetchAll() ?: [];
+
         $this->viewLayout('admin/marketing/campaign_detail', 'admin', [
-            'title'     => "Campaña: {$campaign['name']} | Marketing",
-            'campaign'  => $campaign,
-            'metrics'   => $metrics,
-            'templates' => $this->repo->getAllTemplates(),
-            'lists'     => $this->repo->getAllLists(),
+            'title'         => "Campaña: {$campaign['name']} | Marketing",
+            'campaign'      => $campaign,
+            'metrics'       => $metrics,
+            'templates'     => $this->repo->getAllTemplates(),
+            'lists'         => $this->repo->getAllLists(),
+            'countries'     => $countries,
+            'industries'    => $industries,
+            'pastCampaigns' => $pastCampaigns,
         ]);
     }
 
@@ -118,6 +163,33 @@ class MarketingCampaignController extends Controller
             Session::flash('success', $msg);
         } else {
             Session::flash('error', $result['error'] ?? 'Error al lanzar la campaña.');
+        }
+
+        $this->redirect("/admin/marketing/showCampaign/{$id}");
+    }
+
+
+    public function testSend(int $id): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect("/admin/marketing/showCampaign/{$id}");
+            return;
+        }
+
+        $email = trim($_POST['email'] ?? '');
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Session::flash('error', 'El correo de destino para la prueba no es válido.');
+            $this->redirect("/admin/marketing/showCampaign/{$id}");
+            return;
+        }
+
+        $userId = \Core\Auth::user()['id'];
+        $result = $this->campaignService->sendTestEmail($id, $email, $userId);
+
+        if ($result['success']) {
+            Session::flash('success', "Email de prueba enviado correctamente a {$email}.");
+        } else {
+            Session::flash('error', 'Error al enviar el email de prueba: ' . ($result['error'] ?? 'desconocido'));
         }
 
         $this->redirect("/admin/marketing/showCampaign/{$id}");
@@ -206,6 +278,22 @@ class MarketingCampaignController extends Controller
         if (!empty($_POST['segment_tags'])) {
             $segmentFilters['tags'] = trim($_POST['segment_tags']);
         }
+        if (!empty($_POST['segment_behavior_type'])) {
+            $segmentFilters['behavior'] = [
+                'type' => $_POST['segment_behavior_type'],
+                'campaign_id' => !empty($_POST['segment_behavior_campaign_id']) ? (int)$_POST['segment_behavior_campaign_id'] : null,
+                'days' => !empty($_POST['segment_behavior_days']) ? (int)$_POST['segment_behavior_days'] : null,
+            ];
+        }
+
+        // Add UTM tags
+        $utmEnabled = !empty($_POST['utm_enabled']);
+        $segmentFilters['utm'] = [
+            'enabled'  => $utmEnabled,
+            'source'   => trim($_POST['utm_source'] ?? 'email'),
+            'medium'   => trim($_POST['utm_medium'] ?? 'email'),
+            'campaign' => trim($_POST['utm_campaign'] ?? ''),
+        ];
 
         $data = [
             'name'            => trim($_POST['name']         ?? ''),
@@ -270,4 +358,80 @@ class MarketingCampaignController extends Controller
     }
 
 
+    public function countMatchingContacts(): void
+    {
+        $db = Database::getInstance()->getConnection();
+        $tenantId = \Core\Config::get('current_tenant_id', 1);
+
+        $listId = !empty($_GET['list_id']) ? (int)$_GET['list_id'] : 0;
+        $country = $_GET['country'] ?? '';
+        $industry = $_GET['industry'] ?? '';
+        $tags = $_GET['tags'] ?? '';
+        $behaviorType = $_GET['behavior_type'] ?? '';
+        $behaviorCampaignId = !empty($_GET['behavior_campaign_id']) ? (int)$_GET['behavior_campaign_id'] : null;
+        $behaviorDays = !empty($_GET['behavior_days']) ? (int)$_GET['behavior_days'] : null;
+
+        // Contar total de la lista
+        $stmtTotal = $db->prepare("SELECT COUNT(*) FROM mktg_contacts WHERE list_id = ? AND tenant_id = ? AND status = 'subscribed' AND deleted_at IS NULL AND NOT EXISTS (SELECT 1 FROM blacklist b WHERE b.email = mktg_contacts.email)");
+        $stmtTotal->execute([$listId, $tenantId]);
+        $total = (int)$stmtTotal->fetchColumn();
+
+        if ($listId <= 0) {
+            header('Content-Type: application/json');
+            echo json_encode(['matching' => 0, 'total' => 0]);
+            exit;
+        }
+
+        $sql = "SELECT COUNT(*) FROM mktg_contacts c
+                WHERE c.list_id = ?
+                  AND c.tenant_id = ?
+                  AND c.status = 'subscribed'
+                  AND c.deleted_at IS NULL
+                  AND NOT EXISTS (SELECT 1 FROM blacklist b WHERE b.email = c.email)";
+        $params = [$listId, $tenantId];
+
+        if ($country !== '') {
+            $sql .= " AND c.country = ?";
+            $params[] = $country;
+        }
+        if ($industry !== '') {
+            $sql .= " AND c.industry = ?";
+            $params[] = $industry;
+        }
+        if ($tags !== '') {
+            $sql .= " AND c.tags LIKE ?";
+            $params[] = '%' . $tags . '%';
+        }
+        if ($behaviorType !== '') {
+            if ($behaviorType === 'opened' && $behaviorCampaignId) {
+                $sql .= " AND EXISTS (SELECT 1 FROM mktg_events e WHERE e.contact_id = c.id AND e.campaign_id = ? AND e.event_type = 'open')";
+                $params[] = $behaviorCampaignId;
+            } elseif ($behaviorType === 'clicked' && $behaviorCampaignId) {
+                $sql .= " AND EXISTS (SELECT 1 FROM mktg_events e WHERE e.contact_id = c.id AND e.campaign_id = ? AND e.event_type = 'click')";
+                $params[] = $behaviorCampaignId;
+            } elseif ($behaviorType === 'inactive' && $behaviorDays) {
+                $sql .= " AND NOT EXISTS (SELECT 1 FROM mktg_events e WHERE e.contact_id = c.id AND e.occurred_at >= DATE_SUB(NOW(), INTERVAL ? DAY) AND e.event_type IN ('open', 'click'))";
+                $params[] = $behaviorDays;
+            }
+        }
+
+        $stmtMatch = $db->prepare($sql);
+        $stmtMatch->execute($params);
+        $matching = (int)$stmtMatch->fetchColumn();
+
+        header('Content-Type: application/json');
+        echo json_encode(['matching' => $matching, 'total' => $total]);
+        exit;
+    }
+
+    public function getTemplateHtml(): void
+    {
+        $templateId = !empty($_GET['id']) ? (int)$_GET['id'] : 0;
+        $template = $this->repo->findTemplate($templateId);
+        $html = $template ? ($template['html_body'] ?: '<p style="color:#ccc; padding:24px; font-family:sans-serif; text-align:center;">Esta plantilla no tiene cuerpo HTML.</p>') : '<p style="color:#ccc; padding:24px; font-family:sans-serif; text-align:center;">Plantilla no seleccionada.</p>';
+        
+        header('Content-Type: text/html; charset=utf-8');
+        echo $html;
+        exit;
+    }
 }

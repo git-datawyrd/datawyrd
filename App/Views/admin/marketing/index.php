@@ -153,6 +153,16 @@
                         </div>
                     </a>
 
+                    <a href="<?php echo url('admin/marketing/automations'); ?>" class="d-flex align-items-center gap-3 p-3 rounded-3 bg-white-5 text-decoration-none transition-all hover-bg-white-10">
+                        <div class="rounded-circle bg-info bg-opacity-25 p-2 text-info d-flex">
+                            <span class="material-symbols-outlined">smart_toy</span>
+                        </div>
+                        <div>
+                            <h6 class="text-white mb-0 fw-bold">Flujos Automatizados</h6>
+                            <p class="text-white-50 x-small mb-0">Configura respuestas automáticas y welcome series.</p>
+                        </div>
+                    </a>
+
                     <a href="<?php echo url('admin/marketing/settings'); ?>" class="d-flex align-items-center gap-3 p-3 rounded-3 bg-white-5 text-decoration-none transition-all hover-bg-white-10 border border-primary border-opacity-25">
                         <div class="rounded-circle bg-primary bg-opacity-25 p-2 text-primary d-flex">
                             <span class="material-symbols-outlined">domain_verification</span>

@@ -30,6 +30,11 @@
         </a>
 
         <?php if ($campaign['status'] === 'draft' || $campaign['status'] === 'paused'): ?>
+            <!-- Enviar Prueba -->
+            <button type="button" class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3 rounded-pill text-white border-white-20" data-bs-toggle="modal" data-bs-target="#testSendModal" title="Enviar un correo de prueba">
+                <span class="material-symbols-outlined fs-5">mail</span> Enviar Prueba
+            </button>
+
             <!-- Editar -->
             <button type="button" class="btn btn-outline-info d-flex align-items-center gap-2 px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#editCampaignModal">
                 <span class="material-symbols-outlined fs-5">edit</span> Editar
@@ -159,6 +164,12 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body text-start">
+        <?php
+        $filters = !empty($campaign['segment_filters']) ? json_decode($campaign['segment_filters'], true) : [];
+        $utm = $filters['utm'] ?? [];
+        $utmEnabled = $utm['enabled'] ?? false;
+        $behavior = $filters['behavior'] ?? [];
+        ?>
         <div class="row g-3">
           <div class="col-12">
             <label class="form-label text-white-50 x-small fw-bold uppercase">Nombre Interno de la Campaña *</label>
@@ -206,6 +217,140 @@
               <?php endforeach; endif; ?>
             </select>
           </div>
+
+          <!-- SEGMENTACIÓN DE AUDIENCIA -->
+          <div class="col-12 mt-4">
+            <div class="card bg-black border-white-10 p-3 rounded-3 text-start">
+                <h6 class="text-white fw-bold mb-3 d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-primary fs-5">filter_alt</span> Segmentación de Audiencia (Opcional)
+                </h6>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">Filtrar por País</label>
+                        <select name="segment_country" class="form-select bg-black text-white border-white-10 p-2 rounded-2">
+                            <option value="">Todos los países...</option>
+                            <?php foreach($countries as $c): ?>
+                                <option value="<?php echo htmlspecialchars($c); ?>" <?php echo (isset($filters['country']) && $filters['country'] === $c) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($c); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">Filtrar por Industria</label>
+                        <select name="segment_industry" class="form-select bg-black text-white border-white-10 p-2 rounded-2">
+                            <option value="">Todas las industrias...</option>
+                            <?php foreach($industries as $ind): ?>
+                                <option value="<?php echo htmlspecialchars($ind); ?>" <?php echo (isset($filters['industry']) && $filters['industry'] === $ind) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($ind); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">Filtrar por Tag / Etiqueta</label>
+                        <input type="text" name="segment_tags" class="form-control bg-black text-white border-white-10 p-2 rounded-2" 
+                               placeholder="Ej: cliente, vip" value="<?php echo htmlspecialchars($filters['tags'] ?? ''); ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">Comportamiento del Receptor</label>
+                        <select name="segment_behavior_type" id="edit_behavior_type" class="form-select bg-black text-white border-white-10 p-2 rounded-2">
+                            <option value="">Cualquier comportamiento...</option>
+                            <option value="opened" <?php echo (isset($behavior['type']) && $behavior['type'] === 'opened') ? 'selected' : ''; ?>>Abrió la campaña...</option>
+                            <option value="clicked" <?php echo (isset($behavior['type']) && $behavior['type'] === 'clicked') ? 'selected' : ''; ?>>Hizo clic en la campaña...</option>
+                            <option value="inactive" <?php echo (isset($behavior['type']) && $behavior['type'] === 'inactive') ? 'selected' : ''; ?>>Inactivo (sin abrir/clic) durante...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4" id="edit_behavior_campaign_col" style="display:none;">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">Campaña de Referencia</label>
+                        <select name="segment_behavior_campaign_id" class="form-select bg-black text-white border-white-10 p-2 rounded-2">
+                            <option value="">Seleccione campaña...</option>
+                            <?php foreach($pastCampaigns as $pc): ?>
+                                <option value="<?php echo $pc['id']; ?>" <?php echo (isset($behavior['campaign_id']) && $behavior['campaign_id'] == $pc['id']) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($pc['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-4" id="edit_behavior_days_col" style="display:none;">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">Días de Inactividad</label>
+                        <input type="number" name="segment_behavior_days" class="form-control bg-black text-white border-white-10 p-2 rounded-2" 
+                               placeholder="Ej: 30" min="1" value="<?php echo htmlspecialchars($behavior['days'] ?? ''); ?>">
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <!-- GOOGLE ANALYTICS UTMS -->
+          <div class="col-12 mt-3">
+            <div class="card bg-black border-white-10 p-3 rounded-3 text-start">
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" name="utm_enabled" id="edit_utm_enabled" value="1" <?php echo $utmEnabled ? 'checked' : ''; ?>>
+                    <label class="form-check-label text-white fw-bold d-flex align-items-center gap-2" for="edit_utm_enabled">
+                        <span class="material-symbols-outlined text-success fs-5">link</span> Habilitar Parámetros Google Analytics UTM
+                    </label>
+                </div>
+                <div class="row g-3" id="edit_utm_fields_row" style="display:none;">
+                    <div class="col-md-4">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">UTM Source (Fuente) *</label>
+                        <input type="text" name="utm_source" id="edit_utm_source" class="form-control bg-black text-white border-white-10 p-2 rounded-2" value="<?php echo htmlspecialchars($utm['source'] ?? 'email'); ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">UTM Medium (Medio) *</label>
+                        <input type="text" name="utm_medium" id="edit_utm_medium" class="form-control bg-black text-white border-white-10 p-2 rounded-2" value="<?php echo htmlspecialchars($utm['medium'] ?? 'email'); ?>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label text-white-50 x-small fw-bold uppercase">UTM Campaign (Campaña)</label>
+                        <input type="text" name="utm_campaign" id="edit_utm_campaign" class="form-control bg-black text-white border-white-10 p-2 rounded-2" placeholder="Opcional" value="<?php echo htmlspecialchars($utm['campaign'] ?? ''); ?>">
+                    </div>
+                </div>
+            </div>
+          </div>
+
+          <script>
+          document.addEventListener('DOMContentLoaded', function() {
+              const behaviorType = document.getElementById('edit_behavior_type');
+              const campaignCol = document.getElementById('edit_behavior_campaign_col');
+              const daysCol = document.getElementById('edit_behavior_days_col');
+              
+              function toggleBehaviorCols() {
+                  if (!behaviorType) return;
+                  const val = behaviorType.value;
+                  if (val === 'opened' || val === 'clicked') {
+                      campaignCol.style.display = '';
+                      daysCol.style.display = 'none';
+                  } else if (val === 'inactive') {
+                      campaignCol.style.display = 'none';
+                      daysCol.style.display = '';
+                  } else {
+                      campaignCol.style.display = 'none';
+                      daysCol.style.display = 'none';
+                  }
+              }
+              
+              if (behaviorType) {
+                  behaviorType.addEventListener('change', toggleBehaviorCols);
+                  toggleBehaviorCols();
+              }
+
+              // UTM toggling
+              const utmSwitch = document.getElementById('edit_utm_enabled');
+              const utmFields = document.getElementById('edit_utm_fields_row');
+              
+              function toggleUtmFields() {
+                  if (utmSwitch && utmSwitch.checked) {
+                      utmFields.style.display = '';
+                  } else if (utmFields) {
+                      utmFields.style.display = 'none';
+                  }
+              }
+              
+              if (utmSwitch) {
+                  utmSwitch.addEventListener('change', toggleUtmFields);
+                  toggleUtmFields();
+              }
+          });
+          </script>
         </div>
       </div>
       <div class="modal-footer border-white-10">
@@ -237,6 +382,33 @@
       <div class="modal-footer border-white-10">
         <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
         <button type="submit" class="btn fw-bold px-4 text-white" style="background:linear-gradient(135deg,#6366f1,#D4AF37);border:none;">Programar Envío</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== MODAL ENVÍO DE PRUEBA ==================== -->
+<div class="modal fade" id="testSendModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form action="<?php echo url("admin/marketing/testSend/{$campaign['id']}"); ?>" method="POST" class="modal-content bg-midnight border-white-10 glass-morphism">
+      <?php echo csrf_field(); ?>
+      <div class="modal-header border-white-10">
+        <h5 class="modal-title text-white d-flex align-items-center gap-2">
+          <span class="material-symbols-outlined text-secondary">mail</span> Enviar Correo de Prueba
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-start">
+        <div class="mb-3">
+          <label class="form-label text-white-50 x-small fw-bold uppercase">Correo de Destino *</label>
+          <input type="email" name="email" class="form-control bg-black text-white border-white-10 p-3 rounded-3" required 
+                 value="<?php echo htmlspecialchars(\Core\Auth::user()['email'] ?? ''); ?>" placeholder="ejemplo@correo.com">
+          <div class="form-text text-white-50 small mt-2">Se enviará el correo renderizado con datos simulados de un cliente de prueba, incluyendo un banner informativo al final.</div>
+        </div>
+      </div>
+      <div class="modal-footer border-white-10">
+        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn fw-bold px-4 text-white" style="background:linear-gradient(135deg,#30C5FF,#D4AF37);border:none;">Enviar Prueba</button>
       </div>
     </form>
   </div>

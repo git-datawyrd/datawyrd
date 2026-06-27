@@ -164,4 +164,65 @@ class CampaignServiceTest extends \Tests\TestCase
         $this->assertStringContainsString('https://dw.test/track/unsubscribe?t=unsub-token-abc', $headers['List-Unsubscribe']);
         $this->assertEquals('List-Unsubscribe=One-Click', $headers['List-Unsubscribe-Post']);
     }
+
+    public function test_send_test_email()
+    {
+        $this->db->prepare("INSERT INTO mktg_campaigns (id, tenant_id, name, subject, template_id, list_id, status, created_by) VALUES (?, 1, 'Test Campaign', 'Subject', ?, ?, 'draft', 1)")
+            ->execute([$this->testCampaignId, $this->testTemplateId, $this->testListId]);
+
+        Config::set('marketing.provider', 'smtp');
+        Config::set('mail.host', 'localhost');
+        Config::set('mail.user', 'test');
+        Config::set('mail.from_address', 'test@datawyrd.com');
+
+        $result = $this->service->sendTestEmail($this->testCampaignId, 'recipient@test.com', 1);
+
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('success', $result);
+    }
+
+    public function test_utm_and_click_tracking_rewriting()
+    {
+        Config::set('marketing.tracking', [
+            'base_url' => 'https://dw.test',
+            'click_path' => '/track/click',
+            'click_enabled' => true
+        ]);
+
+        $campaign = [
+            'name' => 'Newsletter Invierno',
+            'template_id' => 0,
+            'subject' => 'Email Subject',
+            'html_body' => '<html><body>Hola! Visita nuestro <a href="https://example.com/shop">sitio web</a> o <a href="https://dw.test/track/unsubscribe?t=abc">darse de baja</a>.</body></html>',
+            'segment_filters' => json_encode([
+                'utm' => [
+                    'enabled' => true,
+                    'source' => 'newsletter',
+                    'medium' => 'email',
+                    'campaign' => 'promo-invierno'
+                ]
+            ])
+        ];
+
+        $log = [
+            'email' => 'user1@test.com',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'tracking_token' => 'xyz-token-abc'
+        ];
+
+        $reflection = new \ReflectionClass(CampaignService::class);
+        $method = $reflection->getMethod('renderTemplate');
+        $method->setAccessible(true);
+
+        $testService = new CampaignService($this->repo);
+        $html = $method->invokeArgs($testService, [$campaign, $log]);
+
+        $this->assertStringContainsString('https://dw.test/track/click?t=xyz-token-abc&u=', $html);
+        
+        $expectedUrl = 'https://example.com/shop?utm_source=newsletter&utm_medium=email&utm_campaign=promo-invierno';
+        $this->assertStringContainsString(urlencode($expectedUrl), $html);
+
+        $this->assertStringContainsString('https://dw.test/track/unsubscribe?t=abc', $html);
+    }
 }

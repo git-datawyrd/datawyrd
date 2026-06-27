@@ -39,9 +39,11 @@ class EmailProviderFactory
         self::$instance = match ($provider) {
             'zepto'     => new ZeptoMailProvider(),
             'smtp'      => new SmtpMarketingProvider(),
+            'sendgrid'  => new SendGridProvider(),
+            'mailgun'   => new MailgunProvider(),
             default     => throw new \RuntimeException(
                 "Proveedor de marketing '{$provider}' no soportado. "
-                . "Opciones válidas: zepto, smtp"
+                . "Opciones válidas: zepto, smtp, sendgrid, mailgun"
             ),
         };
 

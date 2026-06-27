@@ -82,6 +82,17 @@ return [
             'from_name'     => getenv('ZEPTO_FROM_NAME') ?: getenv('MAIL_FROM_NAME') ?: 'Data Wyrd',
             'bounce_address'=> getenv('ZEPTO_BOUNCE_ADDRESS') ?: '',
         ],
+        'sendgrid' => [
+            'api_key'      => getenv('SENDGRID_API_KEY') ?: '',
+            'from_address' => getenv('SENDGRID_FROM_ADDRESS') ?: getenv('MAIL_FROM_ADDRESS') ?: '',
+            'from_name'    => getenv('SENDGRID_FROM_NAME') ?: getenv('MAIL_FROM_NAME') ?: 'Data Wyrd',
+        ],
+        'mailgun' => [
+            'api_key'      => getenv('MAILGUN_API_KEY') ?: '',
+            'domain'       => getenv('MAILGUN_DOMAIN') ?: '',
+            'from_address' => getenv('MAILGUN_FROM_ADDRESS') ?: getenv('MAIL_FROM_ADDRESS') ?: '',
+            'from_name'    => getenv('MAILGUN_FROM_NAME') ?: getenv('MAIL_FROM_NAME') ?: 'Data Wyrd',
+        ],
 
         // --- Límites de envío (Rate Limiting & Throttle) ---
         'rate' => [

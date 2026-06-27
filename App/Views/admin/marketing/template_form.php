@@ -375,6 +375,7 @@ $actionUrl  = $isEdit
             alt:    'Imagen del email',
             width:  '100%',
             align:  'center',
+            url:    '',
         },
         divider: { color: '#333333', height: '1px', margin: '20px' },
         columns: {
@@ -400,6 +401,13 @@ $actionUrl  = $isEdit
                     <a href="${p.url}" style="background:${p.bg};color:${p.color};padding:12px 28px;border-radius:6px;text-decoration:none;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;display:inline-block;">${p.text}</a>
                   </div>`;
             case 'image':
+                if (p.url && p.url.trim() !== '') {
+                    return `<div style="text-align:${p.align};margin:16px 0;">
+                        <a href="${p.url}" target="_blank" style="display:inline-block;width:${p.width};">
+                            <img src="${p.src}" alt="${p.alt}" width="100%" style="max-width:100%;border-radius:4px;border:none;display:block;">
+                        </a>
+                    </div>`;
+                }
                 return `<div style="text-align:${p.align};margin:16px 0;"><img src="${p.src}" alt="${p.alt}" width="${p.width}" style="max-width:100%;border-radius:4px;"></div>`;
             case 'divider':
                 return `<hr style="border:none;border-top:${p.height} solid ${p.color};margin:${p.margin} 0;">`;
@@ -580,6 +588,7 @@ $actionUrl  = $isEdit
             case 'image':
                 html = field('URL de imagen', 'src', p.src, 'url')
                      + field('Texto alternativo', 'alt', p.alt)
+                     + field('Enlace (URL al hacer clic)', 'url', p.url || '', 'url')
                      + field('Ancho', 'width', p.width)
                      + select('Alineación', 'align', p.align, ['left','center','right']);
                 break;

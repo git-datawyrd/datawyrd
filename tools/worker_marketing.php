@@ -136,17 +136,27 @@ try {
     // ACTIVAR CAMPAÑAS PROGRAMADAS QUE YA VENCIERON
     // =========================================================================
     if (!$dryRun) {
-        $activatedStmt = $db->prepare(
-            "UPDATE mktg_campaigns
-             SET status = 'sending'
+        $selectStmt = $db->prepare(
+            "SELECT id, list_id, tenant_id FROM mktg_campaigns
              WHERE status = 'scheduled'
                AND scheduled_at IS NOT NULL
                AND scheduled_at <= NOW()"
         );
-        $activatedStmt->execute();
-        $activatedCount = $activatedStmt->rowCount();
+        $selectStmt->execute();
+        $toActivate = $selectStmt->fetchAll();
+        $activatedCount = count($toActivate);
+        
         if ($activatedCount > 0) {
-            echo "[" . date('Y-m-d H:i:s') . "] {$activatedCount} campaña(s) activadas por scheduler.\n";
+            foreach ($toActivate as $camp) {
+                // Actualizar estado a 'sending' y establecer sent_at
+                $updateStmt = $db->prepare("UPDATE mktg_campaigns SET status = 'sending', sent_at = NOW() WHERE id = ?");
+                $updateStmt->execute([$camp['id']]);
+                
+                // Hidratar la cola de envíos
+                $repo->hydrateSendLog((int)$camp['id'], (int)$camp['list_id'], (int)$camp['tenant_id']);
+                
+                echo "[" . date('Y-m-d H:i:s') . "] Campaña programada ID {$camp['id']} activada e hidratada.\n";
+            }
         }
     }
 

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-11.9.0-blue.svg)
+![Version](https://img.shields.io/badge/version-12.2.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.0+-purple.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
@@ -549,7 +549,7 @@ Para más soluciones, consulta la Sección 10 de [docs/DEPLOYMENT_GUIDE.md](docs
 - [x] **Email Marketing Engine v1**: Gestión de campañas masivas, contactos, tracking SPF/DKIM y cumplimiento GDPR.
 - [ ] **DNS DKIM Completar**: Agregar registro `zmail._domainkey.datawyrd.com` en Hostinger DNS para activar firma DKIM de Zoho.
 - [ ] **Email Marketing - Plantillas Visuales**: Editor drag-and-drop de templates HTML para campañas.
-- [ ] **Email Marketing - Automatizaciones**: Flujos de nurturing basados en triggers (apertura, clic, tiempo).
+- [x] **Email Marketing - Automatizaciones**: Flujos de nurturing basados en triggers (apertura, clic, tiempo).
 - [ ] **Data Wyrd Multi-Tenant & SaaS Core**: Habilitación nativa de inquilinos.
 - [ ] **Pipelines CI/CD & Test-Driven**: Extender cobertura PHPUnit al 80% y generar flujos de despliegue inmutables.
 - [ ] **CQRS & Event Sourcing (FinOps)**: Auditoría infalible de pagos transaccionales mediante historial de eventos puros.

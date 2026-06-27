@@ -233,6 +233,22 @@ class MarketingTrackingController extends Controller
                 $db->prepare("UPDATE mktg_send_log SET opened_at = NOW() WHERE id = ? AND opened_at IS NULL")
                    ->execute([$sendLog['id']]);
             }
+
+            // Trigger automaciones correspondientes
+            if ($eventType === 'open') {
+                $autoService = new \App\Services\Marketing\AutomationService();
+                $autoService->trigger('campaign_open', [
+                    'contact_id'  => $sendLog['contact_id'],
+                    'campaign_id' => $sendLog['campaign_id'],
+                ]);
+            } elseif ($eventType === 'click') {
+                $autoService = new \App\Services\Marketing\AutomationService();
+                $autoService->trigger('campaign_click', [
+                    'contact_id'  => $sendLog['contact_id'],
+                    'campaign_id' => $sendLog['campaign_id'],
+                    'url'         => $urlClicked,
+                ]);
+            }
         } catch (\Exception $e) {
             // Silenciar errores de tracking — no deben afectar la UX del usuario final
             SecurityLogger::log('marketing_tracking_event_failed', [
@@ -311,6 +327,84 @@ class MarketingTrackingController extends Controller
         <h1 style='background:linear-gradient(to right,#D4AF37,#30C5FF);-webkit-background-clip:text;color:transparent;margin:0 0 8px;'>{$escapedCompany}</h1>
         <h2 style='color:#ccc;font-size:20px;margin:0 0 32px;'>Gestión de suscripción</h2>
         {$formContent}
+    </div>
+</body>
+</html>";
+    }
+
+    public function confirmOptIn(): void
+    {
+        $token = preg_replace('/[^a-zA-Z0-9\-_]/', '', $_GET['t'] ?? '');
+        if (empty($token)) {
+            http_response_code(400);
+            echo "Token no válido.";
+            exit;
+        }
+
+        $db = \Core\Database::getInstance()->getConnection();
+        $stmt = $db->prepare("SELECT * FROM mktg_contacts WHERE unsubscribe_token = ? AND deleted_at IS NULL");
+        $stmt->execute([$token]);
+        $contact = $stmt->fetch();
+
+        if (!$contact) {
+            http_response_code(404);
+            echo "Suscriptor no encontrado.";
+            exit;
+        }
+
+        $companyName = \Core\Config::get('business.company_name', 'Data Wyrd');
+
+        if ($contact['status'] === 'pending') {
+            $ipRaw = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '';
+            
+            // Confirm subscription
+            $stmtUpd = $db->prepare("UPDATE mktg_contacts SET status = 'subscribed', consent_given = 1, consent_ip = ?, consent_at = NOW() WHERE id = ?");
+            $stmtUpd->execute([$ipRaw, $contact['id']]);
+
+            // Trigger signup automation
+            $automationService = new \App\Services\Marketing\AutomationService();
+            $automationService->trigger('signup', [
+                'contact_id' => $contact['id'],
+                'email'      => $contact['email'],
+                'tenant_id'  => $contact['tenant_id'],
+            ]);
+
+            $message = "¡Tu suscripción ha sido confirmada con éxito! Ya estás registrado para recibir nuestras novedades.";
+            $success = true;
+        } else {
+            $message = "Esta suscripción ya está confirmada o activa.";
+            $success = true;
+        }
+
+        echo $this->renderOptinConfirmPage($companyName, $message, $success);
+        exit;
+    }
+
+    private function renderOptinConfirmPage(string $companyName, string $message, bool $success): string
+    {
+        $escapedCompany = htmlspecialchars($companyName, ENT_QUOTES, 'UTF-8');
+        $escapedMessage = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
+        $appUrl         = rtrim(\Core\Config::get('base_url', '/'), '/');
+
+        $statusColor = $success ? '#30C5FF' : '#FF5555';
+        $statusIcon  = $success ? 'verified_user' : 'error';
+
+        return "<!DOCTYPE html>
+<html lang='es'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='robots' content='noindex,nofollow'>
+    <title>Confirmación de Suscripción · {$escapedCompany}</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0'>
+</head>
+<body style='background:#0A0A0A;color:#fff;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;'>
+    <div style='background:#111;border:1px solid #333;border-radius:12px;padding:48px;max-width:480px;width:100%;text-align:center;'>
+        <span class='material-symbols-outlined' style='font-size:64px;color:{$statusColor};margin-bottom:16px;'>{$statusIcon}</span>
+        <h1 style='background:linear-gradient(to right,#D4AF37,#30C5FF);-webkit-background-clip:text;color:transparent;margin:0 0 8px;'>{$escapedCompany}</h1>
+        <h2 style='color:#ccc;font-size:20px;margin:0 0 24px;'>Confirmar Suscripción</h2>
+        <p style='color:#ccc;margin-bottom:32px;line-height:1.6;'>{$escapedMessage}</p>
+        <a href='{$appUrl}' style='background:#D4AF37;color:#000;border:none;padding:14px 28px;font-size:16px;font-weight:700;border-radius:8px;text-decoration:none;display:inline-block;'>Ir al Inicio</a>
     </div>
 </body>
 </html>";

@@ -192,6 +192,62 @@ class CampaignService
         return ['success' => true, 'queued' => $queued, 'status' => $newStatus];
     }
 
+    /**
+     * Envía un email de prueba individual con datos simulados.
+     *
+     * @param int $campaignId
+     * @param string $targetEmail
+     * @param int $userId
+     * @return array{success: bool, provider_message_id: string|null, error: string|null}
+     */
+    public function sendTestEmail(int $campaignId, string $targetEmail, int $userId): array
+    {
+        $campaign = $this->repo->findCampaign($campaignId);
+        if (!$campaign) {
+            return ['success' => false, 'provider_message_id' => null, 'error' => 'Campaña no encontrada.'];
+        }
+
+        // Mock contact data for placeholders
+        $mockLog = [
+            'id'                => 0,
+            'email'             => $targetEmail,
+            'first_name'        => 'John',
+            'last_name'         => 'Doe',
+            'company'           => 'Empresa de Prueba',
+            'phone'             => '+34 600 123 456',
+            'tracking_token'    => 'test-token-' . uniqid(),
+            'unsubscribe_token' => 'test-unsub-' . uniqid(),
+            'tenant_id'         => Config::get('current_tenant_id', 1),
+        ];
+
+        // Render target HTML template
+        $body = $this->renderTemplate($campaign, $mockLog);
+        
+        // Add indicator that this is a test email
+        if (stripos($body, '</body>') !== false) {
+            $body = str_ireplace('</body>', '<div style="background:#fef3c7;color:#92400e;padding:10px;text-align:center;font-size:12px;font-family:Arial,sans-serif;font-weight:bold;">Este es un correo de prueba enviado desde Data Wyrd.</div></body>', $body);
+        } else {
+            $body .= '<div style="background:#fef3c7;color:#92400e;padding:10px;text-align:center;font-size:12px;font-family:Arial,sans-serif;font-weight:bold;">Este es un correo de prueba enviado desde Data Wyrd.</div>';
+        }
+
+        $headers = $this->buildComplianceHeaders($campaign, $mockLog);
+
+        $provider = EmailProviderFactory::make();
+        $result = $provider->send([
+            'to'          => $targetEmail,
+            'subject'     => '[PRUEBA] ' . $campaign['subject'],
+            'html_body'   => $body,
+            'from'        => $campaign['from_email'] ?: null,
+            'from_name'   => $campaign['from_name']  ?: null,
+            'reply_to'    => $campaign['reply_to']   ?: null,
+            'headers'     => $headers,
+            'campaign_id' => $campaignId,
+            'send_log_id' => 0,
+        ]);
+
+        return $result;
+    }
+
     // =========================================================================
     // PROCESAMIENTO POR LOTES (llamado por worker_marketing.php)
     // =========================================================================
@@ -364,6 +420,51 @@ HTML;
                 $html = str_ireplace('</body>', $pixel . '</body>', $html);
             } else {
                 $html .= $pixel;
+            }
+        }
+
+        // --- Click Tracking & UTM Parameters Injection ---
+        if ($this->trackingCfg['click_enabled'] ?? true) {
+            $clickPath = $this->trackingCfg['click_path'] ?? '/track/click';
+            $token = $log['tracking_token'] ?? '';
+
+            if ($token !== '') {
+                // Parse UTM configuration from campaign segment filters
+                $filters = !empty($campaign['segment_filters']) ? json_decode($campaign['segment_filters'], true) : [];
+                $utm = $filters['utm'] ?? [];
+                $utmEnabled = $utm['enabled'] ?? false;
+                
+                $utmSource = $utm['source'] ?? 'email';
+                $utmMedium = $utm['medium'] ?? 'email';
+                $utmCampaign = !empty($utm['campaign']) 
+                    ? $utm['campaign'] 
+                    : strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $campaign['name'] ?? 'campaign'));
+
+                $html = preg_replace_callback(
+                    '/<a\s+([^>]*?)href=["\'](https?:\/\/[^"\']+)["\']([^>]*?)>/i',
+                    function (array $matches) use ($baseUrl, $clickPath, $token, $utmEnabled, $utmSource, $utmMedium, $utmCampaign): string {
+                        $attrsBefore = $matches[1];
+                        $url = $matches[2];
+                        $attrsAfter = $matches[3];
+
+                        // Exclude unsubscribe link from click tracking redirector
+                        if (str_contains($url, '/track/unsubscribe')) {
+                            return $matches[0];
+                        }
+
+                        // Append UTM parameters if enabled
+                        if ($utmEnabled) {
+                            $separator = str_contains($url, '?') ? '&' : '?';
+                            $url = $url . $separator . 'utm_source=' . urlencode($utmSource)
+                                       . '&utm_medium=' . urlencode($utmMedium)
+                                       . '&utm_campaign=' . urlencode($utmCampaign);
+                        }
+
+                        $trackedUrl = $baseUrl . $clickPath . '?t=' . urlencode($token) . '&u=' . urlencode($url);
+                        return "<a {$attrsBefore}href=\"{$trackedUrl}\"{$attrsAfter}>";
+                    },
+                    $html
+                );
             }
         }
 

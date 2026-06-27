@@ -220,22 +220,40 @@ class MarketingListController extends Controller
             $tagsInput = implode(',', $existingTags);
         }
 
+        $doubleOptIn = \Core\Config::get('marketing.compliance.double_opt_in', false);
+        $status      = $doubleOptIn ? 'pending' : 'subscribed';
+        $unsubToken  = 'unsub-' . uniqid() . '-' . bin2hex(random_bytes(8));
+
         $data = [
-            'list_id'    => $listId,
-            'email'      => $email,
-            'first_name' => trim($_POST['first_name'] ?? ''),
-            'last_name'  => trim($_POST['last_name'] ?? ''),
-            'phone'      => trim($_POST['phone'] ?? ''),
-            'company'    => trim($_POST['company'] ?? ''),
-            'country'    => trim($_POST['country'] ?? ''),
-            'industry'   => trim($_POST['industry'] ?? ''),
-            'tags'       => $tagsInput ?: null,
-            'status'     => 'subscribed',
-            'source'     => 'manual',
+            'list_id'           => $listId,
+            'email'             => $email,
+            'first_name'        => trim($_POST['first_name'] ?? ''),
+            'last_name'         => trim($_POST['last_name'] ?? ''),
+            'phone'             => trim($_POST['phone'] ?? ''),
+            'company'           => trim($_POST['company'] ?? ''),
+            'country'           => trim($_POST['country'] ?? ''),
+            'industry'          => trim($_POST['industry'] ?? ''),
+            'tags'              => $tagsInput ?: null,
+            'status'            => $status,
+            'source'            => 'manual',
+            'unsubscribe_token' => $unsubToken,
         ];
 
-        $this->repo->createContact($data);
-        Session::flash('success', 'Contacto agregado correctamente.');
+        $contactId = $this->repo->createContact($data);
+
+        if ($doubleOptIn) {
+            $automationService = new \App\Services\Marketing\AutomationService();
+            $automationService->sendDoubleOptInEmail($email, $unsubToken, $data['first_name']);
+            Session::flash('success', 'Contacto creado. Se ha enviado un correo de confirmación de suscripción (Double Opt-In).');
+        } else {
+            $automationService = new \App\Services\Marketing\AutomationService();
+            $automationService->trigger('signup', [
+                'contact_id' => $contactId,
+                'email'      => $email,
+                'tenant_id'  => \Core\Config::get('current_tenant_id', 1),
+            ]);
+            Session::flash('success', 'Contacto agregado correctamente.');
+        }
         $this->redirect("/admin/marketing/showList/{$listId}");
     }
 
